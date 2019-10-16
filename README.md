@@ -1,20 +1,20 @@
 # oxbridge_brainhack_2019
 Task Switching Paradigm Construction
 
-Hello! This aim of this project is to construct a task-switching paradigm. This paradigm will switch between three discrete, psychometrically opposed tasks- the digit span, spatial rotation, and self-ordered search tasks. Participants will perform this task whilst we acquire both fMRI and high-density EEG imaging. The functional neuroimaging data, combined with structural data from a DWI scan, will then be used to model the brain during a task switch. But I’m getting ahead of myself. Let’s focus on some questions and rationale, written below, for this project. _If you have questions or comments on any of the jargon, rationale, or content below, please reach out to me at danielle.kurtin18@imperial.ac.uk_
+Hello! This aim of this project is to construct a task-switching paradigm. This paradigm will switch between three discrete, psychometrically opposed tasks- the digit span, spatial rotation, and either the spatial span or self-ordered search tasks. Participants will perform this task whilst we acquire both fMRI and high-density EEG imaging. The functional neuroimaging data, combined with structural data from a DWI scan, will then be used to model the brain during a task switch. But I’m getting ahead of myself. Let’s focus on some questions and rationale, written below, for this project. _If you have questions or comments on any of the jargon, rationale, or content below, please reach out to me at danielle.kurtin18@imperial.ac.uk_
 
 ## Why do we need to construct a new paradigm?
 	
-Most task-switching literature focuses on switching between tasks that rely on the same cognitive processes/ psychometric principals. While many cognitive processes recruit a “multiple demand cortex” or “__” (SOURCE), there is evidence that the brain’s task activity and connectivity profiles are discrete and dissociable for separate tasks. Furthermore, the more psychometrically opposed the tasks are, the easier it is to separate the neuroimaging correlates of the task (Eyal et al, in press). I want to understand how brain reconfigures in task switching paradigms; specifically, whether the brain reorganizes in a top-down or bottom-up manner. To do this I need discrete, dissociable networks- like the ones generated from three psychometrically opposed tasks. 
+Most task-switching literature focuses on switching between tasks that rely on the same cognitive processes/ psychometric principals. While many cognitive processes recruit a “multiple demand cortex", there is evidence that the brain’s task activity and connectivity profiles are discrete and dissociable for separate tasks. Furthermore, the more psychometrically opposed the tasks are, the easier it is to separate the neuroimaging correlates of the task (Eyal et al, in press). I want to understand how brain reconfigures in task switching paradigms; specifically, whether the brain reorganizes in a top-down or bottom-up manner. To do this I need discrete, dissociable networks- like the ones generated from three psychometrically opposed tasks. 
  
  ## What are the paradigm parameters?
-The task will be coded in PsyPy. More to come here. For information on how we can avoid display, motor, and other confounds, see the section at the very bottom titled _Confound Considerations_
+The task will be coded in Psychopy. More to come here. For information on how we can avoid display, motor, and other confounds, see the section at the very bottom titled _Confound Considerations_
 
 ## What do we have already?
 We have bits of code for the tasks that are (1) programmed in MatLab using PsyToolbox (2) result in different display and motor responses. I will add to this in the appropriate brances in the weeks to come.
 
 ## Where do we need to go?
-        1.	Change MatLab to PsyPy
+        1.	Change MatLab to Psychopy
         2.	Change the task code to fit the display and motor parameters for this task
         3.	Add lines for EEG and fMRI compatibility 
         4.	Pilot test to ensure
