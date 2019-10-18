@@ -1,7 +1,7 @@
 # oxbridge_brainhack_2019
 Task Switching Paradigm Construction
 
-Hello! This aim of this project is to construct a task-switching paradigm. This paradigm will switch between three discrete, psychometrically opposed tasks- the digit span, spatial rotation, and either the spatial span or self-ordered search tasks. Participants will perform this task whilst we acquire both fMRI and high-density EEG imaging. The functional neuroimaging data, combined with structural data from a DWI scan, will then be used to model the brain during a task switch. But I’m getting ahead of myself. Let’s focus on some questions and rationale, written below, for this project. _If you have questions or comments on any of the jargon, rationale, or content below, please reach out to me at danielle.kurtin18@imperial.ac.uk_
+Hello! This aim of this project is to construct a task-switching paradigm. This paradigm will switch between three discrete, psychometrically opposed tasks- the digit span, spatial rotation, and the spatial span tasks. Participants will perform this task whilst we acquire both fMRI and high-density EEG imaging. The functional neuroimaging data, combined with structural data from a DWI scan, will then be used to model the brain during a task switch. But I’m getting ahead of myself. Let’s focus on some questions and rationale, written below, for this project. _If you have questions or comments on any of the jargon, rationale, or content below, please reach out to me at danielle.kurtin18@imperial.ac.uk_
 
 ## Why do we need to construct a new paradigm?
 	
