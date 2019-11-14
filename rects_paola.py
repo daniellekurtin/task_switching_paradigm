@@ -26,8 +26,8 @@ class Grid:
     # Return the pixel offset of the cell at coordinates r, c
     def coordToPixelOffset(self, r, c):
         return (
-            grid.start.x + (r * grid.rect.width),
-            grid.start.y + (c * grid.rect.height)
+            self.start.x + (r * self.rect.width),
+            self.start.y + (c * self.rect.height)
         )
 
 # Adjust text output by -half a character in the x direction
@@ -58,8 +58,53 @@ grid = Grid(
     start_coordinates=Coordinate(-(win.size[0] / 2)+100, -(win.size[1] / 2)+300)
 )
 
-# Iterate through the cells to draw them in the appropriate places
+
+small_grid1 = Grid(
+    width_in_cells=5,
+    height_in_cells=5,
+    # including the rectangles we'll be using as cells
+    psychopy_rect=visual.Rect(
+        win=win,
+        width=25,
+        height=25,
+        fillColor=[1, 1, 1],
+        lineColor=[-1, -1, -1]
+    ),
+    start_coordinates=Coordinate(-(win.size[0] / 2)+700, -(win.size[1] / 2)+500)
+)
+
+small_grid2 = Grid(
+    width_in_cells=5,
+    height_in_cells=5,
+    # including the rectangles we'll be using as cells
+    psychopy_rect=visual.Rect(
+        win=win,
+        width=25,
+        height=25,
+        fillColor=[1, 1, 1],
+        lineColor=[-1, -1, -1]
+    ),
+    start_coordinates=Coordinate(-(win.size[0] / 2)+700, -(win.size[1] / 2)+300)
+)
+
+small_grid3 = Grid(
+    width_in_cells=5,
+    height_in_cells=5,
+    # including the rectangles we'll be using as cells
+    psychopy_rect=visual.Rect(
+        win=win,
+        width=25,
+        height=25,
+        fillColor=[1, 1, 1],
+        lineColor=[-1, -1, -1]
+    ),
+    start_coordinates=Coordinate(-(win.size[0] / 2)+700, -(win.size[1] / 2)+100)
+)
+
+
+
 def make_grid(grid):
+# Iterate through the cells to draw them in the appropriate places
     for r in range(grid.width):
         for c in range(grid.height):
             # Set grid cell position properties
@@ -69,25 +114,42 @@ def make_grid(grid):
             rect.draw()
 
 # Draw stimulus
-coords = grid.coordToPixelOffset(2, 4)
-coords = (coords[0] - halfCharPx, coords[1])
 
-stim = visual.TextStim(
-    win=win,
-    font='monospace',
-    text='4',
-    pos=coords,
-    color=[-1, -1, 1],
-    # autoDraw=True,
-    wrapWidth=1  # no idea why we need this, but apparently we do. Complaints to PsychoPy :)
-)
+numtext = range(6)
 
-make_grid(grid)
+# coords = grid.coordToPixelOffset(2, 4)
+# coords = (coords[0] - halfCharPx, coords[1])
+
+def drawnum(numtext, x_coord, y_coord):
+    coords = grid.coordToPixelOffset(x_coord, y_coord)
+    coords = (coords[0] - halfCharPx, coords[1])
+    stim = visual.TextStim(
+            win=win,
+            font='monospace',
+            text="",
+            pos=coords,
+            color=[-1, -1, 1],
+            # autoDraw=True,
+            wrapWidth=1
+        )  # no idea why we need this, but apparently we do. Complaints to PsychoPy :)
+    for i in numtext:
+        stim.text = i+1
+        make_grid(grid)
+        stim.draw()
+        win.flip()
+        clock.wait(1)
+
+
+
+drawnum(numtext, 2, 4)
 win.flip()
 clock.wait(2)
 
 
 make_grid(grid)
-stim.draw()
+make_grid(small_grid1)
+make_grid(small_grid2)
+make_grid(small_grid3)
+# stim.draw()
 win.flip()
 clock.wait(2)
