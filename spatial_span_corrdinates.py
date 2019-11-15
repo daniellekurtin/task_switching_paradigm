@@ -32,4 +32,8 @@ def get_distractors(ref_corrd, n_filled, grid_size):
 ans_corrd = get_coordinates(n_filled, grid_size)
 distractors = []
 while len(distractors) < n_distractors:
-    distractors.append(get_distractors(ans_corrd, n_filled, grid_size))
+    d = get_distractors(ans_corrd, n_filled, grid_size)
+    if d in distractors:
+        pass
+    else:
+         distractors.append(d)
