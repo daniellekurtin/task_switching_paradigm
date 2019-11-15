@@ -5,8 +5,8 @@ from itertools import combinations
 grid_size = 3
 n_filled = 2
 
-def get_coordinates(n_filled, grid_size):
-    out_corrd = []
+def get_coordinates(n_filled, grid_size, out_corrd = []):
+    # out_corrd = []
     while len(out_corrd) < n_filled:
         x, y = (randint(1, grid_size), randint(1, grid_size))
         if (x, y) in out_corrd:
@@ -19,13 +19,21 @@ def get_distractors(ref_corrd, n_filled, grid_size):
     distractor = ref_corrd.copy()
     shuffle(distractor)
     distractor.pop()
-    while len(distractor) < n_filled:
-        x, y = (randint(1, grid_size), randint(1, grid_size))
-        if (x, y) in ref_corrd:
-            pass
-        else:
-            distractor.append((x, y))
+    distractor = get_coordinates(n_filled, grid_size, out_corrd=distractor)
+
+    # Check that the distractor is not the same as the correct answer (ref_corrd)
+    while set(distractor)==set(ref_corrd):
+        get_coordinates(n_filled, grid_size, out_corrd=distractor)
+
     return distractor
+    
+    # while len(distractor) < n_filled:
+    #     x, y = (randint(1, grid_size), randint(1, grid_size))
+    #     if (x, y) in ref_corrd:
+    #         pass
+    #     else:
+    #         distractor.append((x, y))
+    # return distractor
 
 # generate corrdinates of the correct answer
 ans_corrd = get_coordinates(n_filled, grid_size)
