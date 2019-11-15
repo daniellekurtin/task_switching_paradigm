@@ -4,6 +4,7 @@ from itertools import combinations
 # number = randint(1, 9)
 grid_size = 3
 n_filled = 2
+n_distractors = 2
 
 def get_coordinates(n_filled, grid_size):
     out_corrd = []
@@ -30,5 +31,5 @@ def get_distractors(ref_corrd, n_filled, grid_size):
 # generate corrdinates of the correct answer
 ans_corrd = get_coordinates(n_filled, grid_size)
 distractors = []
-while len(distractors) < len(ans_corrd):
+while len(distractors) < n_distractors:
     distractors.append(get_distractors(ans_corrd, n_filled, grid_size))
