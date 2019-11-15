@@ -11,6 +11,7 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
+    trials = []
 
     def __init__(self, **kwargs):
         """
@@ -28,13 +29,16 @@ class Component:
     """
     Any set of screens in the experiment is a component. These could be trials, instructions, breaks, etc.
     """
+    logEntries = []
 
     def __init__(self, experiment, **kwargs):
         """
         :type experiment: Experiment
         :param kwargs:
         """
-        self.logEntries = []
+        if experiment is None:
+            raise ValueError('experiment must be specified')
+        self.experiment = experiment
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -55,15 +59,22 @@ class Trial(Component):
     """
     Any values which might vary from trial to trial are recorded in a Trial
     """
+    stimulus = None
+    stimulusDuration = 0.5
+    answerRectWidth = 25
+    answerRectHeight = 25
+    answers = []
+    answer = -1             # Answer supplied by participant
+    answerIndex = -1        # Actual answer
 
-    def __init__(self, win, **kwargs):
+    def __init__(self, window, **kwargs):
         """
         :param win: window in which to draw experiment
         :type win: Psychopy.visual.Window
         :param kwargs: keyword arguments
         """
         super().__init__(**kwargs)
-        self.win = win
+        self.win = window
         self.win.mouseVisible = True
 
         self.grid = Grid(
@@ -71,19 +82,19 @@ class Trial(Component):
             height_in_cells=4,
             # including the rectangles we'll be using as cells
             psychopy_rect=visual.Rect(
-                win=win,
+                win=self.win,
                 width=50,
                 height=50,
                 fillColor=[1, 1, 1],
                 lineColor=[-1, -1, -1]
             ),
-            start_pos_tuple=(-(win.size[0] / 2), -(win.size[1] / 2))
+            start_pos_tuple=(-(self.win.size[0] / 2), -(self.win.size[1] / 2))
         )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
-    def drawStim(self, stimulus, grid=None):
+    def draw_stim(self, stimulus, grid=None):
         if grid is None:
             grid = self.grid
 
@@ -164,7 +175,7 @@ class TrialDigitSpan(Trial):
 
     def draw_number(self, n):
         self.grid.draw()
-        self.drawStim(n)
+        self.draw_stim(n)
         self.win.flip()
 
     def prepare_answers(self, override_existing=False):
@@ -173,23 +184,23 @@ class TrialDigitSpan(Trial):
 
         # Find the cell which has the value in it at each time point
         dim = np.shape(self.stimulus[0])
-        nRows = dim[0]
-        nCols = dim[1]
+        n_rows = dim[0]
+        n_cols = dim[1]
         values = self.stimulus[0]
         values = np.reshape(values, (1, np.prod(np.shape(values))))
         values = values[0]
-        indices = np.where([values[i] is not None for i in range(np.prod(np.shape(values)))])
+        indices = np.where([values[i] is not None for i in range(int(np.prod(np.shape(values))))])
         indices = int(indices[0])  # only one answer!
 
         values = self.stimulus
         values = np.reshape(values, (len(values), np.prod(np.shape(values[0]))))
 
         answer = make_display_numbers(
-            rows=[1 for i in range(len(self.stimulus))],
+            rows=[1] * len(self.stimulus),
             cols=[i for i in range(len(self.stimulus))],
             values=[stim[indices] for stim in values],
-            row_num=nRows,
-            col_num=nCols
+            row_num=n_rows,
+            col_num=n_cols
         )
 
         options = [answer]
@@ -198,11 +209,11 @@ class TrialDigitSpan(Trial):
             shuffle(values)
 
             foil = make_display_numbers(
-                rows=[1 for i in range(len(self.stimulus))],
+                rows=[1] * len(self.stimulus),
                 cols=[i for i in range(len(self.stimulus))],
                 values=[values[i] for i in range(4)],
-                row_num=nRows,
-                col_num=nCols
+                row_num=n_rows,
+                col_num=n_cols
             )
 
             if not any([np.array_equal(foil, o) for o in options]):
@@ -215,16 +226,15 @@ class TrialDigitSpan(Trial):
 
         self.log('Target answer = ' + str(self.answerIndex))
 
-    def get_answer_grid_positions(self, n, h, w):
+    def get_answer_grid_positions(self):
+        n = len(self.answers)
         return [(
-            win.size[0] / 2 - (self.grid.width + 1) * 25,
-            win.size[1] / 2 - (self.grid.height + 1) * 25 - win.size[1] * i / n
+            win.size[0] / 2 - (self.grid.width + 1) * self.answerRectWidth,
+            win.size[1] / 2 - (self.grid.height + 1) * self.answerRectHeight - win.size[1] * i / n
         ) for i in range(n)]
 
     def get_answer_grids(self):
-        h = 25
-        w = 25
-        positions = self.get_answer_grid_positions(len(self.answers), h, w)
+        positions = self.get_answer_grid_positions()
         return [
             Grid(
                 width_in_cells=4,
@@ -232,8 +242,8 @@ class TrialDigitSpan(Trial):
                 # including the rectangles we'll be using as cells
                 psychopy_rect=visual.Rect(
                     win=win,
-                    width=w,
-                    height=h,
+                    width=self.answerRectWidth,
+                    height=self.answerRectHeight,
                     fillColor=[1, 1, 1],
                     lineColor=[-1, -1, -1]
                 ),
@@ -248,7 +258,7 @@ class TrialDigitSpan(Trial):
             g.draw()
 
             # Draw the puported answer over this grid
-            self.drawStim(self.answers[i], grid=g)
+            self.draw_stim(self.answers[i], grid=g)
 
     def get_mouse_input(self):
         grids = self.get_answer_grids()
@@ -281,25 +291,25 @@ class TrialSpatialSpan(Trial):
         if hasattr(self, "answers") and not override_existing:
             return self.answers
 
-        nRows = self.stimulus.size[0]
-        nCols = self.stimulus.size[1]
+        n_rows = self.stimulus.size[0]
+        n_cols = self.stimulus.size[1]
         values = self.stimulus
         np.reshape(values, (1, np.prod(values.size)))
         values = values[0]
         indices = np.where(values is not None)
 
         answer = make_display_numbers(
-            rows=[floor(i / nCols) for i in indices],
-            cols=[i % nCols for i in indices],
+            rows=[floor(i / n_cols) for i in indices],
+            cols=[i % n_cols for i in indices],
             values=values,
-            row_num=nRows,
-            col_num=nCols
+            row_num=n_rows,
+            col_num=n_cols
         )
-        foils = [make_display_numbers() for i in range(2)]
-        foils.append(answer)
-        shuffle(foils)
-
-        self.answers = foils
+        # foils = [make_display_numbers() for i in range(2)]
+        # foils.append(answer)
+        # shuffle(foils)
+        #
+        self.answers = answer
 
 
 class TrialSpatialRotation(Trial):
