@@ -11,6 +11,7 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
+
     def __init__(self, **kwargs):
         """
         :param kwargs:
@@ -23,11 +24,11 @@ class Experiment:
             t.run()
 
 
-
 class Component:
     """
     Any set of screens in the experiment is a component. These could be trials, instructions, breaks, etc.
     """
+
     def __init__(self, experiment, **kwargs):
         """
         :type experiment: Experiment
@@ -38,8 +39,7 @@ class Component:
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
-
-    def log(self, entry, level = 'INFO'):
+    def log(self, entry, level='INFO'):
         """
         Write a log entry for this component
         :param entry: text to log
@@ -55,6 +55,7 @@ class Trial(Component):
     """
     Any values which might vary from trial to trial are recorded in a Trial
     """
+
     def __init__(self, win, **kwargs):
         """
         :param win: window in which to draw experiment
@@ -82,8 +83,7 @@ class Trial(Component):
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
-
-    def drawStim(self, stimulus, grid = None):
+    def drawStim(self, stimulus, grid=None):
         if grid is None:
             grid = self.grid
 
@@ -92,7 +92,7 @@ class Trial(Component):
             for c in range(dim[1]):
                 if stimulus[r, c] is not None:
                     # nudge the x coordinate of the stimulus to centre it in the box
-                    coords = grid.coordToPixelOffset(r, c)
+                    coords = grid.coord_to_pixel_offset(r, c)
                     coords = (coords[0] - halfCharPx, coords[1])
 
                     stim = visual.TextStim(
@@ -122,35 +122,35 @@ class TrialDigitSpan(Trial):
 
     def run(self):
         self.prepare()
-        self.showStimulus()
-        self.collectResponse()
+        self.show_stimulus()
+        self.collect_response()
         self.cleanup()
 
     def prepare(self):
-        self.prepareAnswers()
+        self.prepare_answers()
 
         self.win.flip()
         self.log('Preparation complete for ' + str(self))
         clock.wait(.5)
         pass
 
-    def showStimulus(self):
+    def show_stimulus(self):
         for n in self.stimulus:
-            self.drawNumber(n)
+            self.draw_number(n)
             clock.wait(self.stimulusDuration)
 
             self.grid.draw()
             self.win.flip()
             clock.wait(.5)
 
-    def collectResponse(self):
+    def collect_response(self):
         # PsychoPy click response stuff?
-        self.drawAnswerGrids()
+        self.draw_answer_grids()
         self.win.flip()
 
         clock.wait(1)
 
-        response = self.getMouseInput()
+        response = self.get_mouse_input()
         self.log('Answer = ' + str(response["answer"]))
         self.log('Mouse position = ' + str(response["position"]))
 
@@ -162,12 +162,12 @@ class TrialDigitSpan(Trial):
     def cleanup(self):
         print("\n".join(self.logEntries))
 
-    def drawNumber(self, n):
+    def draw_number(self, n):
         self.grid.draw()
         self.drawStim(n)
         self.win.flip()
 
-    def prepareAnswers(self, override_existing=False):
+    def prepare_answers(self, override_existing=False):
         if hasattr(self, "answers") and not override_existing:
             return
 
@@ -184,12 +184,12 @@ class TrialDigitSpan(Trial):
         values = self.stimulus
         values = np.reshape(values, (len(values), np.prod(np.shape(values[0]))))
 
-        answer = makeDisplayNumbers(
+        answer = make_display_numbers(
             rows=[1 for i in range(len(self.stimulus))],
             cols=[i for i in range(len(self.stimulus))],
             values=[stim[indices] for stim in values],
-            rowNum=nRows,
-            colNum=nCols
+            row_num=nRows,
+            col_num=nCols
         )
 
         options = [answer]
@@ -197,12 +197,12 @@ class TrialDigitSpan(Trial):
             values = list(range(10))
             shuffle(values)
 
-            foil = makeDisplayNumbers(
+            foil = make_display_numbers(
                 rows=[1 for i in range(len(self.stimulus))],
                 cols=[i for i in range(len(self.stimulus))],
                 values=[values[i] for i in range(4)],
-                rowNum=nRows,
-                colNum=nCols
+                row_num=nRows,
+                col_num=nCols
             )
 
             if not any([np.array_equal(foil, o) for o in options]):
@@ -215,17 +215,16 @@ class TrialDigitSpan(Trial):
 
         self.log('Target answer = ' + str(self.answerIndex))
 
-
-    def getAnswerGridPositions(self, n, h, w):
+    def get_answer_grid_positions(self, n, h, w):
         return [(
             win.size[0] / 2 - (self.grid.width + 1) * 25,
             win.size[1] / 2 - (self.grid.height + 1) * 25 - win.size[1] * i / n
         ) for i in range(n)]
 
-    def getAnswerGrids(self):
+    def get_answer_grids(self):
         h = 25
         w = 25
-        positions = self.getAnswerGridPositions(len(self.answers), h, w)
+        positions = self.get_answer_grid_positions(len(self.answers), h, w)
         return [
             Grid(
                 width_in_cells=4,
@@ -242,9 +241,8 @@ class TrialDigitSpan(Trial):
             ) for i in range(len(self.answers))
         ]
 
-    def drawAnswerGrids(self):
-        positions = self.getAnswerGridPositions(len(self.answers), 25, 25)
-        grids = self.getAnswerGrids()
+    def draw_answer_grids(self):
+        grids = self.get_answer_grids()
         for i in range(len(self.answers)):
             g = grids[i]
             g.draw()
@@ -252,10 +250,9 @@ class TrialDigitSpan(Trial):
             # Draw the puported answer over this grid
             self.drawStim(self.answers[i], grid=g)
 
-    def getMouseInput(self):
-        grids = self.getAnswerGrids()
+    def get_mouse_input(self):
+        grids = self.get_answer_grids()
         event.clearEvents()  # get rid of other, unprocessed events
-        buttons, times = myMouse.getPressed(getTime=True)
         while True:
             buttons, times = myMouse.getPressed(getTime=True)
 
@@ -268,7 +265,7 @@ class TrialDigitSpan(Trial):
             for a in range(len(grids)):
                 g = grids[a]
                 # check click is in the boundaries of the rectangle
-                if g.clickIsIn(pos):
+                if g.click_is_in(pos):
                     return {
                         "time": times,
                         "position": pos,
@@ -276,14 +273,12 @@ class TrialDigitSpan(Trial):
                     }
 
 
-
 class TrialSpatialSpan(Trial):
     def __init__(self, **kwargs):
         super().__init__(kwargs)
 
-
-    def prepareAnswers(self, override_existing=False):
-        if hasAttr(self, answers) and not override_existing:
+    def prepare_answers(self, override_existing=False):
+        if hasattr(self, "answers") and not override_existing:
             return self.answers
 
         nRows = self.stimulus.size[0]
@@ -293,19 +288,18 @@ class TrialSpatialSpan(Trial):
         values = values[0]
         indices = np.where(values is not None)
 
-        answer = makeDisplayNumbers(
+        answer = make_display_numbers(
             rows=[floor(i / nCols) for i in indices],
             cols=[i % nCols for i in indices],
             values=values,
-            nRows=nRows,
-            nCols=nCols
+            row_num=nRows,
+            col_num=nCols
         )
-        foils = [makeDisplayNumbers() for i in range(2)]
+        foils = [make_display_numbers() for i in range(2)]
         foils.append(answer)
         shuffle(foils)
 
         self.answers = foils
-
 
 
 class TrialSpatialRotation(Trial):
@@ -331,7 +325,7 @@ class Grid:
                       start_pos_tuple[1] + ceil(self.rect.height / 2))
 
     # Return the pixel offset of the cell at coordinates r, c
-    def coordToPixelOffset(self, r, c):
+    def coord_to_pixel_offset(self, r, c):
         return (
             self.start[0] + (r * self.rect.width),
             self.start[1] + (c * self.rect.height)
@@ -343,11 +337,11 @@ class Grid:
             for c in range(self.height):
                 # Set grid cell position properties
                 rect = self.rect
-                rect.pos = self.coordToPixelOffset(r, c)
+                rect.pos = self.coord_to_pixel_offset(r, c)
 
                 rect.draw()
 
-    def clickIsIn(self, coordinates):
+    def click_is_in(self, coordinates):
         xmin = self.start[0]
         xmax = self.start[0] + self.width * self.rect.width
         ymin = self.start[1]
@@ -355,25 +349,26 @@ class Grid:
 
         return xmin <= coordinates[0] <= xmax and ymin <= coordinates[1] <= ymax
 
-def makeDisplayNumbers(rows, cols, values, rowNum, colNum):
+
+def make_display_numbers(rows, cols, values, row_num, col_num):
     """
     Consturct an empty grid of rowNum x colNum, with values placed at cells identified by rows and cols
     :param rows: list of row indices
     :param cols: list of column indices
     :param values: list of values for cells identified by rows[i], cols[i]
-    :param rowNum: number of rows in output
-    :param colNum: number of columns in output
+    :param row_num: number of rows in output
+    :param col_num: number of columns in output
     :type rows: list
     :type cols: list
     :type values: list
-    :type rowNum: int
-    :type colNum: int
+    :type row_num: int
+    :type col_num: int
     :return: Numpy.nbarray with None in unspecified cells
     """
     i = 0
     stimulus = []
-    for r in range(rowNum):
-        for c in range(colNum):
+    for r in range(row_num):
+        for c in range(col_num):
             if r in rows and c in cols:
                 stimulus.append(values[i])
                 i += 1
@@ -382,33 +377,34 @@ def makeDisplayNumbers(rows, cols, values, rowNum, colNum):
 
     # reshape the list into an array of appropriate dimensions
     stimulus = np.array(stimulus)
-    return np.reshape(stimulus, (rowNum, colNum))
+    return np.reshape(stimulus, (row_num, col_num))
+
 
 # Adjust text output by -half a character in the x direction
 halfCharPx = 10
 
 win = visual.Window(
-            size=[800, 800],
-            units="pix",
-            fullscr=False,
-            color=[1, 1, 1]
-        )
+    size=[800, 800],
+    units="pix",
+    fullscr=False,
+    color=[1, 1, 1]
+)
 
-myMouse = event.Mouse(visible = False, win = win)
+myMouse = event.Mouse(visible=False, win=win)
 
 exp = Experiment()
 
 # Define experiment
-exp.trials = trials=[
+exp.trials = trials = [
     TrialDigitSpan(
         experiment=exp,
         stimulus=[
-            makeDisplayNumbers(
+            make_display_numbers(
                 rows=[1],
                 cols=[1],
                 values=[randint(0, 9)],  # enforce no-repeat rule here later
-                rowNum=4,
-                colNum=4
+                row_num=4,
+                col_num=4
             ) for y in range(4)
         ],
         stimulusDuration=.5,
