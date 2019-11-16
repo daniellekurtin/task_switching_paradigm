@@ -101,13 +101,15 @@ class TrialSpatialSpan(Trial):
             row_num=n_rows,
             col_num=n_cols
         )
-
         options = [answer]
-
+        ans_rows, ans_cols = np.where(answer!=None) 
         while len(options) < len(self.answers):
-            rows = []
-            cols = []
-            hashes = []
+            # store all corrdinates that belong to the answe
+            hashes = [hash((r, c)) for r, c in zip(rows, cols)]
+            # drop a random corrdinate
+            i_drop = randint(0, len(rows) - 1)
+            rows = list(np.delete(ans_rows, i_drop))  
+            cols = list(np.delete(ans_cols, i_drop))
             while len(rows) < n_rows:
                 r = randint(0, n_rows - 1)
                 c = randint(0, n_cols - 1)
