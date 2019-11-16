@@ -103,9 +103,9 @@ class TrialSpatialSpan(Trial):
         )
         options = [answer]
         ans_rows, ans_cols = np.where(answer!=None) 
+        hashes = [hash((r, c)) for r, c in zip(ans_rows, ans_cols)]
         while len(options) < len(self.answers):
             # store all corrdinates that belong to the answe
-            hashes = [hash((r, c)) for r, c in zip(rows, cols)]
             # drop a random corrdinate
             i_drop = randint(0, len(rows) - 1)
             rows = list(np.delete(ans_rows, i_drop))  
