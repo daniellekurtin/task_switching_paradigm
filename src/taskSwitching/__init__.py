@@ -6,3 +6,4 @@ from src.taskSwitching.trial import *
 from src.taskSwitching.trial_digit_span import *
 from src.taskSwitching.trial_spatial_rotation import *
 from src.taskSwitching.trial_spatial_span import *
+from src.taskSwitching.trial_rest import *
