@@ -1,4 +1,5 @@
 from src.taskSwitching.trial import *
+from random import choice
 
 
 def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):
@@ -102,14 +103,14 @@ class TrialSpatialSpan(Trial):
             col_num=n_cols
         )
         options = [answer]
-        ans_rows, ans_cols = np.where(answer!=None) 
+        ans_rows, ans_cols = np.where(answer != None)
         hashes = [hash((r, c)) for r, c in zip(ans_rows, ans_cols)]
+        mutate_index = randint(0, len(ans_rows) - 1)
         while len(options) < len(self.answers):
-            # store all corrdinates that belong to the answe
-            # drop a random corrdinate
-            i_drop = randint(0, len(rows) - 1)
-            rows = list(np.delete(ans_rows, i_drop))  
-            cols = list(np.delete(ans_cols, i_drop))
+            # store all coordinates that belong to the answer
+            # then drop the coordinate specified by mutate_at
+            rows = list(np.delete(ans_rows, mutate_index))
+            cols = list(np.delete(ans_cols, mutate_index))
             while len(rows) < n_rows:
                 r = randint(0, n_rows - 1)
                 c = randint(0, n_cols - 1)
@@ -119,6 +120,8 @@ class TrialSpatialSpan(Trial):
                     rows.append(r)
                     cols.append(c)
 
+            print(rows)
+            print(cols)
             foil = make_display_numbers(
                 rows=rows,
                 cols=cols,
