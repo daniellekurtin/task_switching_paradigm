@@ -1,4 +1,5 @@
 from src.taskSwitching.trial import *
+from copy import deepcopy
 
 
 def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, row=None, col=None):
@@ -97,15 +98,18 @@ class TrialDigitSpan(Trial):
             col_num=n_cols
         )
 
+        values = [stim[indices] for stim in values]
+
         options = [answer]
         while len(options) < 3:
-            values = list(range(10))
-            shuffle(values)
+            mutant = deepcopy(values)
+            while mutant == values:
+                mutant[randint(0, len(mutant) - 1)] = randint(0, 9)
 
             foil = make_display_numbers(
                 rows=[1] * len(self.stimulus),
                 cols=[i for i in range(len(self.stimulus))],
-                values=[values[i] for i in range(4)],
+                values=[mutant[i] for i in range(4)],
                 row_num=n_rows,
                 col_num=n_cols
             )
