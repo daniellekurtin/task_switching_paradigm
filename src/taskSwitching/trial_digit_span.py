@@ -12,10 +12,14 @@ class TrialDigitSpan(Trial):
         super().__init__(**kwargs)
 
     def run(self):
+        self.trial_gap()
         self.prepare()
         self.show_stimulus()
         self.collect_response()
         self.cleanup()
+
+    def trial_gap(self):
+        clock.wait(1)
 
     def prepare(self):
         self.prepare_answers()
