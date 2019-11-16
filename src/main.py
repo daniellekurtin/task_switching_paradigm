@@ -20,6 +20,7 @@ Jobs:
 """
 import src.taskSwitching as tS
 from psychopy import visual
+from random import shuffle
 
 win = visual.Window(
     size=[800, 800],
@@ -30,9 +31,11 @@ win = visual.Window(
 
 exp = tS.Experiment(window=win)
 
+n = 5
+
 stimuli = {
-    "SpatialSpan": tS.get_spatial_span_stimuli(3),
-    "DigitSpan": tS.get_digit_span_stimuli(3)
+    "SpatialSpan": tS.get_spatial_span_stimuli(n),
+    "DigitSpan": tS.get_digit_span_stimuli(n)
 }
 
 # Define experiment
@@ -54,6 +57,10 @@ ds = [
     ) for i in range(len(stimuli["DigitSpan"]))
 ]
 
-exp.trials = ss + ds
+trials = ss + ds
+shuffle(trials)
+trials.insert(n, tS.ComponentRest(break_duration=5, experiment=exp))
+
+exp.trials = trials
 
 exp.run()

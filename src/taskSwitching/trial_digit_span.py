@@ -102,7 +102,7 @@ class TrialDigitSpan(Trial):
 
         options = [answer]
         change_index = randint(0, len(values) - 1)
-        allow_repeats = len(np.unique(values)) == len(values)
+        allow_repeats = len(np.unique(values)) != len(values)
 
         while len(options) < 3:
             mutant = deepcopy(values)
@@ -110,8 +110,9 @@ class TrialDigitSpan(Trial):
                 mutant[change_index] = randint(0, 9)
 
                 # go around again if there's a repeat
-                if not allow_repeats and not len(np.unique(mutant)) == len(mutant):
-                    mutant = values
+                if not allow_repeats:
+                    if len(np.unique(mutant)) != len(mutant):
+                        mutant = deepcopy(values)
 
             foil = make_display_numbers(
                 rows=[1] * len(self.stimulus),

@@ -19,21 +19,24 @@ class ComponentRest(Component):
     >>> exp.run()
     """
 
-    def __init__(self, break_duration, window=None, **kwargs):
+    def __init__(self, break_duration=5, **kwargs):
 
         super().__init__(**kwargs)
-        self.win = window
-        self.win.mouseVisible = True
+        self.experiment.window.mouseVisible = True
         self.duration = break_duration
-        self.fixation = visual.ShapeStim(self.win, 
+        self.fixation = visual.ShapeStim(self.experiment.window,
                             vertices=((0, -0.5), (0, 0.5), (0,0), (-0.5,0), (0.5, 0)),
                             lineWidth=5,
                             closeShape=False,
                             lineColor=[-1, -1, -1])
-        self.countdown = visual.TextStim(self.win, 
+        self.countdown = visual.TextStim(self.experiment.window,
                             text="", 
                             color=[-1, -1, -1], 
-                            pos=(0, -200))
+                            pos=(
+                                self.experiment.window.size[0] / 2,
+                                self.experiment.window.size[1] / 2 - 50
+                            )
+                                         )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -46,5 +49,5 @@ class ComponentRest(Component):
             self.fixation.draw()
             self.countdown.draw()
             clock.wait(1)
-            self.win.flip()
+            self.experiment.window.flip()
             end_time += 1

@@ -120,8 +120,6 @@ class TrialSpatialSpan(Trial):
                     rows.append(r)
                     cols.append(c)
 
-            print(rows)
-            print(cols)
             foil = make_display_numbers(
                 rows=rows,
                 cols=cols,
