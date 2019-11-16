@@ -6,10 +6,15 @@ class Experiment:
     """
     trials = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, window=None, **kwargs):
         """
         :param kwargs:
         """
+        if window is None:
+            raise ValueError('A window must be specified for the experiment')
+        else:
+            self.window = window
+
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 

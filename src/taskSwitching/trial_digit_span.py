@@ -1,4 +1,66 @@
 from src.taskSwitching.trial import *
+from copy import deepcopy
+
+
+def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, row=None, col=None):
+    """
+    Generate digit span stimuli
+    :param n: number of stimuli to produce
+    :type n: int
+    :param n_cols: max column number for random calculation
+    :type n_cols: int
+    :param n_rows: max row number for random calculation
+    :type n_rows: int
+    :param span: number of digits in each stimulus
+    :type span: int
+    :param allow_repeats: whether digits can appear multiple times
+    :type allow_repeats: bool
+    :param col: override random column choice
+    :type col: int[]
+    :param row: override random row choice
+    :type row: int[]
+    :return: n stimulus nparrays
+    """
+    if span > 10 and not allow_repeats:
+        raise ValueError('Not possible to produce non-repeating sequences of digits with length > 10')
+
+    values = []
+    if row is None:
+        rows = []
+    else:
+        rows = row
+    if col is None:
+        cols = []
+    else:
+        cols = col
+
+    while len(values) < n:
+        v = [randint(0, 9)]
+        while len(v) < span:
+            r = randint(0, 9)
+            if allow_repeats or r not in v:
+                v.append(r)
+
+        if v not in values:
+            values.append(v)
+            if row is None:
+                rows.append(randint(0, n_rows - 1))
+            if col is None:
+                cols.append(randint(0, n_cols - 1))
+
+    stimuli = []
+    for i in range(len(values)):
+        stimuli.append([
+            make_display_numbers(
+                rows=[rows[i]],
+                cols=[cols[i]],
+                values=[v],
+                row_num=n_rows,
+                col_num=n_cols
+            ) for v in values[i]
+        ])
+
+    return stimuli
 
 
 # Expects:
@@ -10,57 +72,6 @@ class TrialDigitSpan(Trial):
         :param kwargs:
         """
         super().__init__(**kwargs)
-
-    def run(self):
-        self.trial_gap()
-        self.prepare()
-        self.show_stimulus()
-        self.collect_response()
-        self.cleanup()
-
-    def trial_gap(self):
-        clock.wait(1)
-
-    def prepare(self):
-        self.prepare_answers()
-
-        self.win.flip()
-        self.log('Preparation complete for ' + str(self))
-        clock.wait(.5)
-        pass
-
-    def show_stimulus(self):
-        for n in self.stimulus:
-            self.draw_number(n)
-            clock.wait(self.stimulusDuration)
-
-            self.grid.draw()
-            self.win.flip()
-            clock.wait(.5)
-
-    def collect_response(self):
-        # PsychoPy click response stuff?
-        self.draw_answer_grids()
-        self.win.flip()
-
-        clock.wait(1)
-
-        response = self.get_mouse_input()
-        self.log('Answer = ' + str(response["answer"]))
-        self.log('Mouse position = ' + str(response["position"]))
-
-        if response["answer"] == self.answerIndex:
-            self.log('CORRECT!')
-        else:
-            self.log('WRONG!')
-
-    def cleanup(self):
-        print("\n".join(self.logEntries))
-
-    def draw_number(self, n):
-        self.grid.draw()
-        self.draw_stim(n)
-        self.win.flip()
 
     def prepare_answers(self, override_existing=False):
         if not (None in self.answers) and not override_existing:
@@ -87,15 +98,18 @@ class TrialDigitSpan(Trial):
             col_num=n_cols
         )
 
+        values = [stim[indices] for stim in values]
+
         options = [answer]
         while len(options) < 3:
-            values = list(range(10))
-            shuffle(values)
+            mutant = deepcopy(values)
+            while mutant == values:
+                mutant[randint(0, len(mutant) - 1)] = randint(0, 9)
 
             foil = make_display_numbers(
                 rows=[1] * len(self.stimulus),
                 cols=[i for i in range(len(self.stimulus))],
-                values=[values[i] for i in range(4)],
+                values=[mutant[i] for i in range(4)],
                 row_num=n_rows,
                 col_num=n_cols
             )
@@ -109,60 +123,3 @@ class TrialDigitSpan(Trial):
         self.answers = options
 
         self.log('Target answer = ' + str(self.answerIndex))
-
-    def get_answer_grid_positions(self):
-        n = len(self.answers)
-        return [(
-            self.win.size[0] / 2 - (self.grid.width + 1) * self.answerRectWidth,
-            self.win.size[1] / 2 - (self.grid.height + 1) * self.answerRectHeight - self.win.size[1] * i / n
-        ) for i in range(n)]
-
-    def get_answer_grids(self):
-        positions = self.get_answer_grid_positions()
-        return [
-            Grid(
-                width_in_cells=4,
-                height_in_cells=4,
-                # including the rectangles we'll be using as cells
-                psychopy_rect=visual.Rect(
-                    win=self.win,
-                    width=self.answerRectWidth,
-                    height=self.answerRectHeight,
-                    fillColor=[1, 1, 1],
-                    lineColor=[-1, -1, -1]
-                ),
-                start_pos_tuple=positions[i]
-            ) for i in range(len(self.answers))
-        ]
-
-    def draw_answer_grids(self):
-        grids = self.get_answer_grids()
-        for i in range(len(self.answers)):
-            g = grids[i]
-            g.draw()
-
-            # Draw the purported answer over this grid
-            self.draw_stim(self.answers[i], grid=g)
-
-    def get_mouse_input(self):
-        grids = self.get_answer_grids()
-        my_mouse = event.Mouse(visible=True, win=self.win)
-        event.clearEvents()  # get rid of other, unprocessed events
-        while True:
-            buttons, times = my_mouse.getPressed(getTime=True)
-
-            if not buttons[0]:
-                my_mouse.clickReset()
-                continue
-
-            pos = my_mouse.getPos()
-
-            for a in range(len(grids)):
-                g = grids[a]
-                # check click is in the boundaries of the rectangle
-                if g.click_is_in(pos):
-                    return {
-                        "time": times,
-                        "position": pos,
-                        "answer": a
-                    }

@@ -1,6 +1,10 @@
 """
 Jobs:
-    * Move to a window-relative rather than absolute sizing approach (all)
+    * Move to a window-relative rather than absolute units approach (all)
+        * We should be positioning the grids using window-relative (normalised) units
+        * Stimuli should still be specified in pixels
+        * Alternatively we could use a degrees of visual angle approach
+        * This should improve flexibility and durability of the project
     * Saving results to CSV (Trial)
     * Saving Components to JSON (Component)
     * Non-trial Components content
@@ -11,11 +15,11 @@ Jobs:
     * Content for other trial types (TrialSpatialSpan, TrialSpatialRotation)
     * Component sequence production (__main__)
     * Single definitions only (DRY)
-        * window should be defined in Experiment and referred to via experiment in its children
+    * Package unit tests (all)
+    * Reordering the files to put them into a more intuitive order
 """
 import src.taskSwitching as tS
 from psychopy import visual
-from random import randint
 
 win = visual.Window(
     size=[800, 800],
@@ -24,24 +28,32 @@ win = visual.Window(
     color=[1, 1, 1]
 )
 
-exp = tS.Experiment()
+exp = tS.Experiment(window=win)
+
+stimuli = {
+    "SpatialSpan": tS.get_spatial_span_stimuli(3),
+    "DigitSpan": tS.get_digit_span_stimuli(3)
+}
 
 # Define experiment
-exp.trials = trials = [
-    tS.TrialDigitSpan(
+ss = [
+    tS.TrialSpatialSpan(
+        trialNumer=i,
         experiment=exp,
-        stimulus=[
-            tS.make_display_numbers(
-                rows=[1],
-                cols=[1],
-                values=[randint(0, 9)],  # enforce no-repeat rule here later
-                row_num=4,
-                col_num=4
-            ) for y in range(4)
-        ],
-        stimulusDuration=.5,
-        window=win
-    ) for x in range(2)
+        stimulus=stimuli["SpatialSpan"][i],
+        stimulusDuration=.5
+    ) for i in range(len(stimuli["SpatialSpan"]))
 ]
+
+ds = [
+    tS.TrialDigitSpan(
+        trialNumber=i,
+        experiment=exp,
+        stimulus=stimuli["DigitSpan"][i],
+        stimulusDuration=.5
+    ) for i in range(len(stimuli["DigitSpan"]))
+]
+
+exp.trials = ss + ds
 
 exp.run()
