@@ -26,7 +26,7 @@ win = visual.Window(
     size=[800, 800],
     units="pix",
     fullscr=False,
-    color=[1, 1, 1]
+    color=[0, 0, 0]
 )
 
 exp = tS.Experiment(window=win)

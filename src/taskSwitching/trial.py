@@ -59,8 +59,8 @@ class Trial(Component):
                 win=self.experiment.window,
                 width=50,
                 height=50,
-                fillColor=[1, 1, 1],
-                lineColor=[-1, -1, -1]
+                fillColor=[0,0,0],
+                lineColor=[1, 1, 1]
             ),
             start_pos_tuple=(-(self.experiment.window.size[0] / 2), -(self.experiment.window.size[1] / 2))
         )
@@ -109,8 +109,8 @@ class Trial(Component):
                     win=self.experiment.window,
                     width=self.answerRectWidth,
                     height=self.answerRectHeight,
-                    fillColor=[1, 1, 1],
-                    lineColor=[-1, -1, -1]
+                    fillColor=[0, 0, 0],
+                    lineColor=[1, 1, 1]
                 ),
                 start_pos_tuple=positions[i]
             ) for i in range(len(self.answers))
