@@ -1,32 +1,43 @@
 """
 Jobs:
-    * Move to a window-relative rather than absolute units approach (all)
-        * We should be positioning the grids using window-relative (normalised) units
-        * Stimuli should still be specified in pixels
-        * Alternatively we could use a degrees of visual angle approach
-        * This should improve flexibility and durability of the project
-    * Saving results to CSV (Trial)
-    * Saving Components to JSON (Component)
-    * Non-trial Components content
-        * Breaks (ComponentRest)
-        * Instructions (ComponentText)
-    * Tidy TrialDigitSpan (TrialDigitSpan)
-        * Answer grids in correct order
-    * Content for other trial types (TrialSpatialSpan, TrialSpatialRotation)
-    * Component sequence production (__main__)
-    * Single definitions only (DRY)
-    * Package unit tests (all)
-    * Reordering the files to put them into a more intuitive order
+Job list curated below:
+1.	Previous display jobs:
+    1.	Move to window-relative rather than absolute units approach
+    2.	Position grids using normalized, window-relative units
+    3.	Specify stimuli in either pixels or visual angle approach
+    4.	The stimuli box should be shaded, similar to the example attached PowerPoint
+    5.	The stimulus grid can be a bit larger, and moved up slightly from the bottom left corner
+    6.	The answers in the digit span should be in the top column and read from left to right, as opposed to bottom-up.
+2.	Task jobs:
+    1.	Create spatial rotation task!
+    2.	Add the task-switching parameters
+        1.	All stimuli are presented for 500 ms
+        2.	Participants have 2000 ms to answer, before the next trial begins (nonanswered trials count as incorrect)
+        3.	For now, each task should consist of 10 trials before switching
+        4.	The “Next Task:__” cues are either 500 ms or 4000 ms
+    3.	Add instruction slides
+3.	Other
+    1.	Content unit test
+    2.	Package unit test
+    3.	DRY
+    4.	Reorder files
+    5.	Add EEG/fMRI cues (Tibor is on it!)
+    6.	Add an ability to quit the task midway. Tibor and I tried to exit early by pressing esc or exiting the screen, but it would not disappear unless we finished the task.
+
+__________________________________________
+
 """
 import src.taskSwitching as tS
 from psychopy import visual
 from random import shuffle
 
+
 win = visual.Window(
     size=[800, 800],
     units="pix",
     fullscr=False,
-    color=[1, 1, 1]
+    color=[1, 1, 1],
+    gammaErrorPolicy="warn"
 )
 
 exp = tS.Experiment(window=win)
@@ -41,7 +52,7 @@ stimuli = {
 # Define experiment
 ss = [
     tS.TrialSpatialSpan(
-        trialNumer=i,
+        trialNumber=i,
         experiment=exp,
         stimulus=stimuli["SpatialSpan"][i],
         stimulusDuration=.5
@@ -62,5 +73,18 @@ shuffle(trials)
 trials.insert(n, tS.ComponentRest(break_duration=5, experiment=exp))
 
 exp.trials = trials
+# exp.trials = [
+#     tS.Trial(
+#         trialNumber = 0,
+#         experiment=exp,
+#         stimulus=[tS.make_display_numbers(
+#             rows=tS.np.repeat(list(range(4)), 4),
+#             cols=tS.np.tile(list(range(4)), 4),
+#             values=list(range(16)),
+#             row_num=4, col_num=4
+#         )],
+#         stimulusDuration=5
+#     )
+# ]
 
 exp.run()

@@ -62,7 +62,10 @@ class Trial(Component):
                 fillColor=[1, 1, 1],
                 lineColor=[-1, -1, -1]
             ),
-            start_pos_tuple=(-(self.experiment.window.size[0] / 2), -(self.experiment.window.size[1] / 2))
+            start_pos_tuple=(
+                -(self.experiment.window.size[0] / 2),
+                -(self.experiment.window.size[1] / 2)
+            )
         )
 
         for k in kwargs.keys():

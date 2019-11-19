@@ -16,8 +16,8 @@ class Grid:
     # Return the pixel offset of the cell at coordinates r, c
     def coord_to_pixel_offset(self, r, c):
         return (
-            self.start[0] + (r * self.rect.width),
-            self.start[1] + (c * self.rect.height)
+            self.start[0] + (c * self.rect.width),  # columns increase x offset
+            self.start[1] + (r * self.rect.height)  # rows increase y offset
         )
 
     def draw(self):

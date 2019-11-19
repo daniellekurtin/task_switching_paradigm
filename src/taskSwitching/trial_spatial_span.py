@@ -103,7 +103,7 @@ class TrialSpatialSpan(Trial):
             col_num=n_cols
         )
         options = [answer]
-        ans_rows, ans_cols = np.where(answer != None)
+        ans_rows, ans_cols = np.where(np.invert(np.equal(answer, None)))
         hashes = [hash((r, c)) for r, c in zip(ans_rows, ans_cols)]
         mutate_index = randint(0, len(ans_rows) - 1)
         while len(options) < len(self.answers):
