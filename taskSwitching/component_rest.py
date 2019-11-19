@@ -1,4 +1,4 @@
-from src.taskSwitching.component import *
+from taskSwitching.component import *
 
 
 class ComponentRest(Component):

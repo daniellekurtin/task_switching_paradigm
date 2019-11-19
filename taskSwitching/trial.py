@@ -1,5 +1,5 @@
-from src.taskSwitching.component import *
-from src.taskSwitching.grid import *
+from taskSwitching.component import *
+from taskSwitching.grid import *
 from copy import deepcopy
 
 
