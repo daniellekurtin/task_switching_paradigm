@@ -9,7 +9,8 @@ Job list curated below:
     5.	The stimulus grid can be a bit larger, and moved up slightly from the bottom left corner
     6.	The answers in the digit span should be in the top column and read from left to right, as opposed to bottom-up.
 2.	Task jobs:
-    1.	Create spatial rotation task!
+    1.	Tidy up spatial rotation task
+        1. Restructure to use sensible parameter assumptions/passing
     2.	Add the task-switching parameters
         1.	All stimuli are presented for 500 ms
         2.	Participants have 2000 ms to answer, before the next trial begins (nonanswered trials count as incorrect)
@@ -46,7 +47,8 @@ n = 5
 
 stimuli = {
     "SpatialSpan": tS.get_spatial_span_stimuli(n),
-    "DigitSpan": tS.get_digit_span_stimuli(n)
+    "DigitSpan": tS.get_digit_span_stimuli(n),
+    "SpatialRotation": tS.get_spatial_rotation_stimuli(n)
 }
 
 # Define experiment
@@ -68,7 +70,16 @@ ds = [
     ) for i in range(len(stimuli["DigitSpan"]))
 ]
 
-trials = ss + ds
+sr = [
+    tS.TrialSpatialRotation(
+        trialNumber=i,
+        experiment=exp,
+        stimulus=stimuli["SpatialRotation"][i]
+    ) for i in range(len(stimuli["SpatialRotation"]))
+]
+
+# trials = ss + ds
+trials = sr
 shuffle(trials)
 trials.insert(n, tS.ComponentRest(break_duration=5, experiment=exp))
 
