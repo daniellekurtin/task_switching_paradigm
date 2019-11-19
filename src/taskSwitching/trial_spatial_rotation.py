@@ -92,7 +92,8 @@ def translate_and_rotate(matrix, rotate_deg=90, translation_vector=None):
     :type matrix: nparray
     :param rotate_deg: number of degrees to rotate anticlockwise
     :type rotate_deg: int
-    :param translation_vector: 3x3 matrix containing the translation to prepend to the rotation and to invert afterwards, default (-2, -2)
+    :param translation_vector: 3x3 matrix containing the translation to prepend to the rotation and to invert
+    afterwards, default (-2, -2)
     :type translation_vector: nparray|None
     :return: new matrix resulting from translating, rotating, and then anti-translating the original matrix
     """
@@ -104,8 +105,6 @@ def translate_and_rotate(matrix, rotate_deg=90, translation_vector=None):
             [-1.5],  # (n_col - 1) / 2
             [0]
         ])
-
-    detranslation_matrix = translation_vector * -1
 
     rotation_matrix = np.array([
         [math.cos(radians), -math.sin(radians), 0],
@@ -209,8 +208,8 @@ class TrialSpatialRotation(Trial):
                     options.append(foil)
 
         shuffle(options)
-        self.answerIndex = np.where([np.array_equal(answer, o) for o in options])
-        self.answerIndex = self.answerIndex[0][0]
+        self.answer_index = np.where([np.array_equal(answer, o) for o in options])
+        self.answer_index = self.answer_index[0][0]
         self.answers = options
 
-        self.log('Target answer = ' + str(self.answerIndex))
+        self.log('Target answer = ' + str(self.answer_index))

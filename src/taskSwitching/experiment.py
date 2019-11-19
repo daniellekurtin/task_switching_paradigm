@@ -5,6 +5,9 @@ class Experiment:
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
     trials = []
+    stimulus_duration = 0.5
+    answer_rect_width = 40
+    answer_rect_height = 40
 
     def __init__(self, window=None, **kwargs):
         """
