@@ -1,4 +1,4 @@
-from src.taskSwitching.trial import *
+from taskSwitching.trial import *
 
 
 def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):

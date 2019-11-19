@@ -1,4 +1,4 @@
-from src.taskSwitching.trial import *
+from taskSwitching.trial import *
 from copy import deepcopy
 import math
 

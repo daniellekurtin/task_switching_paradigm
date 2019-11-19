@@ -29,7 +29,7 @@ Job list curated below:
 __________________________________________
 
 """
-import src.taskSwitching as tS
+import taskSwitching as tS
 from psychopy import visual
 from random import shuffle
 
