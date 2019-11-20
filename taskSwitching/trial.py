@@ -1,6 +1,5 @@
 from taskSwitching.component import *
 from taskSwitching.grid import *
-from copy import deepcopy
 
 
 def make_display_numbers(rows, cols, values, row_num, col_num):
@@ -173,6 +172,7 @@ class Trial(Component):
         self.experiment.window.flip()
 
     def prepare(self):
+        super().prepare()
         self.prepare_answers()
 
         self.experiment.window.flip()
@@ -212,11 +212,6 @@ class Trial(Component):
         """
         pass
 
-    def cleanup(self):
-        print("\n".join(self.logEntries))
-
-    def run(self):
-        self.prepare()
+    def main(self):
         self.show_stimulus()
         self.collect_response()
-        self.cleanup()

@@ -3,6 +3,8 @@ from psychopy import visual, clock, event
 from math import floor, ceil
 from random import randint, shuffle
 from datetime import datetime
+import json
+from taskSwitching import grid
 
 
 class Component:
@@ -34,3 +36,61 @@ class Component:
         """
         self.logEntries.append(str(datetime.now()) + ': ' + level + ' - ' + entry)
 
+    def run(self):
+        """
+        Components should overwrite the main method to implement themselves
+        :return:
+        """
+        self.prepare()
+        self.main()
+        self.cleanup()
+
+    def prepare(self):
+        self.log('Begin')
+
+    def main(self):
+        pass
+
+    def cleanup(self):
+        print("\n".join(self.logEntries))
+        print(self.to_json())
+
+    def to_json(self, o=None):
+        """
+        :param o: object to stringify (self by default)
+        :return: JSON string representation of the Component
+        """
+        if o is None:
+            d = self.__dict__
+        else:
+            try:
+                # Dump out early if this is not the kind of object we want to record details of
+                if not isinstance(o, (
+                    Component,
+                    grid.Grid,
+                    visual.Rect,
+                    visual.TextStim
+                )):
+                    return str(o)
+                d = o.__dict__
+            except AttributeError:
+                return o
+
+        out = {}
+
+        if 'experiment' in d.keys():
+            d.pop('experiment')
+
+        for k in d.keys():
+            if isinstance(d[k], object):
+                if (not isinstance(d[k], (dict, set, str, int, float, bool))) and d[k] is not None:
+                    out[k] = self.to_json(d[k])
+                elif isinstance(d[k], np.ndarray):
+                    out[k] = d[k].tolist()
+                else:
+                    out[k] = d[k]
+
+        if o is not None:
+            return out
+
+        return json.dumps(out)
