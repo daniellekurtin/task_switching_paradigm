@@ -1,3 +1,5 @@
+
+
 class Experiment:
     """
     The Experiment class simply holds values which must remain constant throughout the experiment.
@@ -5,7 +7,11 @@ class Experiment:
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
     trials = []
+    current_trial_number = 0
     stimulus_duration = 0.5
+
+    delay_before_response = 0.5
+    max_response_time = 2
     answer_rect_width = 40
     answer_rect_height = 40
 
@@ -25,3 +31,18 @@ class Experiment:
         for t in self.trials:
             t.run()
 
+    def save_csv(self, line):
+        """
+        Write a line to the experiment's CSV file
+        :param line: list of values to write
+        :type line: list
+        :return:
+        """
+        pass
+
+    def to_json(self):
+        """
+        Save a JSON representation of the experimental parameters
+        :return:
+        """
+        pass

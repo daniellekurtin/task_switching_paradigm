@@ -1,5 +1,6 @@
 from taskSwitching.component import *
 from taskSwitching.grid import *
+from datetime import timedelta
 
 
 def make_display_numbers(rows, cols, values, row_num, col_num):
@@ -74,6 +75,10 @@ class Trial(Component):
             self.answer_rect_width = experiment.answer_rect_width
         if hasattr(experiment, 'answer_rect_height'):
             self.answer_rect_height = experiment.answer_rect_height
+        if hasattr(experiment, 'delay_before_response'):
+            self.delay_before_response = experiment.delay_before_response
+        if hasattr(experiment, 'max_response_time'):
+            self.max_response_time = experiment.max_response_time
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -147,11 +152,23 @@ class Trial(Component):
         grids = self.get_answer_grids()
         my_mouse = event.Mouse(visible=True, win=self.experiment.window)
         event.clearEvents()  # get rid of other, unprocessed events
+
+        timeout_time = datetime.now() + timedelta(seconds=self.max_response_time)
         while True:
             buttons, times = my_mouse.getPressed(getTime=True)
 
             if not buttons[0]:
                 my_mouse.clickReset()
+
+                # End if we've timed out
+                if datetime.now() > timeout_time:
+                    return {
+                        "time": datetime.now(),
+                        "position": None,
+                        "answer": None
+                    }
+
+                # Otherwise keep waiting
                 continue
 
             pos = my_mouse.getPos()
@@ -176,7 +193,9 @@ class Trial(Component):
         self.prepare_answers()
 
         self.experiment.window.flip()
-        self.log('Preparation complete for trial number ' + str(self.trial_number))
+        self.log('Preparation complete for trial number ' +
+                 str(self.trial_number) +
+                 ' (' + self.__class__.__name__ + ')')
         clock.wait(.5)
         pass
 
@@ -194,7 +213,7 @@ class Trial(Component):
         self.draw_answer_grids()
         self.experiment.window.flip()
 
-        clock.wait(1)
+        clock.wait(self.delay_before_response)
 
         response = self.get_mouse_input()
         self.log('Answer = ' + str(response["answer"]))
@@ -213,5 +232,11 @@ class Trial(Component):
         pass
 
     def main(self):
+        self.trial_number = self.experiment.current_trial_number
+        self.experiment.current_trial_number += 1
+
         self.show_stimulus()
         self.collect_response()
+
+    def to_csv(self):
+        pass

@@ -17,7 +17,6 @@ Job list curated below:
     3.	Add instruction slides
     4. SAVE the data!
         1. Save a CSV representation of the key variables
-        2. Save a JSON representation of the whole trial
 3.	Other
     1.	Content unit test
     2.	Package unit test
@@ -31,9 +30,34 @@ __________________________________________
 """
 import taskSwitching as tS
 from psychopy import visual
-from random import shuffle
+import enum
 
 
+# Set some useful constants
+class TrialTypes(enum.Enum):
+    DIGIT_SPAN = "Digit Span"
+    SPATIAL_SPAN = "Spatial Span"
+    SPATIAL_ROTATION = "Spatial Rotation"
+
+
+class InfoCardDurations(enum.Enum):
+    SHORT = .5
+    LONG = 4
+
+
+class RunLength(enum.IntEnum):
+    MIN = 1
+    MAX = 5
+
+
+class Block(enum.IntEnum):
+    COUNT = 4
+    LENGTH = 5
+    TRIAL_COUNT = 15    # if this is not divisible by the number of task types things will go wrong
+    BREAK_TIME = 5
+
+
+# Create the window we'll display the experiment in
 win = visual.Window(
     size=[800, 800],
     units="pix",
@@ -42,9 +66,11 @@ win = visual.Window(
     gammaErrorPolicy="warn"
 )
 
+# Create the experiment object
 exp = tS.Experiment(window=win)
 
-n = 5
+# Create stimuli. Expect this whole process will eventually be wrapped into the Experiment class
+n = Block.TRIAL_COUNT * Block.COUNT / len(TrialTypes)
 
 stimuli = {
     "SpatialSpan": tS.get_spatial_span_stimuli(n),
@@ -52,10 +78,9 @@ stimuli = {
     "SpatialRotation": tS.get_spatial_rotation_stimuli(n)
 }
 
-# Define experiment
+# Define experimental trials using stimuli
 ss = [
     tS.TrialSpatialSpan(
-        trialNumber=i,
         experiment=exp,
         stimulus=stimuli["SpatialSpan"][i]
     ) for i in range(len(stimuli["SpatialSpan"]))
@@ -63,7 +88,6 @@ ss = [
 
 ds = [
     tS.TrialDigitSpan(
-        trialNumber=i,
         experiment=exp,
         stimulus=stimuli["DigitSpan"][i]
     ) for i in range(len(stimuli["DigitSpan"]))
@@ -71,30 +95,89 @@ ds = [
 
 sr = [
     tS.TrialSpatialRotation(
-        trialNumber=i,
         experiment=exp,
         stimulus=stimuli["SpatialRotation"][i]
     ) for i in range(len(stimuli["SpatialRotation"]))
 ]
 
-# trials = ss + ds
-trials = sr
-shuffle(trials)
-trials.insert(n, tS.ComponentRest(break_duration=5, experiment=exp))
+# Currently these need to be in the same order as the magazines defined below.
+# This is risky and should be made more robust.
+ics = [
+    tS.ComponentInfoCard(
+        experiment=exp,
+        next_task=TrialTypes.SPATIAL_SPAN.value
+    ),
+    tS.ComponentInfoCard(
+        experiment=exp,
+        next_task=TrialTypes.DIGIT_SPAN.value
+    ),
+    tS.ComponentInfoCard(
+        experiment=exp,
+        next_task=TrialTypes.SPATIAL_ROTATION.value
+    )
+]
 
+trials = []
+# Construct experimental trial order
+for b in range(Block.COUNT):          # Blocks
+    # Stack up the trials into a queue by type
+    magazines = [[], [], []]
+    for i in range(int(Block.TRIAL_COUNT / len(TrialTypes))):
+        magazines[0].insert(i, ss.pop())
+        magazines[1].insert(i, ds.pop())
+        magazines[2].insert(i, sr.pop())
+
+    t = 0
+    magazine = -1
+    while t < Block.LENGTH:     # Trials
+
+        # Create a new run of trials of a random length
+        # Guard against too large a minimum run length (orphan trials)
+        if max([len(m) for m in magazines]) < RunLength.MIN:
+            run_length = max([len(m) for m in magazines])
+        else:
+            run_length = tS.randint(RunLength.MIN, RunLength.MAX)
+
+        # Find a magazine with enough trials for the run_length
+        n = 0
+        while True:
+            mag = tS.randint(0, len(magazines) - 1)
+            if mag != magazine and len(magazines[mag]) >= run_length:
+                magazine = mag
+                break
+            # Catch infinite loops
+            n += 1
+            if n > 10000:
+                raise RuntimeError
+
+        # Create run
+        # Random display time for Info Card
+        if tS.randint(0, 1):
+            d = InfoCardDurations.LONG.value
+        else:
+            d = InfoCardDurations.SHORT.value
+
+        ic = tS.ComponentInfoCard(
+            experiment=exp,
+            next_task=ics[magazine].next_task,
+            break_duration=d
+        )
+
+        trials.append(ic)
+
+        # Pop trials from magazine into the block definition
+        for r in range(run_length):     # Runs
+            trials.append(magazines[magazine].pop())
+            trials.append(tS.ComponentTrialGap(experiment=exp))
+
+        t += run_length
+
+    # Add a block break
+    if b < Block.COUNT - 1:
+        trials.append(tS.ComponentRest(experiment=exp, break_duration=Block.BREAK_TIME))
+
+# Load trials into the experiment
 exp.trials = trials
-# exp.trials = [
-#     tS.Trial(
-#         trial_number = 0,
-#         experiment=exp,
-#         stimulus=[tS.make_display_numbers(
-#             rows=tS.np.repeat(list(range(4)), 4),
-#             cols=tS.np.tile(list(range(4)), 4),
-#             values=list(range(16)),
-#             row_num=4, col_num=4
-#         )],
-#         stimulus_duration=5
-#     )
-# ]
 
+# Run the experiment
 exp.run()

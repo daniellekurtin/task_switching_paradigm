@@ -4,7 +4,7 @@ from taskSwitching.component import *
 class ComponentRest(Component):
     """
     Break from performing the tasks, first attribute is its duration in seconds
-    
+
     Examples
     -------
     >>> exp = tS.Experiment()
@@ -26,7 +26,7 @@ class ComponentRest(Component):
         self.duration = break_duration
         self.fixation = visual.ShapeStim(
             self.experiment.window,
-            vertices=((0, -0.5), (0, 0.5), (0,0), (-0.5,0), (0.5, 0)),
+            vertices=((0, -0.5), (0, 0.5), (0, 0), (-0.5, 0), (0.5, 0)),
             lineWidth=5,
             closeShape=False,
             lineColor=[-1, -1, -1]
@@ -37,20 +37,23 @@ class ComponentRest(Component):
             color=[-1, -1, -1],
             pos=(
                 self.experiment.window.size[0] / 2 - 20,
-                - 150
+                150
             )
-         )
+        )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
+
+    def draw(self):
+        self.fixation.draw()
+        self.countdown.draw()
 
     def main(self):
         # Will show a fixation cross and a countdown in seconds
         end_time = 0
         while end_time < self.duration:
             self.countdown.text = str(self.duration - end_time)
-            self.fixation.draw()
-            self.countdown.draw()
+            self.draw()
             clock.wait(1)
             self.experiment.window.flip()
             end_time += 1
