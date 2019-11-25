@@ -15,7 +15,7 @@ class Experiment:
     answer_rect_width = 40
     answer_rect_height = 40
 
-    def __init__(self, window=None, **kwargs):
+    def __init__(self, window=None, synch=None, log_level='INFO', **kwargs):
         """
         :param kwargs:
         """
@@ -23,6 +23,13 @@ class Experiment:
             raise ValueError('A window must be specified for the experiment')
         else:
             self.window = window
+
+        if synch is None:
+            raise ValueError('A synch object must be specified for the experiment')
+        else:
+            self.synch = synch
+        
+        self.log_level = log_level
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])

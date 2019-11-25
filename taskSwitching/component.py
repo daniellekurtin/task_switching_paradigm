@@ -5,13 +5,13 @@ from random import randint, shuffle
 from datetime import datetime
 import json
 from taskSwitching import grid
+from psychopy.logging import _levelNames as levels
 
 
 class Component:
     """
     Any set of screens in the experiment is a component. These could be trials, instructions, breaks, etc.
     """
-    logEntries = []
 
     def __init__(self, experiment, **kwargs):
         """
@@ -25,6 +25,8 @@ class Component:
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
+        self.logEntries = []
+
     def log(self, entry, level='INFO'):
         """
         Write a log entry for this component
@@ -34,7 +36,11 @@ class Component:
         :type level: str
         :return:
         """
-        self.logEntries.append(str(datetime.now()) + ': ' + level + ' - ' + entry)
+        self.logEntries.append({
+            'TIME': datetime.now(),
+            'LEVEL': level,
+            'LOG': entry
+        })
 
     def run(self):
         """
@@ -52,8 +58,12 @@ class Component:
         pass
 
     def cleanup(self):
-        print("\n".join(self.logEntries))
-        print(self.to_json())
+        log_level = self.experiment.log_level # to_json removes experiment
+        self.log(self.to_json(),level='DEBUG')
+        print("\n")
+        for log in self.logEntries:
+            if levels[log['LEVEL']] >= levels[log_level]:
+                print('{}: {} - {}'.format(str(log['TIME']), log['LEVEL'], log['LOG']))
 
     def to_json(self, o=None):
         """

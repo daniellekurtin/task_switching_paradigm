@@ -1,0 +1,37 @@
+{
+    "DAQ": {
+        "Hardware": "Dev1",
+        "BufferLength": 1000
+    },
+    "SynchPulse": {
+        "Channel_Manual": "port0/line0",
+        "Channel_Scanner": "port1/line1"
+    },
+    "ButtonBox": [
+        {
+            "Name": "Nata",
+            "Channels": [
+                "port0/line0",
+                "port0/line1",
+                "port0/line2",
+                "port0/line3",
+                "port0/line4",
+                "port0/line5"
+            ],
+            "ButtonCode":[
+                3,
+                7,
+                11,
+                15,
+                19,
+                23,
+                27,
+                31,
+                35,
+                39
+            ],
+            "Ignore":[
+            ]
+        }        
+    ]
+}
