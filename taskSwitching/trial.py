@@ -148,41 +148,6 @@ class Trial(Component):
             # Draw the purported answer over this grid
             self.draw_stim(self.answers[i], grid=g)
 
-    def get_mouse_input(self):
-        grids = self.get_answer_grids()
-        my_mouse = event.Mouse(visible=True, win=self.experiment.window)
-        event.clearEvents()  # get rid of other, unprocessed events
-
-        timeout_time = datetime.now() + timedelta(seconds=self.max_response_time)
-        while True:
-            buttons, times = my_mouse.getPressed(getTime=True)
-
-            if not buttons[0]:
-                my_mouse.clickReset()
-
-                # End if we've timed out
-                if datetime.now() > timeout_time:
-                    return {
-                        "time": datetime.now(),
-                        "position": None,
-                        "answer": None
-                    }
-
-                # Otherwise keep waiting
-                continue
-
-            pos = my_mouse.getPos()
-
-            for a in range(len(grids)):
-                g = grids[a]
-                # check click is in the boundaries of the rectangle
-                if g.click_is_in(pos):
-                    return {
-                        "time": times,
-                        "position": pos,
-                        "answer": a
-                    }
-
     def draw_number(self, n):
         self.grid.draw()
         self.draw_stim(n)
@@ -215,14 +180,19 @@ class Trial(Component):
 
         clock.wait(self.delay_before_response)
 
-        response = self.get_mouse_input()
-        self.log('Answer = ' + str(response["answer"]))
-        self.log('Mouse position = ' + str(response["position"]))
+        t0 = self.experiment.synch.clock
+        self.experiment.synch.wait_for_button(timeout=self.max_response_time)
+        if len(self.experiment.synch.buttonpresses):
+            if self.experiment.synch.emul_buttons: button = self.experiment.synch.buttons[self.experiment.synch.buttonpresses[-1][0]]
+            else: button = self.experiment.synch.buttonpresses[-1][0]
 
-        if response["answer"] == self.answer_index:
-            self.log('CORRECT!')
+            self.log('Answer = ' + button,level='EXP')
+            self.log('Reaction time = ' + str(self.experiment.synch.buttonpresses[-1][1]-t0),level='EXP')
+            self.log('Correct = ' + str((button-1) == self.answer_index),level='EXP') #  button is not zero-indexed
         else:
-            self.log('WRONG!')
+            self.log('Answer = ' + str(None),level='EXP')
+            self.log('Reaction time = ' + str(0),level='EXP')
+            self.log('Correct = ' + str(False),level='EXP')
 
     def prepare_answers(self):
         """
