@@ -199,4 +199,5 @@ if __name__ == '__main__':
     exp.trials = trials
 
     # Run the experiment
+    exp.synch.wait_for_synch()
     exp.run()
