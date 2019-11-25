@@ -183,12 +183,11 @@ class Trial(Component):
         t0 = self.experiment.synch.clock
         self.experiment.synch.wait_for_button(timeout=self.max_response_time)
         if len(self.experiment.synch.buttonpresses):
-            if self.experiment.synch.emul_buttons: button = self.experiment.synch.buttons[self.experiment.synch.buttonpresses[-1][0]]
-            else: button = self.experiment.synch.buttonpresses[-1][0]
+            button = self.experiment.synch.buttonpresses[-1][0]
 
-            self.log('Answer = ' + button,level='EXP')
+            self.log('Answer = ' + str(button),level='EXP')
             self.log('Reaction time = ' + str(self.experiment.synch.buttonpresses[-1][1]-t0),level='EXP')
-            self.log('Correct = ' + str((button-1) == self.answer_index),level='EXP') #  button is not zero-indexed
+            self.log('Correct = ' + str(button == self.answer_index),level='EXP') #  button is not zero-indexed
         else:
             self.log('Answer = ' + str(None),level='EXP')
             self.log('Reaction time = ' + str(0),level='EXP')
