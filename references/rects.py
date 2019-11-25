@@ -123,7 +123,7 @@ class Trial(Component):
 
 # Expects:
 # stimulus {int[]} digits to display sequentially
-# stimulusDuration {float} seconds to display each digit
+# stimulus_duration {float} seconds to display each digit
 class TrialDigitSpan(Trial):
     def __init__(self, **kwargs):
         """

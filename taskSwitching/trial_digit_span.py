@@ -1,4 +1,4 @@
-from src.taskSwitching.trial import *
+from taskSwitching.trial import *
 from copy import deepcopy
 
 
@@ -65,7 +65,7 @@ def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, r
 
 # Expects:
 # stimulus {int[]} digits to display sequentially
-# stimulusDuration {float} seconds to display each digit
+# stimulus_duration {float} seconds to display each digit
 class TrialDigitSpan(Trial):
     def __init__(self, **kwargs):
         """
@@ -103,6 +103,7 @@ class TrialDigitSpan(Trial):
         options = [answer]
         change_index = randint(0, len(values) - 1)
         allow_repeats = len(np.unique(values)) != len(values)
+        row = randint(0, n_rows - 1)
 
         while len(options) < 3:
             mutant = deepcopy(values)
@@ -115,7 +116,7 @@ class TrialDigitSpan(Trial):
                         mutant = deepcopy(values)
 
             foil = make_display_numbers(
-                rows=[1] * len(self.stimulus),
+                rows=[row] * len(self.stimulus),
                 cols=[i for i in range(len(self.stimulus))],
                 values=[mutant[i] for i in range(4)],
                 row_num=n_rows,
@@ -126,8 +127,8 @@ class TrialDigitSpan(Trial):
                 options.append(foil)
 
         shuffle(options)
-        self.answerIndex = np.where([np.array_equal(answer, o) for o in options])
-        self.answerIndex = self.answerIndex[0][0]
+        self.answer_index = np.where([np.array_equal(answer, o) for o in options])
+        self.answer_index = self.answer_index[0][0]
         self.answers = options
 
-        self.log('Target answer = ' + str(self.answerIndex))
+        self.log('Target answer = ' + str(self.answer_index))

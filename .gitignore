@@ -1,6 +1,8 @@
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
+# virtualenv
+env/
 # vscode environment
 .vscode/
 
@@ -110,3 +112,7 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+.idea/misc.xml
+.idea/modules.xml
+.idea/oxbridge_brainhack_2019.iml
+.idea/workspace.xml

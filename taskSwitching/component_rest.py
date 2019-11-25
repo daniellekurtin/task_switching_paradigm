@@ -1,10 +1,10 @@
-from src.taskSwitching.component import *
+from taskSwitching.component import *
 
 
 class ComponentRest(Component):
     """
     Break from performing the tasks, first attribute is its duration in seconds
-    
+
     Examples
     -------
     >>> exp = tS.Experiment()
@@ -24,30 +24,36 @@ class ComponentRest(Component):
         super().__init__(**kwargs)
         self.experiment.window.mouseVisible = True
         self.duration = break_duration
-        self.fixation = visual.ShapeStim(self.experiment.window,
-                            vertices=((0, -0.5), (0, 0.5), (0,0), (-0.5,0), (0.5, 0)),
-                            lineWidth=5,
-                            closeShape=False,
-                            lineColor=[-1, -1, -1])
-        self.countdown = visual.TextStim(self.experiment.window,
-                            text="", 
-                            color=[-1, -1, -1], 
-                            pos=(
-                                self.experiment.window.size[0] / 2,
-                                self.experiment.window.size[1] / 2 - 50
-                            )
-                                         )
+        self.fixation = visual.ShapeStim(
+            self.experiment.window,
+            vertices=((0, -0.5), (0, 0.5), (0, 0), (-0.5, 0), (0.5, 0)),
+            lineWidth=5,
+            closeShape=False,
+            lineColor=[-1, -1, -1]
+        )
+        self.countdown = visual.TextStim(
+            self.experiment.window,
+            text="",
+            color=[-1, -1, -1],
+            pos=(
+                self.experiment.window.size[0] / 2 - 20,
+                150
+            )
+        )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
-    def run(self):
+    def draw(self):
+        self.fixation.draw()
+        self.countdown.draw()
+
+    def main(self):
         # Will show a fixation cross and a countdown in seconds
         end_time = 0
         while end_time < self.duration:
             self.countdown.text = str(self.duration - end_time)
-            self.fixation.draw()
-            self.countdown.draw()
+            self.draw()
             clock.wait(1)
             self.experiment.window.flip()
             end_time += 1

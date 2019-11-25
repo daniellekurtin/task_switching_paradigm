@@ -1,5 +1,6 @@
-from src.taskSwitching.component import *
-from src.taskSwitching.grid import *
+from taskSwitching.component import *
+from taskSwitching.grid import *
+from datetime import timedelta
 
 
 def make_display_numbers(rows, cols, values, row_num, col_num):
@@ -17,7 +18,6 @@ def make_display_numbers(rows, cols, values, row_num, col_num):
     :type col_num: int
     :return: Numpy.nbarray with None in unspecified cells
     """
-    i = 0
     stimulus = np.zeros((row_num, col_num))
     stimulus = np.where(stimulus == 0, None, stimulus)
 
@@ -31,39 +31,54 @@ class Trial(Component):
     """
     Any values which might vary from trial to trial are recorded in a Trial
     """
-    trialNumber = -1
+    trial_number = -1
     stimulus = None
-    stimulusDuration = 0.5
-    answerRectWidth = 25
-    answerRectHeight = 25
     answers = [None, None, None]
     answer = -1             # Answer supplied by participant
-    answerIndex = -1        # Actual answer
+    answer_index = -1        # Actual answer
 
     halfCharPx = 10
 
-    def __init__(self, **kwargs):
+    def __init__(self, experiment, **kwargs):
         """
-        :param win: window in which to draw experiment
-        :type win: Psychopy.visual.Window
+        :param experiment: Experiment to which this trial belongs
+        :type experiment: taskSwitching.Experiment
         :param kwargs: keyword arguments
         """
         self.logEntries = []
-        super().__init__(**kwargs)
+        super().__init__(experiment, **kwargs)
+
+        cell_size = 70  # pixels
+        grid_size = 4   # cells
 
         self.grid = Grid(
-            width_in_cells=4,
-            height_in_cells=4,
+            width_in_cells=grid_size,
+            height_in_cells=grid_size,
             # including the rectangles we'll be using as cells
             psychopy_rect=visual.Rect(
                 win=self.experiment.window,
-                width=50,
-                height=50,
-                fillColor=[1, 1, 1],
-                lineColor=[-1, -1, -1]
+                width=cell_size,
+                height=cell_size,
+                fillColor=[0, 0, 0],
+                lineColor=[1, 1, 1]
             ),
-            start_pos_tuple=(-(self.experiment.window.size[0] / 2), -(self.experiment.window.size[1] / 2))
+            start_pos_tuple=(
+                -(self.experiment.window.size[0] / 2) + cell_size * grid_size,
+                0
+            )
         )
+
+        # Inherit trial-specific properties of the Experiment
+        if hasattr(experiment, 'stimulus_duration'):
+            self.stimulus_duration = experiment.stimulus_duration
+        if hasattr(experiment, 'answer_rect_width'):
+            self.answer_rect_width = experiment.answer_rect_width
+        if hasattr(experiment, 'answer_rect_height'):
+            self.answer_rect_height = experiment.answer_rect_height
+        if hasattr(experiment, 'delay_before_response'):
+            self.delay_before_response = experiment.delay_before_response
+        if hasattr(experiment, 'max_response_time'):
+            self.max_response_time = experiment.max_response_time
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -76,8 +91,16 @@ class Trial(Component):
         for r in range(dim[0]):
             for c in range(dim[1]):
                 if stimulus[r, c] is not None:
-                    # nudge the x coordinate of the stimulus to centre it in the box
                     coords = grid.coord_to_pixel_offset(r, c)
+                    # Shaded box
+                    grid.rect.pos = coords
+                    color = grid.rect.fillColor
+                    grid.rect.fillColor = [.5, .5, .5]
+                    grid.rect.draw()
+                    grid.rect.fillColor = color
+
+                    # Draw the text
+                    # Nudge the x coordinate of the stimulus to centre it in the box
                     coords = (coords[0] - self.halfCharPx, coords[1])
 
                     stim = visual.TextStim(
@@ -93,9 +116,9 @@ class Trial(Component):
     def get_answer_grid_positions(self):
         n = len(self.answers)
         return [(
-            self.experiment.window.size[0] / 2 - (self.grid.width + 1) * self.answerRectWidth,
-            self.experiment.window.size[1] / 2 - (self.grid.height + 1) *
-            self.answerRectHeight - self.experiment.window.size[1] * i / n
+            self.experiment.window.size[0] / 2 - (self.grid.width + 1) * self.answer_rect_width,
+            self.experiment.window.size[1] / 2 - self.grid.height *
+            self.answer_rect_height - self.experiment.window.size[1] * i / n
         ) for i in range(n)]
 
     def get_answer_grids(self):
@@ -107,10 +130,10 @@ class Trial(Component):
                 # including the rectangles we'll be using as cells
                 psychopy_rect=visual.Rect(
                     win=self.experiment.window,
-                    width=self.answerRectWidth,
-                    height=self.answerRectHeight,
-                    fillColor=[1, 1, 1],
-                    lineColor=[-1, -1, -1]
+                    width=self.answer_rect_width,
+                    height=self.answer_rect_height,
+                    fillColor=[0, 0, 0],
+                    lineColor=[1, 1, 1]
                 ),
                 start_pos_tuple=positions[i]
             ) for i in range(len(self.answers))
@@ -129,11 +152,23 @@ class Trial(Component):
         grids = self.get_answer_grids()
         my_mouse = event.Mouse(visible=True, win=self.experiment.window)
         event.clearEvents()  # get rid of other, unprocessed events
+
+        timeout_time = datetime.now() + timedelta(seconds=self.max_response_time)
         while True:
             buttons, times = my_mouse.getPressed(getTime=True)
 
             if not buttons[0]:
                 my_mouse.clickReset()
+
+                # End if we've timed out
+                if datetime.now() > timeout_time:
+                    return {
+                        "time": datetime.now(),
+                        "position": None,
+                        "answer": None
+                    }
+
+                # Otherwise keep waiting
                 continue
 
             pos = my_mouse.getPos()
@@ -154,17 +189,20 @@ class Trial(Component):
         self.experiment.window.flip()
 
     def prepare(self):
+        super().prepare()
         self.prepare_answers()
 
         self.experiment.window.flip()
-        self.log('Preparation complete for trial number ' + str(self.trialNumber))
+        self.log('Preparation complete for trial number ' +
+                 str(self.trial_number) +
+                 ' (' + self.__class__.__name__ + ')')
         clock.wait(.5)
         pass
 
     def show_stimulus(self):
         for n in self.stimulus:
             self.draw_number(n)
-            clock.wait(self.stimulusDuration)
+            clock.wait(self.stimulus_duration)
 
             self.grid.draw()
             self.experiment.window.flip()
@@ -175,13 +213,13 @@ class Trial(Component):
         self.draw_answer_grids()
         self.experiment.window.flip()
 
-        clock.wait(1)
+        clock.wait(self.delay_before_response)
 
         response = self.get_mouse_input()
         self.log('Answer = ' + str(response["answer"]))
         self.log('Mouse position = ' + str(response["position"]))
 
-        if response["answer"] == self.answerIndex:
+        if response["answer"] == self.answer_index:
             self.log('CORRECT!')
         else:
             self.log('WRONG!')
@@ -193,11 +231,12 @@ class Trial(Component):
         """
         pass
 
-    def cleanup(self):
-        print("\n".join(self.logEntries))
+    def main(self):
+        self.trial_number = self.experiment.current_trial_number
+        self.experiment.current_trial_number += 1
 
-    def run(self):
-        self.prepare()
         self.show_stimulus()
         self.collect_response()
-        self.cleanup()
+
+    def to_csv(self):
+        pass

@@ -1,5 +1,4 @@
-from src.taskSwitching.trial import *
-from random import choice
+from taskSwitching.trial import *
 
 
 def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):
@@ -103,7 +102,7 @@ class TrialSpatialSpan(Trial):
             col_num=n_cols
         )
         options = [answer]
-        ans_rows, ans_cols = np.where(answer != None)
+        ans_rows, ans_cols = np.where(np.invert(np.equal(answer, None)))
         hashes = [hash((r, c)) for r, c in zip(ans_rows, ans_cols)]
         mutate_index = randint(0, len(ans_rows) - 1)
         while len(options) < len(self.answers):
@@ -132,8 +131,8 @@ class TrialSpatialSpan(Trial):
                 options.append(foil)
 
         shuffle(options)
-        self.answerIndex = np.where([np.array_equal(answer, o) for o in options])
-        self.answerIndex = self.answerIndex[0][0]
+        self.answer_index = np.where([np.array_equal(answer, o) for o in options])
+        self.answer_index = self.answer_index[0][0]
         self.answers = options
 
-        self.log('Target answer = ' + str(self.answerIndex))
+        self.log('Target answer = ' + str(self.answer_index))
