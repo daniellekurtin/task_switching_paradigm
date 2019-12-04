@@ -19,7 +19,7 @@ class ComponentRest(Component):
     >>> exp.run()
     """
 
-    def __init__(self, break_duration=5, **kwargs):
+    def __init__(self, break_duration=120, **kwargs):
 
         super().__init__(**kwargs)
         self.experiment.window.mouseVisible = True
