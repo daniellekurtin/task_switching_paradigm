@@ -53,8 +53,8 @@ class InfoCardDurations(enum.Enum):
 
 
 class RunLength(enum.IntEnum):
-    MIN = 16
-    MAX = 20
+    MIN = 15
+    MAX = 21
 
 
 class Block(enum.IntEnum):
