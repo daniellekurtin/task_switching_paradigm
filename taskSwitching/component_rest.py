@@ -14,7 +14,7 @@ class ComponentRest(Component):
     >>>             fullscr=False,
     >>>             color=[1, 1, 1]
     >>>             )
-    >>> rest = [tS.ComponentRest(5, window=win, experiment=exp)]
+    >>> rest = [tS.ComponentRest(120, window=win, experiment=exp)]
     >>> exp.trials = rest
     >>> exp.run()
     """
