@@ -41,6 +41,7 @@ class Config(enum.Enum):
     TR = 2 # seconds
     MIN_LOG_LEVEL = 'INFO'
 
+
 class TrialTypes(enum.Enum):
     DIGIT_SPAN = "Digit Span"
     SPATIAL_SPAN = "Spatial Span"
@@ -63,6 +64,7 @@ class Block(enum.IntEnum):
     TRIAL_COUNT = 144    # if this is not divisible by the number of task types things will go wrong
     BREAK_TIME = 120
 
+
 if __name__ == '__main__':
     # Create the window we'll display the experiment in
     win = visual.Window(
@@ -73,23 +75,36 @@ if __name__ == '__main__':
         gammaErrorPolicy="warn"
     )
 
-    # Create interface for scanner pulse and respons box
-    SSO = scannersynch.scanner_synch(config=Config.SYNCH_CONFIG.value,emul_synch=not(Config.IN_SCANNER.value),emul_buttons=not(Config.IN_SCANNER.value))
+    # Create interface for scanner pulse and response box
+    SSO = scannersynch.scanner_synch(
+        config=Config.SYNCH_CONFIG.value,
+        emul_synch=not Config.IN_SCANNER.value,
+        emul_buttons=not Config.IN_SCANNER.value
+    )
     SSO.set_synch_readout_time(0.5)
     SSO.TR = Config.TR.value
 
     SSO.set_buttonbox_readout_time(0.5)
-    if not(SSO.emul_buttons): SSO.add_buttonbox('Nata')
-    else: SSO.buttons = ['1','2','3'] 
+    if not SSO.emul_buttons:
+        SSO.add_buttonbox('Nata')
+    else:
+        SSO.buttons = ['1','2','3']
 
     SSO.start_process()
 
-
     # Create the experiment object
-    exp = tS.Experiment(window=win, synch=SSO, log_level=Config.MIN_LOG_LEVEL.value)
+    exp = tS.Experiment(
+        window=win,
+        synch=SSO,
+        log_level=Config.MIN_LOG_LEVEL.value
+    )
 
     # Create stimuli. Expect this whole process will eventually be wrapped into the Experiment class
     n = Block.TRIAL_COUNT * Block.COUNT / len(TrialTypes)
+    if int(n) != n:
+        raise ValueError("Trial count/block * block is not cleanly divisible by the number of trial types.")
+    else:
+        n = int(n)
 
     stimuli = {
         "SpatialSpan": tS.get_spatial_span_stimuli(n),
