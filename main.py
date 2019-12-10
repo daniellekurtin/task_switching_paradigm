@@ -182,7 +182,7 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
     :param __prevent_recursion__: prevent automatically expanding non-iterable type parameter
     :type __prevent_recursion__: bool
     :param kwargs: arguments handed to the stimulus creation functions
-    :return:
+    :return: stimulus list for the desired trial types
     """
     out = []
 
@@ -193,13 +193,13 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
                 raise ValueError("trial_type must be a TrialType")
 
             if t == TrialTypes.DIGIT_SPAN:
-                out.append(tS.get_digit_span_stimuli(**kwargs))
+                out.append(tS.get_digit_span_stimuli(n=1, **kwargs))
                 break
             if t == TrialTypes.SPATIAL_SPAN:
-                out.append(tS.get_spatial_span_stimuli(**kwargs))
+                out.append(tS.get_spatial_span_stimuli(n=1, **kwargs))
                 break
             if t == TrialTypes.SPATIAL_ROTATION:
-                out.append(tS.get_spatial_rotation_stimuli(**kwargs))
+                out.append(tS.get_spatial_rotation_stimuli(n=1, **kwargs))
                 break
 
             raise ValueError("Unrecognised trial trial_type requested: " + t)
@@ -208,7 +208,8 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
         if __prevent_recursion__:
             raise
         # If handed just one TrialType, wrap it as a list and return the first answer
-        return create_trial_by_type([trial_type], __prevent_recursion__=True, **kwargs)[0]
+        # Not sure why we're double-unwrapping, but it is necessary. 
+        return create_stimulus_by_type([trial_type], __prevent_recursion__=True, **kwargs)[0][0]
 
     return out
 

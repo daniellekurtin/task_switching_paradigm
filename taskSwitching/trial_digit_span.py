@@ -2,17 +2,14 @@ from taskSwitching.trial import *
 from copy import deepcopy
 
 
-def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, row=None, col=None):
+def get_digit_span_stimuli(n, experiment, span=None, allow_repeats=False, row=None, col=None):
     """
     Generate digit span stimuli
     :param n: number of stimuli to produce
-    :type n: int
-    :param n_cols: max column number for random calculation
-    :type n_cols: int
-    :param n_rows: max row number for random calculation
-    :type n_rows: int
-    :param span: number of digits in each stimulus
-    :type span: int
+    :param experiment: Experiment to attach to
+    :type experiment: Experiment
+    :param span: number of digits in each stimulus, by default the Experiment.grid_size
+    :type span: int|None
     :param allow_repeats: whether digits can appear multiple times
     :type allow_repeats: bool
     :param col: override random column choice
@@ -21,6 +18,9 @@ def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, r
     :type row: int[]
     :return: n stimulus nparrays
     """
+    if span is None:
+        span = experiment.grid_size
+
     if span > 10 and not allow_repeats:
         raise ValueError('Not possible to produce non-repeating sequences of digits with length > 10')
 
@@ -44,9 +44,9 @@ def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, r
         if v not in values:
             values.append(v)
             if row is None:
-                rows.append(randint(0, n_rows - 1))
+                rows.append(randint(0, experiment.grid_size - 1))
             if col is None:
-                cols.append(randint(0, n_cols - 1))
+                cols.append(randint(0, experiment.grid_size - 1))
 
     stimuli = []
     for i in range(len(values)):
@@ -55,8 +55,8 @@ def get_digit_span_stimuli(n, n_rows=4, n_cols=4, span=4, allow_repeats=False, r
                 rows=[rows[i]],
                 cols=[cols[i]],
                 values=[v],
-                row_num=n_rows,
-                col_num=n_cols
+                row_num=experiment.grid_size,
+                col_num=experiment.grid_size
             ) for v in values[i]
         ])
 

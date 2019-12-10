@@ -10,6 +10,8 @@ class Experiment:
     current_trial_number = 0
     stimulus_duration = 0.5
 
+    grid_size = 6
+
     delay_before_response = 0.5
     max_response_time = 2
     answer_rect_width = 40

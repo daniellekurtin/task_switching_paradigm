@@ -3,26 +3,24 @@ from copy import deepcopy
 import math
 
 
-def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
+def get_spatial_rotation_stimuli(n, experiment, size=None, numeral=None):
     """
     Generate digit span stimuli
     :param n: number of stimuli to produce
     :type n: int
-    :param n_cols: max column number for random calculation
-    :type n_cols: int
-    :param n_rows: max row number for random calculation
-    :type n_rows: int
-    :param size: number of digits in each stimulus
-    :type size: int
+    :param experiment: Experiment to attach to
+    :type experiment: Experiment
+    :param size: number of digits in each stimulus, by default the Experiment.grid size
+    :type size: int|None
     :param numeral: number to display in the various positions
     :type numeral: int
     :return: n stimulus nparrays
     """
-    if size > n_rows * n_cols:
-        raise ValueError('Not possible to produce spatial rotation shape larger than number of cells')
+    if size is None:
+        size = experiment.grid_size
 
-    if n_rows != n_cols:
-        raise ValueError('Rotation only supports square grids (' + n_rows + 'x' + n_cols + ' given)')
+    if size > experiment.grid_size ** 2:
+        raise ValueError('Not possible to produce spatial rotation shape larger than number of cells')
 
     stimuli = []
     while len(stimuli) < n:
@@ -35,8 +33,8 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
             "cols": []
         }
         while len(rows) < size:
-            row = randint(0, n_rows - 1)
-            col = randint(0, n_cols - 1)
+            row = randint(0, experiment.grid_size - 1)
+            col = randint(0, experiment.grid_size - 1)
 
             # We can hash row and column together to quickly check for clashes
             h = hash((row, col))
@@ -67,7 +65,7 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
                 stimulus["cols"][len(stimulus["cols"]) - 1]
             ])
             for deg in [90, 180, 270]:
-                if np.all((np.equal(check, rotate(check, n_rows, deg)))):
+                if np.all((np.equal(check, rotate(check, experiment.grid_size, deg)))):
                     append = False
                     break
 
@@ -81,8 +79,8 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
                 rows=[s["rows"][i]],
                 cols=[s["cols"][i]],
                 values=[s["numerals"][i]],
-                row_num=n_rows,
-                col_num=n_cols
+                row_num=experiment.grid_size,
+                col_num=experiment.grid_size
             ) for i in range(len(s["rows"]))
         ])
 

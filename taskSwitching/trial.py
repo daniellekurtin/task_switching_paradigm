@@ -125,8 +125,8 @@ class Trial(Component):
         positions = self.get_answer_grid_positions()
         return [
             Grid(
-                width_in_cells=6,
-                height_in_cells=6,
+                width_in_cells=self.experiment.grid_size,
+                height_in_cells=self.experiment.grid_size,
                 # including the rectangles we'll be using as cells
                 psychopy_rect=visual.Rect(
                     win=self.experiment.window,

@@ -1,22 +1,23 @@
 from taskSwitching.trial import *
 
 
-def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):
+def get_spatial_span_stimuli(n, experiment, span=None, numeral=None):
     """
     Generate digit span stimuli
     :param n: number of stimuli to produce
     :type n: int
-    :param n_cols: max column number for random calculation
-    :type n_cols: int
-    :param n_rows: max row number for random calculation
-    :type n_rows: int
-    :param span: number of digits in each stimulus
-    :type span: int
+    :param experiment: Experiment to attach to
+    :type experiment: Experiment
+    :param span: number of digits in each stimulus, by default the Experiment.grid_size
+    :type span: int|None
     :param numeral: number to display in the various positions
     :type numeral: int
     :return: n stimulus nparrays
     """
-    if span > n_rows * n_cols:
+    if span is None:
+        span = experiment.grid_size
+
+    if span > experiment.grid_size ** 2:
         raise ValueError('Not possible to produce spatial span greater than number of cells')
 
     stimuli = []
@@ -25,8 +26,8 @@ def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):
         cols = []
         hashes = []
         while len(rows) < span:
-            row = randint(0, n_rows - 1)
-            col = randint(0, n_cols - 1)
+            row = randint(0, experiment.grid_size - 1)
+            col = randint(0, experiment.grid_size - 1)
 
             # We can hash row and column together to quickly check for clashes
             h = hash((row, col))
@@ -57,8 +58,8 @@ def get_spatial_span_stimuli(n, n_rows=4, n_cols=4, span=4, numeral=None):
                 rows=[s["rows"][i]],
                 cols=[s["cols"][i]],
                 values=[s["numerals"][i]],
-                row_num=n_rows,
-                col_num=n_cols
+                row_num=experiment.grid_size,
+                col_num=experiment.grid_size
             ) for i in range(len(s["rows"]))
         ])
 
