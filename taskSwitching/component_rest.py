@@ -57,3 +57,4 @@ class ComponentRest(Component):
             clock.wait(1)
             self.experiment.window.flip()
             end_time += 1
+

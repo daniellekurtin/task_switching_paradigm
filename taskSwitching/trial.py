@@ -49,7 +49,7 @@ class Trial(Component):
         super().__init__(experiment, **kwargs)
 
         cell_size = 70  # pixels
-        grid_size = 4   # cells
+        grid_size = 6   # cells
 
         self.grid = Grid(
             width_in_cells=grid_size,
@@ -125,8 +125,8 @@ class Trial(Component):
         positions = self.get_answer_grid_positions()
         return [
             Grid(
-                width_in_cells=4,
-                height_in_cells=4,
+                width_in_cells=6,
+                height_in_cells=6,
                 # including the rectangles we'll be using as cells
                 psychopy_rect=visual.Rect(
                     win=self.experiment.window,
