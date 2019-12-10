@@ -38,7 +38,7 @@ import math
 
 # Set some useful constants
 class Config(enum.Enum):
-    SYNCH_CONFIG = 'config.json'
+    SYNCH_CONFIG = '../config.json'
     IN_SCANNER = False
     TR = 2                          # seconds
     MIN_LOG_LEVEL = 'INFO'
@@ -213,7 +213,7 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
     return out
 
 
-def trials_from_sequence(sequence, exp):
+def trials_from_sequence(sequence, experiment):
     """
     Create a list of Trials given a sequence of TrialTypes.
     Each TrialType in the sequence specifies a run of trials divided over the experimental blocks.
@@ -229,7 +229,7 @@ def trials_from_sequence(sequence, exp):
 
     :param sequence: a sequence of TrialTypes for consecutive runs
     :trial_type sequence: TrialTypes[]
-    :param exp: the Experiment to bind the Trials to
+    :param experiment: the Experiment to bind the Trials to
     :trial_type exp: tS.Experiment
     :return: tS.Trial[]
     """
@@ -269,21 +269,21 @@ def trials_from_sequence(sequence, exp):
             # Upcoming run trial_type notification
             trials.append(
                 tS.ComponentInfoCard(
-                    experiment=exp,
+                    experiment=experiment,
                     next_task=remainder["trial_type"].value,
                     # At the beginning of a block use a random run intro period length
-                    break_duration=random.choice(list(InfoCardDurations))
+                    break_duration=random.choice(list(InfoCardDurations)).value
                 )
             )
             # Remaining trials from before the block break
             for i in range(remainder["n"]):
                 if i > 0:
-                    trials.append(tS.ComponentTrialGap(experiment=exp))
+                    trials.append(tS.ComponentTrialGap(experiment=experiment))
                 trials.append(
                     create_trial_by_type(
                         remainder["trial_type"],
-                        experiment=exp,
-                        stimulus=create_stimulus_by_type(remainder["trial_type"], experiment=exp)
+                        experiment=experiment,
+                        stimulus=create_stimulus_by_type(remainder["trial_type"], experiment=experiment)
                     )
                 )
 
@@ -316,9 +316,9 @@ def trials_from_sequence(sequence, exp):
             # Switch: add a run trial_type notification for upcoming trials
             trials.append(
                 tS.ComponentInfoCard(
-                    experiment=exp,
+                    experiment=experiment,
                     next_task=trial_type.value,
-                    break_duration=break_duration
+                    break_duration=break_duration.value
                 )
             )
 
@@ -332,19 +332,19 @@ def trials_from_sequence(sequence, exp):
             # Add the actual trials themselves
             for i in range(run_length):
                 if i > 0:
-                    trials.append(tS.ComponentTrialGap(experiment=exp))
+                    trials.append(tS.ComponentTrialGap(experiment=experiment))
                 trials.append(
                     create_trial_by_type(
                         trial_type,
-                        experiment=exp,
-                        stimulus=create_stimulus_by_type(trial_type, experiment=exp)
+                        experiment=experiment,
+                        stimulus=create_stimulus_by_type(trial_type, experiment=experiment)
                     )
                 )
 
         # Block break
         trials.append(
             tS.ComponentRest(
-                experiment=exp,
+                experiment=experiment,
                 break_duration=Block.BREAK_TIME)
         )
 
@@ -387,7 +387,7 @@ if __name__ == '__main__':
     )
 
     seq = get_run_sequence()
-    trials = trials_from_sequence(seq)
+    trials = trials_from_sequence(seq, experiment=exp)
 
     # Debugging
     # key = {TrialTypes.DIGIT_SPAN: "DS", TrialTypes.SPATIAL_SPAN: "SS", TrialTypes.SPATIAL_ROTATION: "SR"}
