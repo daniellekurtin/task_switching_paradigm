@@ -30,8 +30,16 @@ __________________________________________
 """
 import taskSwitching as tS
 from psychopy import visual
-from random import shuffle
+from pyniexp import scannersynch
 import enum
+
+
+# Set some useful constants
+class Config(enum.Enum):
+    SYNCH_CONFIG = 'config.json'
+    IN_SCANNER = False
+    TR = 2 # seconds
+    MIN_LOG_LEVEL = 'INFO'
 
 
 class TrialTypes(enum.Enum):
@@ -45,76 +53,103 @@ class InfoCardDurations(enum.Enum):
     LONG = 4
 
 
-win = visual.Window(
-    size=[800, 800],
-    units="pix",
-    fullscr=False,
-    color=[0, 0, 0],
-    gammaErrorPolicy="warn"
-)
+class RunLength(enum.IntEnum):
+    MIN = 1
+    MAX = 3
 
-exp = tS.Experiment(window=win)
 
-n = 5
+class Block(enum.IntEnum):
+    COUNT = 1
+    TRIAL_COUNT = 9    # if this is not divisible by the number of task types things will go wrong
+    BREAK_TIME = 5
 
-stimuli = {
-    "SpatialSpan": tS.get_spatial_span_stimuli(n),
-    "DigitSpan": tS.get_digit_span_stimuli(n),
-    "SpatialRotation": tS.get_spatial_rotation_stimuli(n)
-}
 
-# Define experiment
-ic = [
-    tS.ComponentInfoCard(
-        experiment=exp,
-        next_task=TrialTypes.SPATIAL_ROTATION.value,
-        break_duration=InfoCardDurations.LONG.value
+if __name__ == '__main__':
+    # Create the window we'll display the experiment in
+    win = visual.Window(
+        size=[800, 800],
+        units="pix",
+        fullscr=False,
+        color=[0, 0, 0],
+        gammaErrorPolicy="warn"
     )
-]
 
-ss = [
-    tS.TrialSpatialSpan(
-        trialNumber=i,
-        experiment=exp,
-        stimulus=stimuli["SpatialSpan"][i]
-    ) for i in range(len(stimuli["SpatialSpan"]))
-]
+    # Create interface for scanner pulse and response box
+    SSO = scannersynch.scanner_synch(
+        config=Config.SYNCH_CONFIG.value,
+        emul_synch=not Config.IN_SCANNER.value,
+        emul_buttons=not Config.IN_SCANNER.value
+    )
+    SSO.set_synch_readout_time(0.5)
+    SSO.TR = Config.TR.value
 
-ds = [
-    tS.TrialDigitSpan(
-        trialNumber=i,
-        experiment=exp,
-        stimulus=stimuli["DigitSpan"][i]
-    ) for i in range(len(stimuli["DigitSpan"]))
-]
+    SSO.set_buttonbox_readout_time(0.5)
+    if not SSO.emul_buttons:
+        SSO.add_buttonbox('Nata')
+    else:
+        SSO.buttons = ['1','2','3']
 
-sr = [
-    tS.TrialSpatialRotation(
-        trialNumber=i,
-        experiment=exp,
-        stimulus=stimuli["SpatialRotation"][i]
-    ) for i in range(len(stimuli["SpatialRotation"]))
-]
+    SSO.start_process()
 
-# trials = ss + ds
-trials = sr
-shuffle(trials)
-trials = ic + trials
-trials.insert(n, tS.ComponentRest(break_duration=5, experiment=exp))
+    # Create the experiment object
+    exp = tS.Experiment(
+        window=win,
+        synch=SSO,
+        log_level=Config.MIN_LOG_LEVEL.value
+    )
 
-exp.trials = trials
-# exp.trials = [
-#     tS.Trial(
-#         trial_number = 0,
-#         experiment=exp,
-#         stimulus=[tS.make_display_numbers(
-#             rows=tS.np.repeat(list(range(4)), 4),
-#             cols=tS.np.tile(list(range(4)), 4),
-#             values=list(range(16)),
-#             row_num=4, col_num=4
-#         )],
-#         stimulus_duration=5
-#     )
-# ]
+    # Create stimuli. Expect this whole process will eventually be wrapped into the Experiment class
+    n = Block.TRIAL_COUNT * Block.COUNT
 
-exp.run()
+    stimuli = {
+        "SpatialRotation": tS.get_spatial_rotation_stimuli(n)
+    }
+
+    # Define experimental trials using stimuli
+    sr = [
+        tS.TrialSpatialRotation(
+            experiment=exp,
+            stimulus=stimuli["SpatialRotation"][i]
+        ) for i in range(len(stimuli["SpatialRotation"]))
+    ]
+
+    # Currently these need to be in the same order as the magazines defined below.
+
+    trials = []
+    # Construct experimental trial order
+    for b in range(Block.COUNT):          # Blocks
+        # Stack up the trials into a queue by type
+        magazines = [[], [], []]
+        for i in range(int(Block.TRIAL_COUNT)):
+            magazines[2].insert(i, sr.pop())
+
+        t = 0
+        magazine = 2
+        while t < Block.TRIAL_COUNT:     # Trials
+
+            # Create a new run of trials of a random length
+            # Guard against too large a minimum run length (orphan trials)
+            run_length = RunLength.MAX
+
+            # Create run
+
+            # Pop trials from magazine into the block definition
+            for r in range(run_length):     # Runs
+                trials.append(magazines[magazine].pop())
+                trials.append(tS.ComponentTrialGap(experiment=exp))
+
+            t += run_length
+
+        # Add a block break
+        if b < Block.COUNT - 1:
+            trials.append(tS.ComponentRest(experiment=exp, break_duration=Block.BREAK_TIME))
+
+    # Load trials into the experiment
+    exp.trials = trials
+
+    for t in exp.trials:
+        t.prepare()
+
+    # Run the experiment
+    exp.synch.wait_for_synch()
+    exp.run()

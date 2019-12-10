@@ -52,7 +52,7 @@ class Component:
         self.cleanup()
 
     def prepare(self):
-        self.log('Begin')
+        self.log('Begin ' + self.__class__.__name__)
 
     def main(self):
         pass

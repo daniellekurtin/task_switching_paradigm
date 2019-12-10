@@ -21,6 +21,9 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
     if size > n_rows * n_cols:
         raise ValueError('Not possible to produce spatial rotation shape larger than number of cells')
 
+    if n_rows != n_cols:
+        raise ValueError('Rotation only supports square grids (' + n_rows + 'x' + n_cols + ' given)')
+
     stimuli = []
     while len(stimuli) < n:
         rows = []
@@ -64,7 +67,7 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
                 stimulus["cols"][len(stimulus["cols"]) - 1]
             ])
             for deg in [90, 180, 270]:
-                if np.all((np.equal(check, translate_and_rotate(check, deg)))):
+                if np.all((np.equal(check, rotate(check, n_rows, deg)))):
                     append = False
                     break
 
@@ -86,49 +89,34 @@ def get_spatial_rotation_stimuli(n, n_rows=4, n_cols=4, size=4, numeral=None):
     return output
 
 
-def translate_and_rotate(matrix, rotate_deg=90, translation_vector=None):
+def rotate(matrix, grid_size, deg=90):
     """
-    :param matrix: matrix to manipulate
+    Rotate an n x n grid clockwise.
+    For a 90 degree clockwise rotation each cell (r, c) gets new coordinates (c, (n-1) - r).
+    :param matrix: matrix of coordinates to manipulate
     :type matrix: nparray
-    :param rotate_deg: number of degrees to rotate anticlockwise
-    :type rotate_deg: int
-    :param translation_vector: 3x3 matrix containing the translation to prepend to the rotation and to invert
-    afterwards, default (-2, -2)
-    :type translation_vector: nparray|None
-    :return: new matrix resulting from translating, rotating, and then anti-translating the original matrix
+    :param grid_size: number of cells in the grid
+    :param deg: degrees to rotate, only steps of 90 will work
+    :type deg: int
+    :return: new matrix with rotated coordinates
     """
-    radians = math.radians(rotate_deg)
 
-    if translation_vector is None:
-        translation_vector = np.array([
-            [-1.5],  # (n_row - 1) / 2
-            [-1.5],  # (n_col - 1) / 2
-            [0]
-        ])
+    if deg % 90 != 0:
+        raise ValueError("rotate() only supports rotations of 90 degrees")
 
-    rotation_matrix = np.array([
-        [math.cos(radians), -math.sin(radians), 0],
-        [math.sin(radians), math.cos(radians), 0],
-        [0, 0, 1]
-    ])
+    # Recursively call rotate() to rotate by 90deg until we're 90deg away from target rotation
+    # It would technically be more efficient to do this as a yielding iterative, but we'll stick with this for now
+    if deg > 90:
+        matrix = rotate(matrix, grid_size, deg - 90)
 
-    if np.size(matrix, 0) == 2:
-        matrix = np.vstack((
-            matrix,
-            np.repeat(1, np.size(matrix, 1))
-        ))
-        trim = True
-    else:
-        trim = False
+    new_matrix = np.zeros_like(matrix)
 
-    new_matrix = np.add(translation_vector, matrix)
-    new_matrix = np.dot(rotation_matrix, new_matrix)
-    new_matrix = np.add(translation_vector * -1, new_matrix)  # translate back
+    # New row <- old column
+    new_matrix[0] = matrix[1]
+    # New column <- (n - 1) - old row
+    new_matrix[1] = (grid_size - 1) - matrix[0]
 
     # reshape the matrix back to the form of the input
-    if trim:
-        new_matrix = new_matrix[[0, 1], :]
-
     return new_matrix.astype(int)
 
 
@@ -158,8 +146,9 @@ class TrialSpatialRotation(Trial):
                 rows.append(floor(i / n_cols))
                 cols.append(i % n_cols)
 
-        rotated = translate_and_rotate(
-            np.array([rows, cols])
+        rotated = rotate(
+            np.array([rows, cols]),
+            n_rows
         )
 
         answer = make_display_numbers(
@@ -191,7 +180,7 @@ class TrialSpatialRotation(Trial):
             okay = True
             check = np.array([rows, cols])
             for deg in [90, 180]:  # 270 covered already by the correct answer
-                if np.all(np.equal(check, translate_and_rotate(check, deg))):
+                if np.all(np.equal(check, rotate(check, n_rows, deg))):
                     okay = False
                     break
 

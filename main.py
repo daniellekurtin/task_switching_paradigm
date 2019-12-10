@@ -60,7 +60,6 @@ class RunLength(enum.IntEnum):
 
 class Block(enum.IntEnum):
     COUNT = 4
-    LENGTH = 5
     TRIAL_COUNT = 144    # if this is not divisible by the number of task types things will go wrong
     BREAK_TIME = 120
 
@@ -163,7 +162,7 @@ if __name__ == '__main__':
 
         t = 0
         magazine = -1
-        while t < Block.LENGTH:     # Trials
+        while t < Block.TRIAL_COUNT:     # Trials
 
             # Create a new run of trials of a random length
             # Guard against too large a minimum run length (orphan trials)
