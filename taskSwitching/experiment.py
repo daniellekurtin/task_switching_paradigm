@@ -34,6 +34,10 @@ class Experiment:
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
+    def __del__(self):
+        self.window.close()
+        self.synch = None
+
     def run(self):
         for t in self.trials:
             t.run()

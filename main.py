@@ -399,3 +399,6 @@ if __name__ == '__main__':
     # Run the experiment
     exp.synch.wait_for_synch()
     exp.run()
+    
+    exp = None
+    SSO = None

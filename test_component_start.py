@@ -1,5 +1,5 @@
 import taskSwitching as tS
-from psychopy import visual
+from psychopy import visual, core
 from pyniexp import scannersynch
 import enum
 
@@ -50,3 +50,7 @@ if __name__ == '__main__':
 
     exp.synch.wait_for_synch()
     exp.run()
+
+    exp = None
+    SSO = None
+    
