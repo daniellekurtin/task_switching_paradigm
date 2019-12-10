@@ -12,9 +12,13 @@ class ComponentStart(ComponentRest):
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
+
     def main(self):
-        # Will show show the start card and wait for a keypress
+        # Will show the start card and wait for a keypress
         self.countdown.text = "Press any key to begin" 
         self.draw()
         self.experiment.window.flip()
-        clock.wait(self.break_duration)
+        
+        self.experiment.synch.wait_for_button()
+
+        
