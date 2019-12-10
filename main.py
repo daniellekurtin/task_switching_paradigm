@@ -208,7 +208,7 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
         if __prevent_recursion__:
             raise
         # If handed just one TrialType, wrap it as a list and return the first answer
-        # Not sure why we're double-unwrapping, but it is necessary. 
+        # Not sure why we're double-unwrapping, but it is necessary.
         return create_stimulus_by_type([trial_type], __prevent_recursion__=True, **kwargs)[0][0]
 
     return out
@@ -265,6 +265,9 @@ def trials_from_sequence(sequence, experiment):
 
     # Construct each block
     for b in range(Block.COUNT):
+
+        last_block = b == Block.COUNT - 1
+
         # If there are trials left over from before the block break, add them here
         if remainder["n"] > 0:
             # Upcoming run trial_type notification
@@ -287,32 +290,52 @@ def trials_from_sequence(sequence, experiment):
                         stimulus=create_stimulus_by_type(remainder["trial_type"], experiment=experiment)
                     )
                 )
+        else:
+            # First block in the experiment has a full run
+            trial_type = sequence[0]
+            run_length = random.randint(RunLength.MIN, RunLength.MAX)
+            # Upcoming run trial_type notification
+            trials.append(
+                tS.ComponentInfoCard(
+                    experiment=experiment,
+                    next_task=trial_type.value,
+                    # At the beginning of a block use a random run intro period length
+                    break_duration=random.choice(list(InfoCardDurations)).value
+                )
+            )
+            # Remaining trials from before the block break
+            for i in range(run_length):
+                if i > 0:
+                    trials.append(tS.ComponentTrialGap(experiment=experiment))
+                trials.append(
+                    create_trial_by_type(
+                        trial_type,
+                        experiment=experiment,
+                        stimulus=create_stimulus_by_type(trial_type, experiment=experiment)
+                    )
+                )
 
         # Construct each run
         for s in range(Block.SWITCH_COUNT):
-
-            i = Block.SWITCH_COUNT * b + s  # index of run in sequence
+            i = Block.SWITCH_COUNT * b + s + 1 # index of run in sequence
             trial_type = sequence[i]
             run_length = random.randint(RunLength.MIN, RunLength.MAX)
+            end_of_block = s == Block.SWITCH_COUNT - 1
 
-            # First run of the experiment has a random run intro period length
-            if s == 0 and b == 0:
-                break_duration = random.choice(list(InfoCardDurations))
-            else:
-                # Pick from the ripls available (weighted random)
-                choices = []
-                ripls = intro_lengths[sequence[i - 1]][sequence[i]]
-                for x in ripls:
-                    for r in range(ripls[x]):
-                        choices.append(x)
+            # Pick from the ripls available (weighted random)
+            choices = []
+            ripls = intro_lengths[sequence[i - 1]][sequence[i]]
+            for x in ripls:
+                for r in range(ripls[x]):
+                    choices.append(x)
 
-                if len(choices) == 0:
-                    raise RuntimeError("No choices remaining for run intro period length")
+            if len(choices) == 0:
+                raise RuntimeError("No choices remaining for run intro period length")
 
-                r = random.choice(choices)  # ripl selected
+            r = random.choice(choices)  # ripl selected
 
-                intro_lengths[sequence[i - 1]][sequence[i]][r] -= 1  # decrement counter
-                break_duration = r
+            intro_lengths[sequence[i - 1]][sequence[i]][r] -= 1  # decrement counter
+            break_duration = r
 
             # Switch: add a run trial_type notification for upcoming trials
             trials.append(
@@ -324,7 +347,7 @@ def trials_from_sequence(sequence, experiment):
             )
 
             # Handle runs split by the end of the block
-            if s == Block.SWITCH_COUNT - 1:
+            if end_of_block:
                 r = math.floor(run_length / 2)
                 remainder["trial_type"] = trial_type
                 remainder["n"] = run_length - r
@@ -342,12 +365,16 @@ def trials_from_sequence(sequence, experiment):
                     )
                 )
 
-        # Block break
-        trials.append(
-            tS.ComponentRest(
-                experiment=experiment,
-                break_duration=Block.BREAK_TIME)
-        )
+        if not last_block:
+            # Block break
+            trials.append(
+                tS.ComponentRest(
+                    experiment=experiment,
+                    break_duration=Block.BREAK_TIME)
+            )
+        else:
+            # We can append the end-of-experiment feedback if we make it here.
+            pass
 
     return trials
 
@@ -391,8 +418,28 @@ if __name__ == '__main__':
     trials = trials_from_sequence(seq, experiment=exp)
 
     # Debugging
-    # key = {TrialTypes.DIGIT_SPAN: "DS", TrialTypes.SPATIAL_SPAN: "SS", TrialTypes.SPATIAL_ROTATION: "SR"}
-    # print([key[t] for t in trials])
+    n = 0
+    for i in range(len(trials)):
+        t = trials[i]
+
+        if t.__class__.__name__ == "ComponentTrialGap":
+            continue
+
+        if isinstance(t, tS.ComponentInfoCard):
+            if n > 0:
+                print("> " + str(n) + " x " + str(tt))
+            print(t.__class__.__name__)
+            n = 0
+        elif isinstance(t, tS.ComponentRest):
+            print("> " + str(n) + " x " + str(tt))
+            print("----------Block Break------------")
+            n = 0
+        else:
+            n += 1
+            tt = t.__class__.__name__
+
+    # print the final trial type
+    print("> " + str(n) + " x " + str(tt))
 
     # Load trials into the experiment
     exp.trials = trials
