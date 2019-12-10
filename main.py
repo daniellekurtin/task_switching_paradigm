@@ -59,7 +59,7 @@ class RunLength(enum.IntEnum):
 
 class Block(enum.IntEnum):
     COUNT = 4
-    LENGTH = 5
+    LENGTH = 50
     TRIAL_COUNT = 144    # if this is not divisible by the number of task types things will go wrong
     BREAK_TIME = 120
 
