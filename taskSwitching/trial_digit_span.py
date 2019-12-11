@@ -88,22 +88,21 @@ class TrialDigitSpan(Trial):
         indices = int(indices[0])  # only one answer!
 
         values = self.stimulus
-        values = np.reshape(values, (len(values), np.prod(np.shape(values[0]))))
+        values = [np.reshape(stim, (1, np.prod(np.shape(stim)))) for stim in values]
+        values = [stim[0, indices] for stim in values]
+        row = randint(0, n_rows - 1)
 
         answer = make_display_numbers(
-            rows=[1] * len(self.stimulus),
+            rows=[row] * len(self.stimulus),
             cols=[i for i in range(len(self.stimulus))],
-            values=[stim[indices] for stim in values],
+            values=values,
             row_num=n_rows,
             col_num=n_cols
         )
 
-        values = [stim[indices] for stim in values]
-
         options = [answer]
         change_index = randint(0, len(values) - 1)
         allow_repeats = len(np.unique(values)) != len(values)
-        row = randint(0, n_rows - 1)
 
         while len(options) < 3:
             mutant = deepcopy(values)
@@ -118,7 +117,7 @@ class TrialDigitSpan(Trial):
             foil = make_display_numbers(
                 rows=[row] * len(self.stimulus),
                 cols=[i for i in range(len(self.stimulus))],
-                values=[mutant[i] for i in range(4)],
+                values=mutant,
                 row_num=n_rows,
                 col_num=n_cols
             )
