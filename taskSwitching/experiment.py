@@ -21,8 +21,8 @@ class Experiment:
 
     grid_size = 6
 
-    delay_before_response = 0.5
-    max_response_time = 2
+    delay_before_response = 0.15
+    max_response_time = 3
     answer_rect_width = .06   # normed units for Panel
     answer_rect_height = .06  # normed units for Panel
 

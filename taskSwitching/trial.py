@@ -45,6 +45,7 @@ class Trial(Component):
         "stimulus_end": -1,
         "response_enabled": -1,
         "response_submitted": -1,
+        "response_disabled": -1,
         "trial_logged": -1
     }
 
@@ -161,6 +162,13 @@ class Trial(Component):
         self.draw_stim(n)
         self.experiment.window.flip()
 
+    def draw_response_feedback(self):
+        grids = self.get_answer_grids()
+        g = grids[self.answer]
+        g.draw()
+        self.draw_stim(self.answers[self.answer], target_grid=g)
+        self.experiment.window.flip()
+
     def prepare(self):
         super().prepare()
         self.prepare_answers()
@@ -200,9 +208,18 @@ class Trial(Component):
         if len(self.experiment.synch.buttonpresses):
             self.answer = self.experiment.synch.buttonpresses[-1][0]  # button is not zero-indexed
             self.times["response_submitted"] = self.experiment.synch.buttonpresses[-1][1]
+
+            padding_time = self.experiment.synch.clock + self.max_response_time - self.times["response_enabled"]
+
+            self.draw_response_feedback()
+
+            if padding_time > 0:
+                clock.wait(padding_time)
         else:
             self.answer = -1
             self.times["response_submitted"] = -1
+
+        self.times["response_disabled"] = self.experiment.synch.clock
 
         self.log('Answer = ' + str(self.answer), level='EXP')
         self.log('Response time = ' + str(self.times["response_submitted"] - self.times["response_enabled"]),
@@ -241,6 +258,7 @@ class Trial(Component):
                 "time_stimulus_end": self.times["stimulus_end"],
                 "time_response_enabled": self.times["response_enabled"],
                 "time_response_submitted": self.times["response_submitted"],
+                "time_response_disabled": self.times["response_disabled"],
                 "time_trial_logged": self.times["trial_logged"]
             },
             file="trials-" + self.version,
