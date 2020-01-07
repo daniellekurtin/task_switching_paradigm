@@ -19,7 +19,7 @@ import math
 
 # Set some useful constants
 class Config(enum.Enum):
-    SYNCH_CONFIG = '../config.json'
+    SYNCH_CONFIG = 'config.json'
     IN_SCANNER = False
     TR = 2                          # seconds
     MIN_LOG_LEVEL = 'INFO'
@@ -422,8 +422,11 @@ if __name__ == '__main__':
     # print the final trial type
     print("> " + str(n) + " x " + str(tt))
 
+    # incorporate "press any key to begin"
+    info = [tS.ComponentStart(experiment=exp)]
+
     # Load trials into the experiment
-    exp.trials = trials
+    exp.trials = info + trials
 
     # Run the experiment
     exp.synch.wait_for_synch()
