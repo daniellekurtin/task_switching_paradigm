@@ -386,6 +386,7 @@ if __name__ == '__main__':
         units="pix",
         fullscr=False,
         color=[0, 0, 0],
+        winType='pyglet',
         gammaErrorPolicy="warn"
     )
 
