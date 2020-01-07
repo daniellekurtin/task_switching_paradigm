@@ -50,9 +50,16 @@ class ComponentRest(Component):
 
     def main(self):
         # Will show a fixation cross and a countdown in seconds
+        # For a countdown of 5 seconds, final_countdown needs 
+        # self.duration - 6
         end_time = 0
+        final_countdown = 114
         while end_time < self.duration:
-            self.countdown.text = str(self.duration - end_time)
+            if end_time < final_countdown:
+                self.countdown.text = str("+")
+            if final_countdown < end_time:
+                self.countdown.text = str(self.duration - end_time)
+
             self.draw()
             clock.wait(1)
             self.experiment.window.flip()
