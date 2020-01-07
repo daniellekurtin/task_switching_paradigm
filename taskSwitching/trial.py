@@ -31,11 +31,22 @@ class Trial(Component):
     """
     Any values which might vary from trial to trial are recorded in a Trial
     """
+    version = "v0.0.1"  # used for keeping .csv file headers sensible
+
     trial_number = -1
     stimulus = None
     answers = [None, None, None]
     answer = -1  # Answer supplied by participant
     answer_index = -1  # Actual answer
+
+    times = {
+        "start": -1,
+        "stimulus_start": -1,
+        "stimulus_end": -1,
+        "response_enabled": -1,
+        "response_submitted": -1,
+        "trial_logged": -1
+    }
 
     def __init__(self, experiment, **kwargs):
         """
@@ -162,6 +173,8 @@ class Trial(Component):
         pass
 
     def show_stimulus(self):
+        self.times["stimulus_start"] = self.experiment.synch.clock
+
         for n in self.stimulus:
             self.draw_number(n)
             clock.wait(self.stimulus_duration)
@@ -171,6 +184,8 @@ class Trial(Component):
             self.experiment.window.flip()
             clock.wait(.5)
 
+        self.times["stimulus_end"] = self.experiment.synch.clock
+
     def collect_response(self):
         # PsychoPy click response stuff?
         self.debug_visuals()
@@ -179,18 +194,20 @@ class Trial(Component):
 
         clock.wait(self.delay_before_response)
 
-        t0 = self.experiment.synch.clock
+        self.times["response_enabled"] = self.experiment.synch.clock
+
         self.experiment.synch.wait_for_button(timeout=self.max_response_time)
         if len(self.experiment.synch.buttonpresses):
-            button = self.experiment.synch.buttonpresses[-1][0]
-
-            self.log('Answer = ' + str(button),level='EXP')
-            self.log('Reaction time = ' + str(self.experiment.synch.buttonpresses[-1][1]-t0),level='EXP')
-            self.log('Correct = ' + str(button == self.answer_index), level='EXP')  # button is not zero-indexed
+            self.answer = self.experiment.synch.buttonpresses[-1][0]  # button is not zero-indexed
+            self.times["response_submitted"] = self.experiment.synch.buttonpresses[-1][1]
         else:
-            self.log('Answer = ' + str(None),level='EXP')
-            self.log('Reaction time = ' + str(0),level='EXP')
-            self.log('Correct = ' + str(False),level='EXP')
+            self.answer = -1
+            self.times["response_submitted"] = -1
+
+        self.log('Answer = ' + str(self.answer), level='EXP')
+        self.log('Response time = ' + str(self.times["response_submitted"] - self.times["response_enabled"]),
+                 level='EXP')
+        self.log('Correct = ' + str(self.answer == self.answer_index), level='EXP')
 
     def prepare_answers(self):
         """
@@ -200,11 +217,32 @@ class Trial(Component):
         pass
 
     def main(self):
+        self.times["start"] = self.experiment.synch.clock
+
         self.trial_number = self.experiment.current_trial_number
         self.experiment.current_trial_number += 1
 
         self.show_stimulus()
         self.collect_response()
 
+        self.to_csv()
+
     def to_csv(self):
-        pass
+        self.times["trial_logged"] = self.experiment.synch.clock
+
+        self.experiment.save_csv(
+            {
+                "trial_py_version": self.version,
+                "type": self.__class__.__name__,
+                "target_ans": self.answer_index,
+                "participant_ans": self.answer,
+                "time_start": self.times["start"],
+                "time_stimulus_start": self.times["stimulus_start"],
+                "time_stimulus_end": self.times["stimulus_end"],
+                "time_response_enabled": self.times["response_enabled"],
+                "time_response_submitted": self.times["response_submitted"],
+                "time_trial_logged": self.times["trial_logged"]
+            },
+            file="trials-" + self.version,
+            public=True
+        )

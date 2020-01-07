@@ -26,6 +26,9 @@ class Config(enum.Enum):
 
 if __name__ == '__main__':
 
+    # Query participant details
+    participant = {"id": "testing", "gender": "other", "age": 18}
+
     # Create the window we'll display the experiment in
     win = visual.Window(
         size=[1000, 1000],
@@ -71,7 +74,8 @@ if __name__ == '__main__':
         window=win,
         panel_size=[800, 800],
         synch=SSO,
-        log_level=Config.MIN_LOG_LEVEL.value
+        log_level=Config.MIN_LOG_LEVEL.value,
+        participant=participant
     )
 
     # Debugging

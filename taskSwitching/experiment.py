@@ -1,4 +1,7 @@
 from psychopy import visual
+import csv
+import os.path
+import datetime
 
 
 class Experiment:
@@ -7,6 +10,9 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
+    version = "v0.0.1"
+    save_path = "data"
+
     trials = []
     current_trial_number = 0
     stimulus_duration = 0.5
@@ -26,10 +32,15 @@ class Experiment:
     stimulus_text_color = [-1, -1, 1]
     stimulus_background_color = [.5, .5, .5]
 
-    def __init__(self, window=None, synch=None, log_level='INFO', **kwargs):
+    def __init__(self, participant=None, window=None, synch=None, log_level='INFO', **kwargs):
         """
         :param kwargs:
         """
+        if participant is None:
+            raise ValueError('A participant must be specified for the experiment')
+        else:
+            self.participant = participant
+
         if window is None:
             raise ValueError('A window must be specified for the experiment')
         else:
@@ -64,14 +75,58 @@ class Experiment:
         for t in self.trials:
             t.run()
 
-    def save_csv(self, line):
+    def save_csv(self, row_dict, file="trials", public=False):
         """
         Write a line to the experiment's CSV file
-        :param line: list of values to write
-        :type line: list
+        :param row_dict: dict of values to write
+        :type row_dict: dict
+        :param file: filename to save under
+        :type file: str
+        :param public: whether data should be publicly accesible
+        :type public: bool
         :return:
         """
-        pass
+        if public:
+            access = "public"
+        else:
+            access = "private"
+        file_name = os.path.join(self.save_path, access, self.__class__.__name__ + "_" + file + ".csv")
+
+        # add write-time info to the file
+        row_dict = {
+            'write_time': datetime.datetime.now().isoformat(),
+            'experiment_name': self.__class__.__name__,
+            'experiment_version': self.version,
+            'participant_id': self.participant["id"],
+            **row_dict
+        }
+
+        if not os.path.isfile(file_name):
+            head = row_dict.keys()
+            new_file = True
+        else:
+            new_file = False
+            with open(file_name, 'r') as f:
+                old = csv.DictReader(f)
+                head = old.fieldnames
+
+                for k in row_dict.keys():
+                    if k not in head:
+                        raise ValueError("Field " + k + " in data but not header names when saving to " + file_name)
+
+                for k in head:
+                    if k not in row_dict.keys():
+                        raise ValueError("Field " + k + " in headers but not in data when saving to " + file_name)
+
+        if len(head) < 5:
+            raise ValueError("No headers found for saving CSV file " + file_name)
+
+        with open(file_name, 'a+') as f:
+            w = csv.DictWriter(f, head)
+            if new_file:
+                w.writeheader()
+
+            w.writerow(row_dict)
 
     def to_json(self):
         """
