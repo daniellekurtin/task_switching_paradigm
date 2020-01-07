@@ -20,7 +20,11 @@ class Experiment:
     answer_rect_width = .06   # normed units for Panel
     answer_rect_height = .06  # normed units for Panel
 
+    background_color = [0, 0, 0]
+    line_color = [1, 1, 1]
     text_color = [1, 1, 1]
+    stimulus_text_color = [-1, -1, 1]
+    stimulus_background_color = [.5, .5, .5]
 
     def __init__(self, window=None, synch=None, log_level='INFO', **kwargs):
         """
@@ -43,6 +47,8 @@ class Experiment:
 
         if self.window.size[0] < self.panel_size[0] or self.window.size[1] < self.panel_size[1]:
             raise ValueError('The requested panel size is larger than the window size')
+
+        self.window.color = self.background_color
 
         self.loading_text_stim = visual.TextStim(
             win=self.window,

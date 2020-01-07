@@ -37,8 +37,6 @@ class Trial(Component):
     answer = -1  # Answer supplied by participant
     answer_index = -1  # Actual answer
 
-    halfCharPx = 10
-
     def __init__(self, experiment, **kwargs):
         """
         :param experiment: Experiment to which this trial belongs
@@ -94,21 +92,17 @@ class Trial(Component):
                     # Shaded box
                     target_grid.rect.pos = coords
                     color = target_grid.rect.fillColor
-                    target_grid.rect.fillColor = [.5, .5, .5]
+                    target_grid.rect.fillColor = self.experiment.stimulus_background_color
                     target_grid.rect.draw()
                     target_grid.rect.fillColor = color
 
                     # Draw the text
-                    # Nudge the x coordinate of the stimulus to centre it in the box
-                    text_coords = [coords[0] - self.halfCharPx, coords[1]]
-
                     stim = visual.TextStim(
                         text=stimulus[r, c],
                         win=self.experiment.window,
                         font='monospace',
-                        pos=text_coords,
-                        color=[-1, -1, 1],
-                        wrapWidth=1  # no idea why we need this, but apparently we do. Complaints to PsychoPy :)
+                        pos=coords,
+                        color=self.experiment.stimulus_text_color
                     )
                     stim.draw()
 
@@ -134,8 +128,8 @@ class Trial(Component):
                     width=width,
                     height=height,
                     units='pix',
-                    fillColor=[0, 0, 0],
-                    lineColor=[1, 1, 1]
+                    fillColor=self.experiment.background_color,
+                    lineColor=self.experiment.line_color
                 ),
                 start_coords=self.n2p(positions[i])
             ) for i in range(len(self.answers))

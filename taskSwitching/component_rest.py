@@ -27,11 +27,7 @@ class ComponentRest(Component):
         self.countdown = visual.TextStim(
             self.experiment.window,
             text="",
-            color=[-1, -1, -1],
-            pos=(
-                0,
-                0
-            )
+            color=self.experiment.text_color
         )
 
         for k in kwargs.keys():
