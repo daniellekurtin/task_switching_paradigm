@@ -1,3 +1,4 @@
+from psychopy import visual
 
 
 class Experiment:
@@ -18,6 +19,8 @@ class Experiment:
     max_response_time = 2
     answer_rect_width = .06   # normed units for Panel
     answer_rect_height = .06  # normed units for Panel
+
+    text_color = [1, 1, 1]
 
     def __init__(self, window=None, synch=None, log_level='INFO', **kwargs):
         """
@@ -40,6 +43,12 @@ class Experiment:
 
         if self.window.size[0] < self.panel_size[0] or self.window.size[1] < self.panel_size[1]:
             raise ValueError('The requested panel size is larger than the window size')
+
+        self.loading_text_stim = visual.TextStim(
+            win=self.window,
+            color=self.text_color,
+            text=""
+        )
 
     def __del__(self):
         self.window.close()
@@ -64,3 +73,13 @@ class Experiment:
         :return:
         """
         pass
+
+    def debug_trial_order(self):
+        n = 0
+        for i in range(len(self.trials)):
+            t = self.trials[i]
+            tt = t.__class__.__name__
+            # print the final trial type
+            print("> " + str(n) + " x " + str(tt))
+
+            n += 1
