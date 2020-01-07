@@ -24,20 +24,13 @@ class ComponentRest(Component):
         super().__init__(**kwargs)
         self.experiment.window.mouseVisible = True
         self.duration = break_duration
-        self.fixation = visual.ShapeStim(
-            self.experiment.window,
-            vertices=((0, -0.5), (0, 0.5), (0, 0), (-0.5, 0), (0.5, 0)),
-            lineWidth=5,
-            closeShape=False,
-            lineColor=[-1, -1, -1]
-        )
         self.countdown = visual.TextStim(
             self.experiment.window,
             text="",
             color=[-1, -1, -1],
             pos=(
-                self.experiment.window.size[0] / 2 - 20,
-                150
+                0,
+                0
             )
         )
 
@@ -45,7 +38,6 @@ class ComponentRest(Component):
             self.__setattr__(k, kwargs[k])
 
     def draw(self):
-        self.fixation.draw()
         self.countdown.draw()
 
     def main(self):
