@@ -49,7 +49,7 @@ class Block(enum.IntEnum):
     BREAK_TIME = 120
 
 
-def get_run_sequence():
+def get_run_sequence(infoTextStim = None):
     """
     Produces a sequence of runs which ensures an equal number of transitions of each type.
     :return: list: TrialType sequence for the runs
@@ -88,6 +88,11 @@ def get_run_sequence():
             s = tS.deepcopy(switches)
             sequence = [random.choice(list(TrialTypes))]
             while len(sequence) <= Block.SWITCH_COUNT * Block.COUNT:
+                if infoTextStim is not None:
+                    infoTextStim.text = "Generating run sequence... [attempt " + str(n + 1) + "] " + \
+                                        str(len(sequence)) + "/" + str(Block.COUNT * Block.SWITCH_COUNT)
+                    infoTextStim.draw()
+                    infoTextStim.win.flip()
                 # Add a run of the next trial type
                 f = sequence[len(sequence) - 1]  # TrialType we're switching from
 
@@ -112,6 +117,11 @@ def get_run_sequence():
         if len(sequence) >= Block.SWITCH_COUNT * Block.COUNT:
             break
         elif n > 1000:
+            if infoTextStim is not None:
+                infoTextStim.text = "Failed to generate run sequence: maximum iterations exceeded!"
+                infoTextStim.color = [1, -1, -1]
+                infoTextStim.draw()
+                infoTextStim.win.flip()
             raise RuntimeError("Exceeded maximum attempts to create a run sequence.")
 
     return sequence
@@ -196,7 +206,7 @@ def create_stimulus_by_type(trial_type, __prevent_recursion__=False, **kwargs):
     return out
 
 
-def trials_from_sequence(sequence, experiment):
+def trials_from_sequence(sequence, experiment, infoTextStim=None):
     """
     Create a list of Trials given a sequence of TrialTypes.
     Each TrialType in the sequence specifies a run of trials divided over the experimental blocks.
@@ -299,7 +309,14 @@ def trials_from_sequence(sequence, experiment):
 
         # Construct each run
         for s in range(Block.SWITCH_COUNT):
-            i = Block.SWITCH_COUNT * b + s + 1 # index of run in sequence
+
+            if infoTextStim is not None:
+                infoTextStim.text = "Generating trials for block " + str(b + 1) + "/" + str(Block.COUNT.value) + \
+                    ": " + str(round(s / Block.SWITCH_COUNT.value * 100)) + "%"
+                infoTextStim.draw()
+                infoTextStim.win.flip()
+
+            i = Block.SWITCH_COUNT * b + s + 1  # index of run in sequence
             trial_type = sequence[i]
             run_length = random.randint(RunLength.MIN, RunLength.MAX)
             end_of_block = s == Block.SWITCH_COUNT - 1
@@ -372,6 +389,15 @@ if __name__ == '__main__':
         gammaErrorPolicy="warn"
     )
 
+    text = visual.TextStim(
+        text="Scanner synch... preparing",
+        win=win,
+        font='monospace',
+        color=[1, 1, 1]
+    )
+    text.draw()
+    text.win.flip()
+
     # Create interface for scanner pulse and response box
     SSO = scannersynch.scanner_synch(
         config=Config.SYNCH_CONFIG.value,
@@ -387,6 +413,10 @@ if __name__ == '__main__':
     else:
         SSO.buttons = ['1', '2', '3']
 
+    text.text = "Scanner synch... starting"
+    text.draw()
+    text.win.flip()
+
     SSO.start_process()
 
     # Create the experiment object
@@ -397,8 +427,8 @@ if __name__ == '__main__':
         log_level=Config.MIN_LOG_LEVEL.value
     )
 
-    seq = get_run_sequence()
-    trials = trials_from_sequence(seq, experiment=exp)
+    seq = get_run_sequence(text)
+    trials = trials_from_sequence(seq, experiment=exp, infoTextStim=text)
 
     # Debugging
     n = 0

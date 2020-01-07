@@ -6,6 +6,9 @@ env/
 # vscode environment
 .vscode/
 
+venv/
+.idea/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
