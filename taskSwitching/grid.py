@@ -4,14 +4,14 @@ from math import ceil
 # Create a grid by specifying rectangles to be repeated
 class Grid:
 
-    def __init__(self, width_in_cells, height_in_cells, psychopy_rect, start_pos_tuple):
+    def __init__(self, width_in_cells, height_in_cells, psychopy_rect, start_coords):
         # we would copy this stuff across, but here we do some shorthand hacks
         self.width = width_in_cells
         self.height = height_in_cells
         self.rect = psychopy_rect
         # bump the start coordinates to account for rectangles drawing centred on their start points
-        self.start = (start_pos_tuple[0] - ceil(self.rect.width * self.width / 2),
-                      start_pos_tuple[1] - ceil(self.rect.height * self.height / 2))
+        self.start = (start_coords[0] - ceil(self.rect.width * self.width / 2),
+                      start_coords[1] - ceil(self.rect.height * self.height / 2))
 
     # Return the pixel offset of the cell at coordinates r, c
     def coord_to_pixel_offset(self, r, c):

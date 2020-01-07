@@ -242,10 +242,10 @@ def trials_from_sequence(sequence, experiment):
     unique_ripl_count = len(InfoCardDurations)  # run intro period lengths
     if (Block.SWITCH_COUNT * Block.COUNT) % (unique_switch_count * unique_ripl_count) != 0:
         raise ValueError("Total number of switches (" +
-                         (Block.SWITCH_COUNT * Block.COUNT) +
+                         str(Block.SWITCH_COUNT * Block.COUNT) +
                          ") must be divisible by number of unique switches * number of intro period lengths (" +
-                         unique_switch_count + " * " + unique_ripl_count + " = " +
-                         (unique_switch_count * unique_ripl_count) + ")")
+                         str(unique_switch_count) + " * " + str(unique_ripl_count) + " = " +
+                         str(unique_switch_count * unique_ripl_count) + ")")
 
     ripl_count = int(Block.SWITCH_COUNT * Block.COUNT / (unique_switch_count * unique_ripl_count))
 
@@ -383,7 +383,7 @@ if __name__ == '__main__':
 
     # Create the window we'll display the experiment in
     win = visual.Window(
-        size=[800, 800],
+        size=[1000, 1000],
         units="pix",
         fullscr=False,
         color=[0, 0, 0],
@@ -410,6 +410,7 @@ if __name__ == '__main__':
     # Create the experiment object
     exp = tS.Experiment(
         window=win,
+        panel_size=[800, 800],
         synch=SSO,
         log_level=Config.MIN_LOG_LEVEL.value
     )

@@ -5,7 +5,7 @@ from datetime import timedelta
 
 def make_display_numbers(rows, cols, values, row_num, col_num):
     """
-    Consturct an empty grid of rowNum x colNum, with values placed at cells identified by rows and cols
+    Construct an empty grid of rowNum x colNum, with values placed at cells identified by rows and cols
     :param rows: list of row indices
     :param cols: list of column indices
     :param values: list of values for cells identified by rows[i], cols[i]
@@ -34,8 +34,8 @@ class Trial(Component):
     trial_number = -1
     stimulus = None
     answers = [None, None, None]
-    answer = -1             # Answer supplied by participant
-    answer_index = -1        # Actual answer
+    answer = -1  # Answer supplied by participant
+    answer_index = -1  # Actual answer
 
     halfCharPx = 10
 
@@ -48,8 +48,9 @@ class Trial(Component):
         self.logEntries = []
         super().__init__(experiment, **kwargs)
 
-        cell_size = 70  # pixels
-        grid_size = 6   # cells
+        cell_size = .14  # normed units of Panel
+        cell_pix = self.n2p([cell_size, 0])[0]
+        grid_size = 6  # cells
 
         self.grid = Grid(
             width_in_cells=grid_size,
@@ -57,15 +58,13 @@ class Trial(Component):
             # including the rectangles we'll be using as cells
             psychopy_rect=visual.Rect(
                 win=self.experiment.window,
-                width=cell_size,
-                height=cell_size,
+                width=cell_pix,
+                height=cell_pix,
+                units='pix',
                 fillColor=[0, 0, 0],
                 lineColor=[1, 1, 1]
             ),
-            start_pos_tuple=(
-                -(self.experiment.window.size[0] / 2) + cell_size * grid_size,
-                0
-            )
+            start_coords=self.n2p([-.9 + (cell_size * grid_size / 2), 0])
         )
 
         # Inherit trial-specific properties of the Experiment
@@ -83,31 +82,31 @@ class Trial(Component):
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
 
-    def draw_stim(self, stimulus, grid=None):
-        if grid is None:
-            grid = self.grid
+    def draw_stim(self, stimulus, target_grid=None):
+        if target_grid is None:
+            target_grid = self.grid
 
         dim = stimulus.shape
         for r in range(dim[0]):
             for c in range(dim[1]):
                 if stimulus[r, c] is not None:
-                    coords = grid.coord_to_pixel_offset(r, c)
+                    coords = target_grid.coord_to_pixel_offset(r, c)
                     # Shaded box
-                    grid.rect.pos = coords
-                    color = grid.rect.fillColor
-                    grid.rect.fillColor = [.5, .5, .5]
-                    grid.rect.draw()
-                    grid.rect.fillColor = color
+                    target_grid.rect.pos = coords
+                    color = target_grid.rect.fillColor
+                    target_grid.rect.fillColor = [.5, .5, .5]
+                    target_grid.rect.draw()
+                    target_grid.rect.fillColor = color
 
                     # Draw the text
                     # Nudge the x coordinate of the stimulus to centre it in the box
-                    coords = (coords[0] - self.halfCharPx, coords[1])
+                    text_coords = [coords[0] - self.halfCharPx, coords[1]]
 
                     stim = visual.TextStim(
                         text=stimulus[r, c],
                         win=self.experiment.window,
                         font='monospace',
-                        pos=coords,
+                        pos=text_coords,
                         color=[-1, -1, 1],
                         wrapWidth=1  # no idea why we need this, but apparently we do. Complaints to PsychoPy :)
                     )
@@ -115,14 +114,16 @@ class Trial(Component):
 
     def get_answer_grid_positions(self):
         n = len(self.answers)
-        return [(
-            self.experiment.window.size[0] / 2 - (self.grid.width + 1) * self.answer_rect_width,
-            self.experiment.window.size[1] / 2 - self.grid.height *
-            self.answer_rect_height - self.experiment.window.size[1] * i / n
-        ) for i in range(n)]
+        remainder = 2 - (self.answer_rect_height * n)
+        gap_height = remainder / (n + 1)
+        return [[
+            .60 + self.answer_rect_width / 2,  # x
+            (-1 + gap_height + self.answer_rect_height / 2) + (gap_height + self.answer_rect_height) * i  # y
+        ] for i in range(n)]
 
     def get_answer_grids(self):
         positions = self.get_answer_grid_positions()
+        [width, height] = self.n2p([self.answer_rect_width, self.answer_rect_height])
         return [
             Grid(
                 width_in_cells=self.experiment.grid_size,
@@ -130,12 +131,13 @@ class Trial(Component):
                 # including the rectangles we'll be using as cells
                 psychopy_rect=visual.Rect(
                     win=self.experiment.window,
-                    width=self.answer_rect_width,
-                    height=self.answer_rect_height,
+                    width=width,
+                    height=height,
+                    units='pix',
                     fillColor=[0, 0, 0],
                     lineColor=[1, 1, 1]
                 ),
-                start_pos_tuple=positions[i]
+                start_coords=self.n2p(positions[i])
             ) for i in range(len(self.answers))
         ]
 
@@ -146,9 +148,10 @@ class Trial(Component):
             g.draw()
 
             # Draw the purported answer over this grid
-            self.draw_stim(self.answers[i], grid=g)
+            self.draw_stim(self.answers[i], target_grid=g)
 
     def draw_number(self, n):
+        self.debug_visuals()
         self.grid.draw()
         self.draw_stim(n)
         self.experiment.window.flip()
@@ -169,12 +172,14 @@ class Trial(Component):
             self.draw_number(n)
             clock.wait(self.stimulus_duration)
 
+            self.debug_visuals()
             self.grid.draw()
             self.experiment.window.flip()
             clock.wait(.5)
 
     def collect_response(self):
         # PsychoPy click response stuff?
+        self.debug_visuals()
         self.draw_answer_grids()
         self.experiment.window.flip()
 
@@ -187,7 +192,7 @@ class Trial(Component):
 
             self.log('Answer = ' + str(button),level='EXP')
             self.log('Reaction time = ' + str(self.experiment.synch.buttonpresses[-1][1]-t0),level='EXP')
-            self.log('Correct = ' + str(button == self.answer_index),level='EXP') #  button is not zero-indexed
+            self.log('Correct = ' + str(button == self.answer_index), level='EXP')  # button is not zero-indexed
         else:
             self.log('Answer = ' + str(None),level='EXP')
             self.log('Reaction time = ' + str(0),level='EXP')

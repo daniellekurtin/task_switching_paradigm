@@ -13,6 +13,8 @@ class Component:
     Any set of screens in the experiment is a component. These could be trials, instructions, breaks, etc.
     """
 
+    debug_visual = True
+
     def __init__(self, experiment, **kwargs):
         """
         :type experiment: Experiment
@@ -26,6 +28,47 @@ class Component:
             self.__setattr__(k, kwargs[k])
 
         self.logEntries = []
+
+    def n2p(self, coords):
+        """
+        Normed coordinates as pixels
+        :param coords: list of coordinates in normed units [int: x, int: y]
+        :return: coordinates in pixels
+        """
+        return [
+            coords[0] * self.experiment.panel_size[0] / 2,
+            coords[1] * self.experiment.panel_size[1] / 2
+        ]
+
+    def h2p(self, coords):
+        """
+        Height coordinates as pixels
+        :param coords: list of coordinates in height units [int: x, int: y]
+        :return: coordinates in pixels
+        """
+        aspect_ratio = self.experiment.panel_size[0] / self.experiment.panel_size[1]
+        return [
+            coords[0] * self.experiment.panel_size[0] * aspect_ratio,
+            coords[1] * self.experiment.panel_size[1]
+        ]
+
+    def debug_visuals(self):
+        """
+        Draw debugging markers on the screen
+        :return:
+        """
+        if not self.debug_visual:
+            return
+
+        rect = visual.Rect(
+            win=self.experiment.window,
+            width=self.n2p([2, 0])[0],
+            height=self.n2p([0, 2])[1],
+            units='pix',
+            lineColor=[1, 1, 1],
+            pos=[0, 0]
+        )
+        rect.draw()
 
     def log(self, entry, level='INFO'):
         """
@@ -58,7 +101,7 @@ class Component:
         pass
 
     def cleanup(self):
-        log_level = self.experiment.log_level # to_json removes experiment
+        log_level = self.experiment.log_level  # to_json removes experiment
         self.log(self.to_json(),level='DEBUG')
         print("\n")
         for log in self.logEntries:
