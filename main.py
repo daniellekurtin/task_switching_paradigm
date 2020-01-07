@@ -1,30 +1,11 @@
 """
 Jobs:
-Job list curated below:
-1.	Previous display jobs:
-    1.	Move to window-relative rather than absolute units approach
-    2.	Position grids using normalized, window-relative units
-    3.	Specify stimuli in either pixels or visual angle approach
-2.	Task jobs:
-    1.	Tidy up spatial rotation task
-        1. Restructure to use sensible parameter assumptions/passing
-        2. There's a bug in the algorithm which needs fixing
-    2.	Add the task-switching parameters
-        1.	All stimuli are presented for 500 ms
-        2.	Participants have 2000 ms to answer, before the next trial begins (nonanswered trials count as incorrect)
-        3.	For now, each task should consist of 10 trials before switching
-        4.	The “Next Task:__” cues are either 500 ms or 4000 ms
-    3.	Add instruction slides
-    4. SAVE the data!
-        1. Save a CSV representation of the key variables
-3.	Other
-    1.	Content unit test
-    2.	Package unit test
-    3.	DRY
-    4.	Reorder files
-    5.	Add EEG/fMRI cues (Tibor is on it!)
-    6.	Add an ability to quit the task midway. Tibor and I tried to exit early by pressing esc or exiting the screen, but it would not disappear unless we finished the task.
-
+1. Add a "press any key to begin" button
+2. Hide countdown on breaks (which are now 2 minutes) until there is 5 seconds left.
+Display jobs:
+3. Create monitor, window
+4. Specify panel size in degrees of visual arc (deg).
+5. Specify components drawn on panel in percentages/standard units.
 __________________________________________
 
 """
