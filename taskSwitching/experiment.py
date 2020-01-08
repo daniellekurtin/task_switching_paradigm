@@ -51,6 +51,12 @@ class Experiment:
             self.synch = synch
         
         self.log_level = log_level
+        self.save_path = path.join(getcwd(),"data")
+        self.loading_text_stim = visual.TextStim(
+            win=self.window,
+            color=self.text_color,
+            text=""
+        )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -60,13 +66,6 @@ class Experiment:
 
         self.window.color = self.background_color
 
-        self.loading_text_stim = visual.TextStim(
-            win=self.window,
-            color=self.text_color,
-            text=""
-        )
-
-        self.save_path = path.join(getcwd(),"data")
         makedirs(path.join(self.save_path,"private"),exist_ok=True)
         makedirs(path.join(self.save_path,"public"),exist_ok=True)
 
