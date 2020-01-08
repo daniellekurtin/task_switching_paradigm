@@ -1,7 +1,7 @@
 from psychopy import visual
 import csv
 from os import getcwd, path, makedirs
-import datetime
+from datetime import datetime
 
 
 class Experiment:
@@ -31,7 +31,7 @@ class Experiment:
     stimulus_text_color = [-1, -1, 1]
     stimulus_background_color = [.5, .5, .5]
 
-    def __init__(self, participant=None, window=None, synch=None, log_level='INFO', **kwargs):
+    def __init__(self, participant=None, window=None, synch=None, config=None, **kwargs):
         """
         :param kwargs:
         """
@@ -50,7 +50,12 @@ class Experiment:
         else:
             self.synch = synch
         
-        self.log_level = log_level
+        if config is None:
+            raise ValueError('A configuration must be specified for the experiment')
+        else:
+            self.Config = config
+
+        self.log_level = self.Config.MIN_LOG_LEVEL.value
         self.save_path = path.join(getcwd(),"data")
         self.loading_text_stim = visual.TextStim(
             win=self.window,
@@ -76,6 +81,9 @@ class Experiment:
     def run(self):
         for t in self.trials:
             t.run()
+            if self.Config.QUIT_BUTTON.value in self.synch.pressed_control_buttons():
+                print('{}: {} - {}'.format(str(datetime.now()), 'INFO', 'Experiment has been interrupted'))
+                break
 
     def save_csv(self, row_dict, file="trials", public=False):
         """
@@ -96,7 +104,7 @@ class Experiment:
 
         # add write-time info to the file
         row_dict = {
-            'write_time': datetime.datetime.now().isoformat(),
+            'write_time': datetime.now().isoformat(),
             'experiment_name': self.__class__.__name__,
             'experiment_version': self.version,
             'participant_id': self.participant["id"],

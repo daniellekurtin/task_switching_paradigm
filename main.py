@@ -22,6 +22,7 @@ class Config(enum.Enum):
     IN_SCANNER = False
     TR = 2                          # seconds
     MIN_LOG_LEVEL = 'INFO'
+    QUIT_BUTTON = 'q'
 
 
 if __name__ == '__main__':
@@ -62,6 +63,7 @@ if __name__ == '__main__':
         SSO.add_buttonbox('Nata')
     else:
         SSO.buttons = ['1', '2', '3']
+    SSO.control_buttons = [Config.QUIT_BUTTON.value]
 
     text.text = "Scanner synch... starting"
     text.draw()
@@ -74,7 +76,7 @@ if __name__ == '__main__':
         window=win,
         panel_size=[800, 800],
         synch=SSO,
-        log_level=Config.MIN_LOG_LEVEL.value,
+        config=Config,
         participant=participant
     )
 
@@ -86,4 +88,6 @@ if __name__ == '__main__':
     exp.run()
     
     exp = None
+    win.close()
+    SSO._scanner_synch__process.terminate()
     SSO = None
