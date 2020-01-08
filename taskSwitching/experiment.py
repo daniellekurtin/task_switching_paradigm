@@ -1,6 +1,6 @@
 from psychopy import visual
 import csv
-import os.path
+from os import getcwd, path, makedirs
 import datetime
 
 
@@ -11,8 +11,7 @@ class Experiment:
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
     version = "v0.0.1"
-    save_path = "data"
-
+    
     trials = []
     current_trial_number = 0
     stimulus_duration = 0.5
@@ -67,6 +66,10 @@ class Experiment:
             text=""
         )
 
+        self.save_path = path.join(getcwd(),"data")
+        makedirs(path.join(self.save_path,"private"),exist_ok=True)
+        makedirs(path.join(self.save_path,"public"),exist_ok=True)
+
     def __del__(self):
         self.window.close()
         self.synch = None
@@ -90,7 +93,7 @@ class Experiment:
             access = "public"
         else:
             access = "private"
-        file_name = os.path.join(self.save_path, access, self.__class__.__name__ + "_" + file + ".csv")
+        file_name = path.join(self.save_path, access, self.__class__.__name__ + "_" + file + ".csv")
 
         # add write-time info to the file
         row_dict = {
@@ -101,7 +104,7 @@ class Experiment:
             **row_dict
         }
 
-        if not os.path.isfile(file_name):
+        if not path.isfile(file_name):
             head = row_dict.keys()
             new_file = True
         else:
