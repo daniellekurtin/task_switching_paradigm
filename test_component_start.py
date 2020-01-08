@@ -2,6 +2,7 @@ import taskSwitching as tS
 from psychopy import visual, core
 from pyniexp import scannersynch
 import enum
+import tkinter as tk
 
 
 # Set some useful constants
@@ -45,12 +46,24 @@ if __name__ == '__main__':
         log_level=Config.MIN_LOG_LEVEL.value
     )
 
-    info = [tS.ComponentStart(experiment=exp)]
-    exp.trials = info
+master = tk.Tk()
+tk.Label(master, text="First Name").grid(row=0)
+tk.Label(master, text="Last Name").grid(row=1)
 
-    exp.synch.wait_for_synch()
-    exp.run()
+e1 = tk.Entry(master)
+e2 = tk.Entry(master)
 
-    exp = None
-    SSO = None
+e1.grid(row=0, column=1)
+e2.grid(row=1, column=1)
+
+master.mainloop()
+
+info = [tS.ComponentStart(experiment=exp)]
+exp.trials = info
+
+exp.synch.wait_for_synch()
+exp.run()
+
+exp = None
+SSO = None
     
