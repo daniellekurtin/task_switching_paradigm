@@ -124,7 +124,7 @@ class Trial(Component):
         gap_height = remainder / (n + 1)
         return [[
             .60 + self.answer_rect_width / 2,  # x
-            (-1 + gap_height + self.answer_rect_height / 2) + (gap_height + self.answer_rect_height) * i  # y
+            (1 - (gap_height + self.answer_rect_height / 2)) - (gap_height + self.answer_rect_height) * i  # y
         ] for i in range(n)]
 
     def get_answer_grids(self):
