@@ -123,7 +123,7 @@ class Experiment:
         if len(head) < 5:
             raise ValueError("No headers found for saving CSV file " + file_name)
 
-        with open(file_name, 'a+') as f:
+        with open(file_name, 'a+', newline='') as f:
             w = csv.DictWriter(f, head)
             if new_file:
                 w.writeheader()
