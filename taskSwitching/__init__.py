@@ -11,3 +11,4 @@ from taskSwitching.component_trial_gap import *
 from taskSwitching.component_info_card import *
 from taskSwitching.component_start import *
 from taskSwitching.component_rest import *
+from taskSwitching.participant_gui import *
