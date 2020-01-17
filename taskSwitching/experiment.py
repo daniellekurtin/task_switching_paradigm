@@ -81,7 +81,8 @@ class Experiment:
     def run(self):
         for t in self.trials:
             t.run()
-            if self.Config.QUIT_BUTTON.value in self.synch.pressed_control_buttons():
+            if hasattr(self.synch, 'pressed_control_buttons') and \
+                    self.Config.QUIT_BUTTON.value in self.synch.pressed_control_buttons():
                 print('{}: {} - {}'.format(str(datetime.now()), 'INFO', 'Experiment has been interrupted'))
                 break
 
