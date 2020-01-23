@@ -28,13 +28,13 @@ class Config(enum.Enum):
 if __name__ == '__main__':
 
     # Query participant details
-    participant = {"id": "test2", "gender": "other", "age": 18}
+    participant = {"id": "breakplusarefive", "gender": "m", "age": 18}
 
     # Create the window we'll display the experiment in
     win = visual.Window(
         size=[1000, 1000],
         units="pix",
-        fullscr=True,
+        fullscr=False,
         color=[0, 0, 0],
         winType='pyglet',
         gammaErrorPolicy="warn"

@@ -177,7 +177,7 @@ class Trial(Component):
         self.log('Preparation complete for trial number ' +
                  str(self.trial_number) +
                  ' (' + self.__class__.__name__ + ')')
-        clock.wait(.5)
+        # clock.wait(.5)
         pass
 
     def show_stimulus(self):
