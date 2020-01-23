@@ -28,7 +28,8 @@ class Config(enum.Enum):
 if __name__ == '__main__':
 
     # Query participant details
-    participant = {"id": "breakplusarefive", "gender": "m", "age": 18}
+    gui = tS.ParticipantGUI()
+    participant = gui.participant
 
     # Create the window we'll display the experiment in
     win = visual.Window(

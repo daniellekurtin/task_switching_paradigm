@@ -1,7 +1,7 @@
 {
     "DAQ": {
         "Hardware": "Dev1",
-        "BufferLength": 1000
+        "BufferLength": 10000
     },
     "SynchPulse": {
         "Channel_Manual": "port0/line0",

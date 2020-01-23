@@ -10,7 +10,7 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
-    version = "v0.0.1"
+    version = "v0.0.2"
     
     trials = []
     current_trial_number = 0
@@ -101,14 +101,17 @@ class Experiment:
             access = "public"
         else:
             access = "private"
-        file_name = path.join(self.save_path, access, self.__class__.__name__ + "_" + file + ".csv")
+        file_name = path.join(self.save_path, access, self.__class__.__name__ + "-" + self.version + "_" + file + ".csv")
 
         # add write-time info to the file
         row_dict = {
             'write_time': datetime.now().isoformat(),
             'experiment_name': self.__class__.__name__,
             'experiment_version': self.version,
-            'participant_id': self.participant["id"],
+            'participant_id': self.participant.id,
+            'participant_session': self.participant.session,
+            'participant_age': self.participant.age,
+            'participant_gender': self.participant.gender,
             **row_dict
         }
 
