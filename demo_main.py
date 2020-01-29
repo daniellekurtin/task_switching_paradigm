@@ -1,12 +1,5 @@
 """
-Jobs:
-1. Add a "press any key to begin" button (DONE)
-2. Hide countdown on breaks (which are now 2 minutes) until there is 5 seconds left.
-3. Annotate code for future editing
-Display jobs:
-3. Create monitor, window
-4. Specify panel size in degrees of visual arc (deg).
-5. Specify components drawn on panel in percentages/standard units.
+This demo will familiarze participants with the three tasks
 __________________________________________
 
 """
@@ -35,7 +28,7 @@ if __name__ == '__main__':
     win = visual.Window(
         size=[1000, 1000],
         units="pix",
-        fullscr=True,
+        fullscr=False,
         color=[0, 0, 0],
         winType='pyglet',
         gammaErrorPolicy="warn"
@@ -73,7 +66,7 @@ if __name__ == '__main__':
     SSO.start_process()
 
     # Create the experiment object
-    exp = tS.ExperimentTaskSwitch(
+    exp = tS.demoExperimentTaskSwitch(
         window=win,
         panel_size=[800, 800],
         synch=SSO,
