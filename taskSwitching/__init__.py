@@ -12,3 +12,5 @@ from taskSwitching.component_info_card import *
 from taskSwitching.component_start import *
 from taskSwitching.component_rest import *
 from taskSwitching.participant_gui import *
+from taskSwitching.demo_experiment import *
+from taskSwitching.demo_experiment_task_switch import * 
