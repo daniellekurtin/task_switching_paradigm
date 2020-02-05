@@ -11,7 +11,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 # columns of interest from .csv file
 headers = ['participant_id', 'type', 'target_ans', 'participant_ans', 'time_start', 'time_response_enabled', 'time_response_submitted']
 # reading in .csv file
-df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\oxbridge_brainhack_2019\data\public\ExperimentTaskSwitch-v0.0.2_trials-v0.0.1.csv', usecols = headers)
+df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\ExperimentTaskSwitch-v0.0.2_trials-v0.0.1.csv', usecols = headers)
 ###
 ###
 ###
