@@ -1,8 +1,10 @@
 import taskSwitching as tS
 from copy import deepcopy
+from os import getcwd, path, makedirs
 import enum
 import random
 import math
+import numpy as np
 
 
 class ExperimentTaskSwitch(tS.Experiment):
@@ -392,3 +394,7 @@ class ExperimentTaskSwitch(tS.Experiment):
 
         # print the final trial type
         print("> " + str(n) + " x " + str(tt))
+        
+        # self.save_path = path.join(getcwd(),"taskstructure")
+        # file_name = path.join(self.save_path, self.__class__.__name__  + ".txt")
+

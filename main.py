@@ -28,7 +28,7 @@ if __name__ == '__main__':
     win = visual.Window(
         size=[1000, 1000],
         units="pix",
-        fullscr=True,
+        fullscr=False,
         color=[0, 0, 0],
         winType='pyglet',
         gammaErrorPolicy="warn"

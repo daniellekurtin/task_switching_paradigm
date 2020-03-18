@@ -10,7 +10,7 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
-    version = "v0.0.3"
+    version = "v0.0.4"
     
     trials = []
     current_trial_number = 0
@@ -86,7 +86,7 @@ class Experiment:
                 print('{}: {} - {}'.format(str(datetime.now()), 'INFO', 'Experiment has been interrupted'))
                 break
 
-    def save_csv(self, row_dict, file="trials", public=False):
+    def save_csv(self, row_dict, file="trials", public=True):
         """
         Write a line to the experiment's CSV file
         :param row_dict: dict of values to write
@@ -155,6 +155,8 @@ class Experiment:
             t = self.trials[i]
             tt = t.__class__.__name__
             # print the final trial type
-            print("> " + str(n) + " x " + str(tt))
+            ("> " + str(n) + " x " + str(tt))
 
             n += 1
+
+        
