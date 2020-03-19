@@ -369,6 +369,13 @@ class ExperimentTaskSwitch(tS.Experiment):
 
         return trials
 
+    def trial_order_to_string(self):
+        n = 0
+        lines = []
+        # ???
+        
+        return lines
+
     def debug_trial_order(self):
         n = 0
         for i in range(len(self.trials)):
