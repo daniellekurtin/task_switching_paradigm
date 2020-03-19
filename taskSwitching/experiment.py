@@ -149,14 +149,20 @@ class Experiment:
         """
         pass
 
-    def debug_trial_order(self):
+    def trial_order_to_string(self):
         n = 0
+        lines = []
         for i in range(len(self.trials)):
             t = self.trials[i]
             tt = t.__class__.__name__
-            # print the final trial type
-            ("> " + str(n) + " x " + str(tt))
+            # output the final trial type
+            lines.append(str(n) + " x " + str(tt))
 
             n += 1
 
-        
+        return lines
+
+
+    def debug_trial_order(self):
+        for s in self.trial_order_to_string():
+            print("> " + s)
