@@ -13,7 +13,7 @@ class Component:
     Any set of screens in the experiment is a component. These could be trials, instructions, breaks, etc.
     """
 
-    debug_visual = False
+    debug_visual = True
 
     def __init__(self, experiment, **kwargs):
         """

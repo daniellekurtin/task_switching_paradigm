@@ -382,6 +382,7 @@ class ExperimentTaskSwitch(tS.Experiment):
             if isinstance(t, tS.ComponentInfoCard):
                 if n > 0:
                     print("> " + str(n) + " x " + str(tt))
+                    print(t.break_duration)
                 print(t.__class__.__name__)
                 n = 0
             elif isinstance(t, tS.ComponentRest):
@@ -394,7 +395,10 @@ class ExperimentTaskSwitch(tS.Experiment):
 
         # print the final trial type
         print("> " + str(n) + " x " + str(tt))
+        # xx = ("> " + str(n) + " x " + str(tt))
+        # attempt example 1:
+        # np.savetxt("task_structure.csv", xx, delimiter=str)
+        # attempt example 2:
+        # xx.saveAsWideText("task_structure.csv", delimiter=str, appendFile=True)
+    
         
-        # self.save_path = path.join(getcwd(),"taskstructure")
-        # file_name = path.join(self.save_path, self.__class__.__name__  + ".txt")
-

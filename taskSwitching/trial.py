@@ -74,7 +74,7 @@ class Trial(Component):
                 fillColor=[0, 0, 0],
                 lineColor=[1, 1, 1]
             ),
-            start_coords=self.n2p([-.9 + (cell_size * grid_size / 2), 0])
+            start_coords=self.n2p([(-.4 + cell_size * grid_size / 2), 0])
         )
 
         # Inherit trial-specific properties of the Experiment
