@@ -4,6 +4,7 @@ from os import getcwd, path, makedirs
 import enum
 import random
 import math
+import csv
 import numpy as np
 
 
@@ -374,12 +375,7 @@ class ExperimentTaskSwitch(tS.Experiment):
     def trial_order_to_string(self):
         n = 0
         lines = []
-        # ???
         
-        return lines
-
-    def debug_trial_order(self):
-        n = 0
         for i in range(len(self.trials)):
             t = self.trials[i]
 
@@ -388,20 +384,51 @@ class ExperimentTaskSwitch(tS.Experiment):
 
             if isinstance(t, tS.ComponentInfoCard):
                 if n > 0:
-                    print("> " + str(n) + " x " + str(tt))
-                    print(t.break_duration)
-                print(t.__class__.__name__)
+                    lines.append("> " + str(n) + " x " + str(tt))
+                    lines.append(str(t.break_duration))
+                lines.append(t.__class__.__name__)
                 n = 0
             elif isinstance(t, tS.ComponentRest):
-                print("> " + str(n) + " x " + str(tt))
-                print("----------Block Break------------")
+                lines.append("> " + str(n) + " x " + str(tt))
+                lines.append("----------Block Break------------")
                 n = 0
             else:
                 n += 1
                 tt = t.__class__.__name__
+        
+        return lines
 
-        # print the final trial type
-        print("> " + str(n) + " x " + str(tt))
+    def debug_trial_order(self):
+        for s in self.trial_order_to_string():
+            print("> " + s)
+        # np.savetxt("task_structure.csv", s, delimiter=str)
+
+
+
+    # def debug_trial_order(self):
+    #     n = 0
+    #     for i in range(len(self.trials)):
+    #         t = self.trials[i]
+
+    #         if t.__class__.__name__ == "ComponentTrialGap" or t.__class__.__name__ == "ComponentStart":
+    #             continue
+
+    #         if isinstance(t, tS.ComponentInfoCard):
+    #             if n > 0:
+    #                 print("> " + str(n) + " x " + str(tt))
+    #                 print(t.break_duration)
+    #             print(t.__class__.__name__)
+    #             n = 0
+    #         elif isinstance(t, tS.ComponentRest):
+    #             print("> " + str(n) + " x " + str(tt))
+    #             print("----------Block Break------------")
+    #             n = 0
+    #         else:
+    #             n += 1
+    #             tt = t.__class__.__name__
+
+    #     # print the final trial type
+    #     print("> " + str(n) + " x " + str(tt))
         # xx = ("> " + str(n) + " x " + str(tt))
         # attempt example 1:
         # np.savetxt("task_structure.csv", xx, delimiter=str)
