@@ -78,7 +78,7 @@ class Trial(Component):
         )
 
         # Inherit trial-specific properties of the Experiment
-        if hasattr(experiment, 'stimulus_duration'):
+        if hasattr(experiment, stimulus_duration):
             self.stimulus_duration = experiment.stimulus_duration
         if hasattr(experiment, 'answer_rect_width'):
             self.answer_rect_width = experiment.answer_rect_width
@@ -188,7 +188,6 @@ class Trial(Component):
         for n in self.stimulus:
             self.draw_number(n)
             clock.wait(self.stimulus_duration)
-
             self.debug_visuals()
             self.grid.draw()
             self.experiment.window.flip()

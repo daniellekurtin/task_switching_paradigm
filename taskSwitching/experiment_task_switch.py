@@ -6,6 +6,7 @@ import random
 import math
 import csv
 import numpy as np
+import pandas as pd
 
 
 class ExperimentTaskSwitch(tS.Experiment):
@@ -400,11 +401,14 @@ class ExperimentTaskSwitch(tS.Experiment):
 
     def debug_trial_order(self):
         for s in self.trial_order_to_string():
-            print("> " + s)
-        # np.savetxt("task_structure.csv", s, delimiter=str)
+            print(s)
 
-
-
+    def trial_order_to_csv(self):
+        for i in self.trial_order_to_csv:
+            lines = pd.DataFrame()
+        lines.to_csv('participant_paradigm_structure.csv')
+            
+        #np.savetxt(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\participant_paradigm_structure.csv', s, delimiter=',')
     # def debug_trial_order(self):
     #     n = 0
     #     for i in range(len(self.trials)):
