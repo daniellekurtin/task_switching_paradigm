@@ -49,14 +49,16 @@ class Trial(Component):
         "trial_logged": -1
     }
 
-    def __init__(self, experiment, **kwargs):
+    def __init__(self, experiment, trial_type="undefined", **kwargs):
         """
         :param experiment: Experiment to which this trial belongs
+        :param trial_type: This tells trials what task type they are 
         :type experiment: taskSwitching.Experiment
         :param kwargs: keyword arguments
         """
         self.logEntries = []
         super().__init__(experiment, **kwargs)
+        self.trial_type = trial_type
 
         cell_size = .14  # normed units of Panel
         cell_pix = self.n2p([cell_size, 0])[0]
@@ -79,21 +81,19 @@ class Trial(Component):
 
         # Inherit trial-specific properties of the Experiment
 ########################################################################################
-# First two commented out sections are previous drafts 
 
-        # if hasattr(experiment, 'stimulus_duration'):
-        #     self.stimulus_duration_ds = experiment.stimulus_duration.ds
-        #     self.stimulus_duration_ss = experiment.stimulus_duration.ss
-        #     self.stimulus_duration_sr = experiment.stimulus_duration.sr
-        # if hasattr(experiment, 'TrialTypes'):
-        #     self.task_type_ds = ExperimentTaskSwitch.TrialTypes.DIGIT_SPAN
-        #     self.task_type_ss = experiment_task_switch.TrialTypes.SPATIAL_SPAN
-        #     self.task_type_sr = experiment_task_switch.TrialTypes.SPATIAL_ROTATION
+        # Find out my stimulus_durations:
+        # Plan A, I'll check my experiment to see if there is a dictionary of values for stimulus_durations,  
+        # and whether there is a stimulus_duration for my trial_type. 
+        # Plan B, I'll check my experiment to see if it has stimulus_duration, and use the value it has for stimulus_duration  
+        # Plan C, check to see if I have a constant simulus_duration I can use for my trials (kwargs)
 
+        if hasattr(experiment, 'stimulus_durations') and trial_type in experiment.stimulus_durations:   # Plan A
+            self.stimulus_duration = experiment.stimulus_durations[trial_type]  
+        elif hasattr(experiment, 'stimulus_duration'):     # Plan B
+            self.stimulus_duration = experiment.stimulus_duration
+        # Plan C is taken care of at the bottom with kwargs
 
-        if hasattr(experiment, 'stimulus_durations'):
-            self.stimulus_duration = experiment.stimulus_durations[self.trial_type]
-# when you come back start here and add add sim durations per trial types
         if hasattr(experiment, 'answer_rect_width'):
             self.answer_rect_width = experiment.answer_rect_width
         if hasattr(experiment, 'answer_rect_height'):

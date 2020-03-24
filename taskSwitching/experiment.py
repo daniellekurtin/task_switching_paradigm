@@ -15,7 +15,7 @@ class Experiment:
     
     trials = []
     current_trial_number = 0
-    # stimulus_duration = 0.5
+    stimulus_duration = 0.5   # if you want multiple values, use stimulus_durations instead
 
     panel_size = [800, 800]
 

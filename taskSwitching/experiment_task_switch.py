@@ -18,12 +18,11 @@ class ExperimentTaskSwitch(tS.Experiment):
         SPATIAL_SPAN = "Spatial Span"
         SPATIAL_ROTATION = "Spatial Rotation"
 
-    class StimulusDurations(enum.Enum):
-        stimulus_durations = {
-            TrialTypes.DIGIT_SPAN == 0.25,
-            TrialTypes.SPATIAL_SPAN == 0.5,
-            TrialTypes.SPATIAL_ROTATION == 0.5
-        }
+    stimulus_durations = {
+        TrialTypes.DIGIT_SPAN: 0.25,
+        TrialTypes.SPATIAL_SPAN: 0.5,
+        TrialTypes.SPATIAL_ROTATION: 0.5
+    }
 
     class InfoCardDurations(enum.Enum):
         SHORT = .5
@@ -152,14 +151,13 @@ class ExperimentTaskSwitch(tS.Experiment):
                     raise ValueError("trial_type must be a TrialType")
 
                 if t == self.TrialTypes.DIGIT_SPAN:
-                    out.append(tS.TrialDigitSpan(**kwargs))
-                    stimulus_durations = self.StimulusDurations.TrialTypes.DIGIT_SPAN
+                    out.append(tS.TrialDigitSpan(trial_type=t, **kwargs))
                     break
                 if t == self.TrialTypes.SPATIAL_SPAN:
-                    out.append(tS.TrialSpatialSpan(**kwargs))
+                    out.append(tS.TrialSpatialSpan(trial_type=t, **kwargs))
                     break
                 if t == self.TrialTypes.SPATIAL_ROTATION:
-                    out.append(tS.TrialSpatialRotation(**kwargs))
+                    out.append(tS.TrialSpatialRotation(trial_type=t, **kwargs))
                     break
 
                 raise ValueError("Unrecognised trial trial_type requested: " + str(t.value))
