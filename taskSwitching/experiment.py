@@ -32,11 +32,6 @@ class Experiment:
     stimulus_text_color = [-1, -1, 1]
     stimulus_background_color = [.5, .5, .5]
 
-    class stimulus_duration(enum.Enum):
-        ds = 0.25
-        ss = 0.5
-        sr = 0.5
-
     def __init__(self, participant=None, window=None, synch=None, config=None, **kwargs):
         """
         :param kwargs:

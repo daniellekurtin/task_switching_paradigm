@@ -78,14 +78,22 @@ class Trial(Component):
         )
 
         # Inherit trial-specific properties of the Experiment
-        if hasattr(experiment, 'stimulus_duration'):
-            self.stimulus_duration_ds = experiment.stimulus_duration.ds
-            self.stimulus_duration_ss = experiment.stimulus_duration.ss
-            self.stimulus_duration_sr = experiment.stimulus_duration.sr
-        if hasattr(experiment, 'TrialTypes'):
-            self.task_type_ds = ExperimentTaskSwitch.TrialTypes.DIGIT_SPAN
-            self.task_type_ss = experiment_task_switch.TrialTypes.SPATIAL_SPAN
-            self.task_type_sr = experiment_task_switch.TrialTypes.SPATIAL_ROTATION
+########################################################################################
+# First two commented out sections are previous drafts 
+
+        # if hasattr(experiment, 'stimulus_duration'):
+        #     self.stimulus_duration_ds = experiment.stimulus_duration.ds
+        #     self.stimulus_duration_ss = experiment.stimulus_duration.ss
+        #     self.stimulus_duration_sr = experiment.stimulus_duration.sr
+        # if hasattr(experiment, 'TrialTypes'):
+        #     self.task_type_ds = ExperimentTaskSwitch.TrialTypes.DIGIT_SPAN
+        #     self.task_type_ss = experiment_task_switch.TrialTypes.SPATIAL_SPAN
+        #     self.task_type_sr = experiment_task_switch.TrialTypes.SPATIAL_ROTATION
+
+
+        if hasattr(experiment, 'stimulus_durations'):
+            self.stimulus_duration = experiment.stimulus_durations[self.trial_type]
+# when you come back start here and add add sim durations per trial types
         if hasattr(experiment, 'answer_rect_width'):
             self.answer_rect_width = experiment.answer_rect_width
         if hasattr(experiment, 'answer_rect_height'):
@@ -193,12 +201,13 @@ class Trial(Component):
 
         for n in self.stimulus:
             self.draw_number(n)
-            if self.task_type_ds:
-                clock.wait(self.stimulus_duration_ds)
-            elif experiment_task_switch.TrialTypes == experiment_task_switch.TrialTypes.SPATIAL_SPAN:
-                clock.wait(self.stimulus_duration_ss)
-            elif experiment_task_switch.TrialTypes == experiment_task_switch.TrialTypes.SPATIAL_ROTATION:
-                clock.wait(self.stimulus_duration_sr)
+            clock.wait(self.stimulus_duration)
+            # if self.task_type_ds:
+            #     clock.wait(self.stimulus_duration_ds)
+            # elif experiment_task_switch.TrialTypes == experiment_task_switch.TrialTypes.SPATIAL_SPAN:
+            #     clock.wait(self.stimulus_duration_ss)
+            # elif experiment_task_switch.TrialTypes == experiment_task_switch.TrialTypes.SPATIAL_ROTATION:
+            #     clock.wait(self.stimulus_duration_sr)
             self.debug_visuals()
             self.grid.draw()
             self.experiment.window.flip()

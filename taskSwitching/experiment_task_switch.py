@@ -18,6 +18,13 @@ class ExperimentTaskSwitch(tS.Experiment):
         SPATIAL_SPAN = "Spatial Span"
         SPATIAL_ROTATION = "Spatial Rotation"
 
+    class StimulusDurations(enum.Enum):
+        stimulus_durations = {
+            TrialTypes.DIGIT_SPAN == 0.25,
+            TrialTypes.SPATIAL_SPAN == 0.5,
+            TrialTypes.SPATIAL_ROTATION == 0.5
+        }
+
     class InfoCardDurations(enum.Enum):
         SHORT = .5
         LONG = 4
@@ -146,6 +153,7 @@ class ExperimentTaskSwitch(tS.Experiment):
 
                 if t == self.TrialTypes.DIGIT_SPAN:
                     out.append(tS.TrialDigitSpan(**kwargs))
+                    stimulus_durations = self.StimulusDurations.TrialTypes.DIGIT_SPAN
                     break
                 if t == self.TrialTypes.SPATIAL_SPAN:
                     out.append(tS.TrialSpatialSpan(**kwargs))
@@ -403,10 +411,10 @@ class ExperimentTaskSwitch(tS.Experiment):
         for s in self.trial_order_to_string():
             print(s)
 
-    def trial_order_to_csv(self):
-        for i in self.trial_order_to_csv:
-            lines = pd.DataFrame()
-        lines.to_csv('participant_paradigm_structure.csv')
+    # def trial_order_to_csv(self):
+    #     for i in self.trial_order_to_csv:
+    #         lines = pd.DataFrame()
+    #     lines.to_csv('participant_paradigm_structure.csv')
             
         #np.savetxt(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\participant_paradigm_structure.csv', s, delimiter=',')
     # def debug_trial_order(self):
