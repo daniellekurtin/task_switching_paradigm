@@ -410,13 +410,9 @@ class ExperimentTaskSwitch(tS.Experiment):
             print(s)
 
     # def trial_order_to_csv(self):
-    #     for i in self.trial_order_to_csv:
-    #         lines = pd.DataFrame()
-    #     lines.to_csv('participant_paradigm_structure.csv')
-            
-        #np.savetxt(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\participant_paradigm_structure.csv', s, delimiter=',')
-    # def debug_trial_order(self):
     #     n = 0
+    #     task_structure = open("task_structure.txt")
+        
     #     for i in range(len(self.trials)):
     #         t = self.trials[i]
 
@@ -425,24 +421,74 @@ class ExperimentTaskSwitch(tS.Experiment):
 
     #         if isinstance(t, tS.ComponentInfoCard):
     #             if n > 0:
-    #                 print("> " + str(n) + " x " + str(tt))
-    #                 print(t.break_duration)
-    #             print(t.__class__.__name__)
+    #                 task_structure.write("> " + str(n) + " x " + str(tt))
+    #                 task_structure.write(str(t.break_duration))
+    #             task_structure.write(t.__class__.__name__)
     #             n = 0
     #         elif isinstance(t, tS.ComponentRest):
-    #             print("> " + str(n) + " x " + str(tt))
-    #             print("----------Block Break------------")
+    #             task_structure.write("> " + str(n) + " x " + str(tt))
+    #             task_structure.write("Block Break")
     #             n = 0
     #         else:
     #             n += 1
     #             tt = t.__class__.__name__
 
-    #     # print the final trial type
-    #     print("> " + str(n) + " x " + str(tt))
-        # xx = ("> " + str(n) + " x " + str(tt))
-        # attempt example 1:
-        # np.savetxt("task_structure.csv", xx, delimiter=str)
-        # attempt example 2:
-        # xx.saveAsWideText("task_structure.csv", delimiter=str, appendFile=True)
+    #     task_structure.close()
     
-        
+    def save_task_structure(self, row_dict, file="trials", public=True):
+        """
+        Write the task structure to a text file
+        :param row_dict: dict of values to write
+        :type row_dict: dict
+        :param file: filename to save under
+        :type file: str
+        :param public: whether data should be publicly accesible
+        :type public: bool
+        :return:
+        """
+        if public:
+            access = "public"
+        else:
+            access = "private"
+        file_name = path.join(self.save_path, access, self.participant_id + "-" + self.version + "_" + file + ".csv")
+
+        # add write-time info to the file
+        row_dict = {
+            'write_time': datetime.now().isoformat(),
+            'experiment_name': self.__class__.__name__,
+            'experiment_version': self.version,
+            'participant_id': self.participant.id,
+            'participant_session': self.participant.session,
+            'participant_age': self.participant.age,
+            'participant_gender': self.participant.gender,
+            **row_dict
+        }
+
+        if not path.isfile(file_name):
+            head = row_dict.keys()
+            new_file = True
+        else:
+            new_file = False
+            with open(file_name, 'r') as f:
+                old = csv.DictReader(f)
+                head = old.fieldnames
+
+                for k in row_dict.keys():
+                    if k not in head:
+                        raise ValueError("Field " + k + " in data but not header names when saving to " + file_name)
+
+                for k in head:
+                    if k not in row_dict.keys():
+                        raise ValueError("Field " + k + " in headers but not in data when saving to " + file_name)
+
+        if len(head) < 5:
+            raise ValueError("No headers found for saving file " + file_name)
+
+        with open(file_name, 'a+', newline='') as f:
+            w = csv.DictWriter(f, head)
+            if new_file:
+                w.writeheader()
+
+            w.writerow(row_dict)
+    
+    save_task_structure.()

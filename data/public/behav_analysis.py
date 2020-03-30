@@ -19,7 +19,7 @@ headers = [
     'time_response_submitted'
 ]
 # reading in .csv file
-df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\ExperimentTaskSwitch-v0.0.3_trials-v0.0.1.csv', usecols = headers)
+df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\ExperimentTaskSwitch-v0.0.4_trials-v0.0.1.csv', usecols = headers)
 
 # creating an empty df with column names only for data analysis later on
 df_new = pd.DataFrame(columns=[
@@ -83,13 +83,13 @@ for group_name, df_group in pid_group:
 print('\n********************************************************************************************************************************************')
 
 # exporting data to .csv file 
-df_new.to_csv(r'data_v5.csv')
+df_new.to_csv(r'pilot3_data.csv')
 
  
 #-----ANALYSIS-----
 
 # heirachical grouping of data
-df_new.set_index(['participant_id', 'block', 'type'], inplace = True)
+df_new.set_index(['participant_id', 'type', 'block'], inplace = True)
 types = ['TrialDigitSpan', 'TrialSpatialSpan', 'TrialSpatialRotation']
 
 # ---MRT---
@@ -104,20 +104,19 @@ df_mrt = df_new.drop(columns = [
 ])
 
 # mean response time (mrt) calc. for each block, per type, per participant
-for title, df_mrt1 in df_mrt.groupby(level=[0, 1, 2]):
+for title, df_mrt1 in df_mrt.groupby(level=[0, 1]):
     df_mrt1 = df_mrt1.apply(pd.to_numeric, errors = 'coerce').dropna(how = 'all')
     mask = df_mrt1.index.get_level_values(2)
     mrt = df_mrt1.mean()
     #print('\nPLOTTING MRT (participant_id, type) = {}'.format(title))
-
+    
     for i in mrt:
         plt.title('Mean Reaction Time for {}'.format(title))
         plt.plot(mrt)
         plt.xlabel('Block')
         plt.ylabel('Mean Reaction Time (sec)')
-        plt.axis([1, 4, 0, 3.0])
+        plt.axis([1, 4, 0, 3])
         path = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\MRT')
-        # plt.annotate(MRT_data, xy =(3,0.5))
         figname = 'fig_{}.png'.format(title)
         dest = os.path.join(path, figname)
         plt.savefig(dest)  
