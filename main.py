@@ -28,7 +28,7 @@ if __name__ == '__main__':
     win = visual.Window(
         size=[1000, 1000],
         units="pix",
-        fullscr=True,
+        fullscr=False,
         color=[0, 0, 0],
         winType='pyglet',
         gammaErrorPolicy="warn"
@@ -76,7 +76,8 @@ if __name__ == '__main__':
 
     # Debugging
     exp.debug_trial_order()
-
+    exp.trial_order_to_csv()
+    
     # Run the experiment
     exp.synch.wait_for_synch()
     exp.run()
