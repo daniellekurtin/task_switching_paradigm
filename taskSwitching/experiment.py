@@ -113,6 +113,7 @@ class Experiment:
             'participant_session': self.participant.session,
             'participant_age': self.participant.age,
             'participant_gender': self.participant.gender,
+            # 'cue_length': [],
             **row_dict
         }
 
@@ -135,6 +136,8 @@ class Experiment:
 
         if len(head) < 5:
             raise ValueError("No headers found for saving CSV file " + file_name)
+        
+        
 
         with open(file_name, 'a+', newline='') as f:
             w = csv.DictWriter(f, head)

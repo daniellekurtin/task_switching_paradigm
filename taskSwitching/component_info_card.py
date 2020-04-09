@@ -22,3 +22,11 @@ class ComponentInfoCard(ComponentRest):
         self.draw()
         self.experiment.window.flip()
         clock.wait(self.break_duration)
+    
+    def to_csv(self):
+        self.experiment.save_csv(
+            {"cue_length": self.break_duration},
+            file="trials-" + self.version,
+            public=True
+        )
+

@@ -76,7 +76,8 @@ if __name__ == '__main__':
 
     # Debugging
     exp.debug_trial_order()
-    exp.trial_order_to_csv()
+    exp.save_trial_order()
+
     
     # Run the experiment
     exp.synch.wait_for_synch()

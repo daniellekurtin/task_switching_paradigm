@@ -280,7 +280,7 @@ class Trial(Component):
                 "time_response_enabled": self.times["response_enabled"],
                 "time_response_submitted": self.times["response_submitted"],
                 "time_response_disabled": self.times["response_disabled"],
-                "time_trial_logged": self.times["trial_logged"]
+                "time_trial_logged": self.times["trial_logged"],
             },
             file="trials-" + self.version,
             public=True

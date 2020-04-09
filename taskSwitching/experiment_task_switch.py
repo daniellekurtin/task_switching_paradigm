@@ -379,7 +379,7 @@ class ExperimentTaskSwitch(tS.Experiment):
 
         return trials
 
-    def trial_order_to_string(self):
+    def trial_order_to_string(self, newline=''):
         n = 0
         lines = []
         
@@ -391,13 +391,13 @@ class ExperimentTaskSwitch(tS.Experiment):
 
             if isinstance(t, tS.ComponentInfoCard):
                 if n > 0:
-                    lines.append("> " + str(n) + " x " + str(tt))
                     lines.append(str(t.break_duration))
+                    lines.append("> " + str(n) + " x " + str(tt))
                 lines.append(t.__class__.__name__)
                 n = 0
             elif isinstance(t, tS.ComponentRest):
                 lines.append("> " + str(n) + " x " + str(tt))
-                lines.append("----------Block Break------------")
+                lines.append("Block Break")
                 n = 0
             else:
                 n += 1
@@ -407,17 +407,27 @@ class ExperimentTaskSwitch(tS.Experiment):
 
     def debug_trial_order(self):
         for s in self.trial_order_to_string():
-            print(s)
+            print(s + "\n")
 
 
-    def trial_order_to_csv(self, public=True):
-        if public:
-            access = "public"
-        else:
-            access = "private"
-        file_name = path.join(self.save_path, access,  self.participant.id + "_" + "task_structure" + "_" + self.version + ".csv")
+    def save_trial_order(self, public=True):
+        
+        # if public:
+        #     access = "public"
+        # else:
+        #     access = "private"
+        # file_name = path.join(self.save_path, access, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
+        
+        self.save_path2 = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\TaskStructure')
+        file_name = path.join(self.save_path2, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
         
         w = open(file_name, 'w+', newline='')
         for s in self.trial_order_to_string():
-            w.write(s)
-            
+            w.write("\n" + s)
+    
+    def to_csv(self):
+        self.Experiment.save_csv(
+            {"cue_length": self.break_duration},
+            file="trials-" + self.version,
+            public=True
+        )

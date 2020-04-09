@@ -1,0 +1,1 @@
+Ttest_indResult(statistic=-1.0606538227156397, pvalue=0.2895139025911816)
