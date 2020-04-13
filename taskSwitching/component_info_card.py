@@ -18,15 +18,9 @@ class ComponentInfoCard(ComponentRest):
 
     def main(self):
         # Will show a fixation cross and a countdown in seconds
+        # You have to give the experiment your break_duration
+        self.experiment.break_duration = self.break_duration
         self.countdown.text = "Next Task: " + self.next_task
         self.draw()
         self.experiment.window.flip()
         clock.wait(self.break_duration)
-    
-    def to_csv(self):
-        self.experiment.save_csv(
-            {"cue_length": self.break_duration},
-            file="trials-" + self.version,
-            public=True
-        )
-

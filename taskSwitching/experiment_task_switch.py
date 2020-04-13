@@ -425,9 +425,3 @@ class ExperimentTaskSwitch(tS.Experiment):
         for s in self.trial_order_to_string():
             w.write("\n" + s)
     
-    def to_csv(self):
-        self.Experiment.save_csv(
-            {"cue_length": self.break_duration},
-            file="trials-" + self.version,
-            public=True
-        )

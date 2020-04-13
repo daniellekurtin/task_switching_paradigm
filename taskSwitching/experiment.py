@@ -113,7 +113,7 @@ class Experiment:
             'participant_session': self.participant.session,
             'participant_age': self.participant.age,
             'participant_gender': self.participant.gender,
-            # 'cue_length': [],
+            'cue_length': self.break_duration,
             **row_dict
         }
 
@@ -133,6 +133,7 @@ class Experiment:
                 for k in head:
                     if k not in row_dict.keys():
                         raise ValueError("Field " + k + " in headers but not in data when saving to " + file_name)
+
 
         if len(head) < 5:
             raise ValueError("No headers found for saving CSV file " + file_name)
@@ -170,3 +171,4 @@ class Experiment:
     def debug_trial_order(self):
         for s in self.trial_order_to_string():
             print("> " + s)
+
