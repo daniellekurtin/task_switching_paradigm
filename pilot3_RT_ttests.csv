@@ -1,0 +1,9 @@
+,standard,welchs
+mean_vs_rt1,"Ttest_indResult(statistic=-1.027839197927134, pvalue=0.3046758516194067)","Ttest_indResult(statistic=-1.027839197927134, pvalue=0.30489744634962096)"
+mean_vs_rt2,"Ttest_indResult(statistic=-0.11455603037709135, pvalue=0.9088572199536199)","Ttest_indResult(statistic=-0.11455603037709135, pvalue=0.9088803575763426)"
+mean_vs_rt3,"Ttest_indResult(statistic=0.8765419268113906, pvalue=0.38128637022769407)","Ttest_indResult(statistic=0.8765419268113905, pvalue=0.38147051663907994)"
+mean_vs_rt123,"Ttest_indResult(statistic=-0.2767350937437987, pvalue=0.7821331972828316)","Ttest_indResult(statistic=-0.2767350937437987, pvalue=0.7821447915596915)"
+med_vs_rt1,"Ttest_indResult(statistic=-1.102365069485042, pvalue=0.2709970196648891)","Ttest_indResult(statistic=-1.1023650694850418, pvalue=0.2711013634507266)"
+med_vs_rt2,"Ttest_indResult(statistic=-0.2425445801397163, pvalue=0.808488387733405)","Ttest_indResult(statistic=-0.24254458013971625, pvalue=0.8085130166258145)"
+med_vs_rt3,"Ttest_indResult(statistic=0.6787571379231288, pvalue=0.4977027564356169)","Ttest_indResult(statistic=0.6787571379231288, pvalue=0.4977622984681265)"
+med_vs_rt123,"Ttest_indResult(statistic=-0.4248496180639855, pvalue=0.6711855019063224)","Ttest_indResult(statistic=-0.4248496180639855, pvalue=0.6711856732371668)"

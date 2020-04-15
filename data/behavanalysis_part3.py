@@ -3,6 +3,12 @@ import numpy as np
 from scipy import integrate, stats
 from numpy import absolute, mean  
 from itertools import islice
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+import statsmodels.stats.multicomp
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 headers = [
     'participant_id',
@@ -108,7 +114,7 @@ df_behavstats.drop_duplicates(subset="MAD_rt", keep='first', inplace=True)
 # value for any t-test calculations it is involved in. therefore i have excluded those rows below:
 print("")
 print("")
-print('HI DANIELLE!!!! BELOW DISPLAYS THE GROUP(S) WHICH HAVE BEEN EXCLUDED AS THERE WERE LESS THAN')
+print('BELOW DISPLAYS THE GROUP(S) WHICH HAVE BEEN EXCLUDED AS THERE WERE LESS THAN')
 print('3 TRIALS IN THE GROUP, CAUSING A NaN VALUE FOR THE T-TEST CALCULATIONS:')
 print("")
 print(df_behavstats[df_behavstats.isna().any(axis=1)].index)
@@ -116,8 +122,51 @@ df_behavstats = df_behavstats[pd.notnull(df_behavstats['switch_rt'])]
 print("")
 print("")
 
-df_behavstats.to_csv('RT_with_stats_and_switches.csv')
+df_behavstats.to_csv('pilot3_RT_stats.csv')
+df_behavstats.reset_index(drop=False, inplace=True)
 
+df_behavstats.columns = [
+    'participant_id',
+    'block',
+    'type',
+    'occurence',
+    'MAD_rt',
+    'SD_rt',
+    'mean_rt',
+    'median_rt',
+    'rt_trial_1',
+    'rt_trial_2',
+    'rt_trial_3',
+    'switch_rt'
+    ]
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# ANOVAs
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+model1 = ols(
+    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    data=df_behavstats
+    ).fit()
+
+anova_table1 = sm.stats.anova_lm(model1, typ=2)
+print(anova_table1)
+
+model2 = ols(
+    'mean_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    data=df_behavstats
+    ).fit()
+
+anova_table2 = sm.stats.anova_lm(model2, typ=2)
+print(anova_table2)
+
+model3 = ols(
+    'mean_rt ~ switch_rt',
+    data=df_behavstats
+    ).fit()
+
+anova_table3 = sm.stats.anova_lm(model3, typ=2)
+print(anova_table3)
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # T-TESTS AND WRITING TO .TXT
@@ -128,11 +177,14 @@ SD     = df_behavstats['SD_rt']
 MAD    = df_behavstats['MAD_rt']
 median = df_behavstats['median_rt'] 
 
+# Check here is mean or median is different from one another; if so, decide which to use. If not, move ahead with one or the other. 
+g1 = stats.ttest_ind(median, mean, equal_var = False) 
+print(g1)
+
 rt1    = df_behavstats['rt_trial_1']
 rt2    = df_behavstats['rt_trial_2']
 rt3    = df_behavstats['rt_trial_3']
 rt123  = df_behavstats['switch_rt']
-
 
 a = stats.ttest_ind(mean, rt1)
 b = stats.ttest_ind(mean, rt2)
@@ -145,7 +197,6 @@ f = stats.ttest_ind(median, rt3)
 MEDvsAVRT = stats.ttest_ind(median, rt123) 
 
 standard_t_tests = [a,b,c,MEANvsAVRT,d,e,f,MEDvsAVRT]
-
 
 a1 = stats.ttest_ind(mean, rt1, equal_var = False)
 b1 = stats.ttest_ind(mean, rt2, equal_var = False)
@@ -164,5 +215,33 @@ t_data = {'standard':standard_t_tests, 'welchs':welchs_t_tests}
 t_rows = ['mean_vs_rt1', 'mean_vs_rt2', 'mean_vs_rt3', 'mean_vs_rt123', 'med_vs_rt1', 'med_vs_rt2', 'med_vs_rt3', 'med_vs_rt123']
 
 df_t_tests = pd.DataFrame(data=t_data, index=t_rows)
-df_t_tests.to_csv('RT_t_tests.csv')
+df_t_tests.to_csv('pilot3_RT_ttests.csv')
 
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Plots!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ax1 = sns.boxplot(x='type', y='mean_rt', data=df_behavstats)
+ax1 = sns.swarmplot(x='type', y='mean_rt', data=df_behavstats, color=".25")
+figure1 = ax1.get_figure()    
+figure1.savefig('Figures/boxplot_Mean_ShowDataPoints.png', dpi=400)
+plt.close()
+
+
+ax2 = sns.boxplot(x='type', y='mean_rt', hue='block', data=df_behavstats)
+figure2 = ax2.get_figure()    
+figure2.savefig('Figures/boxplot_Mean_byTaskType.png', dpi=400)
+plt.close()
+
+ax3 = sns.boxplot(x='type', y='switch_rt', data=df_behavstats)
+ax3 = sns.swarmplot(x='type', y='switch_rt', data=df_behavstats, color=".25")
+figure3 = ax3.get_figure()    
+figure3.savefig('Figures/boxplot_Switch_ShowDataPoints.png', dpi=400)
+plt.close()
+
+
+ax4 = sns.boxplot(x='type', y='switch_rt', hue='block', data=df_behavstats)
+figure4 = ax4.get_figure()    
+figure4.savefig('Figures/boxplot_Switch_byTaskType.png', dpi=400)
+plt.close()

@@ -57,6 +57,8 @@ df_accuracy1.reset_index(drop = True, inplace = True)
 
 df_accuracy1.set_index(['participant_id', 'type', 'block', 'occurence'], inplace = True)
 
+x = 0
+
 for group_i, group_v in df_accuracy1.groupby(level=[0, 1, 2, 3]):
     n = 0
 
@@ -77,31 +79,40 @@ for group_i, group_v in df_accuracy1.groupby(level=[0, 1, 2, 3]):
     number_of_trials = 0
     overall_accuracy = 0
 
+    x = x + 1
+
     for index, row in islice(group_v.iterrows(), m):
 
         number_of_trials = number_of_trials + 1    
         overall_accuracy = overall_accuracy + row['accuracy']     
         j = ((overall_accuracy/number_of_trials) * 100)
-        group_v.at[index, 'switch_percent_acc'] = j
+        group_v.at[index, 'switch_percent_acc'] = j        
+        group_v.at[index, 'drop_column'] = x
 
     group_v.reset_index(drop = False, inplace = True)
-    df_accuracy2 = pd.concat([df_accuracy2, group_v])
+    df_accuracy2 = pd.concat([df_accuracy2, group_v], sort=True)
  
+
+df_accuracy2.drop_duplicates(subset ='drop_column', keep = "first", inplace = True)
+df_accuracy2.drop(columns=['accuracy', 'drop_column'], inplace=True)
 df_accuracy2.to_csv('pilot3_ACC_stats.csv')
 
-df_accuracy2.set_index(['participant_id', 'type', 'block', 'occurence'], inplace = True)
-df_accuracy2.groupby(level=[0,1,2,3])
-df_accuracy2.drop_duplicates(subset ='switch_percent_acc', keep = "first", inplace = True)
-df_accuracy2.to_csv('oyvey.csv')
 
 ############################################################################################
 # ANOVA
 
-model = ols('df_accuracy2["overall_percent_acc"] ~ C(df_accuracy2["block"])*C(df_accuracy2["type"])*C(df_accuracy2["participant_id"])', df_accuracy2).fit()
+df_accuracy2.columns = [
+    'block', 
+    'occurence', 
+    'overall_percent_acc',
+    'participant_id',
+    'switch_percent_acc',
+    'type'
+    ]
 
-print(f"Overall model F({model.df_model: .0f},{model.df_resid: .0f}) = {model.fvalue: .3f}, p = {model.f_pvalue: .4f}")
+model = ols(
+    'overall_percent_acc ~ C(block) + C(type) + C(participant_id) + C(block):C(type) ', data=df_accuracy2
+    ).fit()
 
-model.summary()
-
-res = sm.stats.anova_lm(model, typ= 2)
-print(res)
+anova_table= sm.stats.anova_lm(model, typ=2)
+print(anova_table)
