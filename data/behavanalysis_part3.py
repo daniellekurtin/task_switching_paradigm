@@ -16,10 +16,11 @@ headers = [
     'block',
     'occurence',
     'response_time',
+    'switch_type',
     'accuracy'
 ]
 
-df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot3_withoccurence.csv', usecols = headers)
+df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot4_withoccurence.csv', usecols = headers)
 
 df_behavstats1 = pd.DataFrame()
 df_behavstats = pd.DataFrame()
@@ -122,7 +123,7 @@ df_behavstats = df_behavstats[pd.notnull(df_behavstats['switch_rt'])]
 print("")
 print("")
 
-df_behavstats.to_csv('pilot3_RT_stats.csv')
+df_behavstats.to_csv('pilot4_RT_stats.csv')
 df_behavstats.reset_index(drop=False, inplace=True)
 
 df_behavstats.columns = [
@@ -130,6 +131,7 @@ df_behavstats.columns = [
     'block',
     'type',
     'occurence',
+    'switch_type',
     'MAD_rt',
     'SD_rt',
     'mean_rt',
@@ -145,7 +147,7 @@ df_behavstats.columns = [
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 model1 = ols(
-    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(switch_type) + C(block):C(switch_type) + C(type):C(switch_type) + C(participant_id):C(switch_type) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
     data=df_behavstats
     ).fit()
 
@@ -153,20 +155,13 @@ anova_table1 = sm.stats.anova_lm(model1, typ=2)
 print(anova_table1)
 
 model2 = ols(
-    'mean_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    'mean_rt ~ C(block) + C(type) + C(participant_id) + C(switch_type) + C(block):C(switch_type) + C(type):C(switch_type) + C(participant_id):C(switch_type) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
     data=df_behavstats
     ).fit()
 
 anova_table2 = sm.stats.anova_lm(model2, typ=2)
 print(anova_table2)
 
-model3 = ols(
-    'mean_rt ~ switch_rt',
-    data=df_behavstats
-    ).fit()
-
-anova_table3 = sm.stats.anova_lm(model3, typ=2)
-print(anova_table3)
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # T-TESTS AND WRITING TO .TXT
@@ -215,7 +210,7 @@ t_data = {'standard':standard_t_tests, 'welchs':welchs_t_tests}
 t_rows = ['mean_vs_rt1', 'mean_vs_rt2', 'mean_vs_rt3', 'mean_vs_rt123', 'med_vs_rt1', 'med_vs_rt2', 'med_vs_rt3', 'med_vs_rt123']
 
 df_t_tests = pd.DataFrame(data=t_data, index=t_rows)
-df_t_tests.to_csv('pilot3_RT_ttests.csv')
+df_t_tests.to_csv('pilot4_RT_ttests.csv')
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

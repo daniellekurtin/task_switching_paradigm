@@ -23,10 +23,11 @@ headers = [
     'block',
     'type',
     'occurence',
+    'switch_type',
     'accuracy',
 ] 
 
-df_accuracy = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot3_withoccurence.csv', usecols = headers)
+df_accuracy = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot4_withoccurence.csv', usecols = headers)
 df_accuracy1 = pd.DataFrame()
 df_accuracy2 = pd.DataFrame()
 
@@ -95,7 +96,7 @@ for group_i, group_v in df_accuracy1.groupby(level=[0, 1, 2, 3]):
 
 df_accuracy2.drop_duplicates(subset ='drop_column', keep = "first", inplace = True)
 df_accuracy2.drop(columns=['accuracy', 'drop_column'], inplace=True)
-df_accuracy2.to_csv('pilot3_ACC_stats.csv')
+df_accuracy2.to_csv('pilot4_ACC_stats.csv')
 
 
 ############################################################################################
@@ -107,12 +108,14 @@ df_accuracy2.columns = [
     'overall_percent_acc',
     'participant_id',
     'switch_percent_acc',
-    'type'
+    'type',
+    'switch_type'
     ]
 
-model = ols(
-    'overall_percent_acc ~ C(block) + C(type) + C(participant_id) + C(block):C(type) ', data=df_accuracy2
+model1 = ols(
+    'overall_percent_acc ~ C(block) + C(type) + C(participant_id) + C(switch_type) + C(block):C(switch_type) + C(type):C(switch_type) + C(participant_id):C(switch_type) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    data=df_accuracy2
     ).fit()
 
-anova_table= sm.stats.anova_lm(model, typ=2)
-print(anova_table)
+anova_table1 = sm.stats.anova_lm(model1, typ=2)
+print(anova_table1)
