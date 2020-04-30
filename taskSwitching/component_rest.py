@@ -22,13 +22,15 @@ class ComponentRest(Component):
     def __init__(self, break_duration=120, **kwargs):
 
         super().__init__(**kwargs)
-        self.experiment.window.mouseVisible = True
+        if self.experiment.window:
+            self.experiment.window.mouseVisible = True
+            self.countdown = visual.TextStim(
+                self.experiment.window,
+                text="",
+                color=self.experiment.text_color
+            )
+
         self.duration = break_duration
-        self.countdown = visual.TextStim(
-            self.experiment.window,
-            text="",
-            color=self.experiment.text_color
-        )
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])

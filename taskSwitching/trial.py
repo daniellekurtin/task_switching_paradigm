@@ -64,20 +64,21 @@ class Trial(Component):
         cell_pix = self.n2p([cell_size, 0])[0]
         grid_size = 6  # cells
 
-        self.grid = Grid(
-            width_in_cells=grid_size,
-            height_in_cells=grid_size,
-            # including the rectangles we'll be using as cells
-            psychopy_rect=visual.Rect(
-                win=self.experiment.window,
-                width=cell_pix,
-                height=cell_pix,
-                units='pix',
-                fillColor=[0, 0, 0],
-                lineColor=[1, 1, 1]
-            ),
-            start_coords=self.n2p([(-.4 + cell_size * grid_size / 2), 0])
-        )
+        if self.experiment.window:
+            self.grid = Grid(
+                width_in_cells=grid_size,
+                height_in_cells=grid_size,
+                # including the rectangles we'll be using as cells
+                psychopy_rect=visual.Rect(
+                    win=self.experiment.window,
+                    width=cell_pix,
+                    height=cell_pix,
+                    units='pix',
+                    fillColor=[0, 0, 0],
+                    lineColor=[1, 1, 1]
+                ),
+                start_coords=self.n2p([(-.4 + cell_size * grid_size / 2), 0])
+            )
 
         # Inherit trial-specific properties of the Experiment
 ########################################################################################

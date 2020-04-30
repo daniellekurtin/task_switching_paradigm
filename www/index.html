@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="taskSwitchingPlugins/ts-trial.js"></script>
+  <script src="taskSwitchingPlugins/ts-intro.js"></script>
+  <script src="taskSwitchingPlugins/ts-trial-gap.js"></script>
+  <script src="taskSwitchingPlugins/ts-info-card.js"></script>
+  <script src="taskSwitchingPlugins/ts-block-break.js"></script>
+  <link rel="stylesheet" href="jspsych-6.1.0/css/jspsych.css">
+  <link rel="stylesheet" href="taskSwitchingPlugins/css/ts-style.css">
+  <title>Online Experiment</title>
+</head>
+<body>
+  <div>
+    <h1>Loading</h1>
+    <p>Please wait while we load the experiment. This should only take a few moments.</p>
+    <p id="LoadingStatus" class="status">Checking JavaScript is enabled...</p>
+  </div>
+</body>
+<script defer type="text/javascript">
+  const DEBUG = true;
+  // Load the trial list from the Python script
+  loadTrialList()
+    .then(tl => createTimeline(tl))
+    .then(timeline => begin(timeline));
+
+  /**
+   * Update status in the loading screen.
+   */
+  function message(s) {
+    document.getElementById("LoadingStatus").innerHTML = s;
+  }
+
+  /**
+   * Register an error in the loading screen and console.
+   */
+  function error(s, e) {
+    message(s);
+    console.error(e);
+  }
+
+  function loadTrialList() {
+    message('Fetching experiment details from server...');
+    return fetch('http://localhost:5000/', {
+      method: 'GET',
+      // mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      // credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+            .then(r => r.json())
+            .then(r => JSON.parse(r.trials))
+            .catch(e => error("Could not load experiment.", e));
+  }
+
+  /**
+   * Create a jsPsych experiment timeline by adding participant details gathering stuff to the sequence defined in trialTypes
+   * @param trials {object[]} Trial specifications
+   * @return {object[]} jsPsych plugin trials
+   */
+  function createTimeline(trials) {
+    let out;
+    try {
+      out = trials.map(t => parseTrial(t));
+    } catch(e) {
+      error("Error preparing experiment.", e);
+    }
+    return out;
+  }
+
+  function parseTrial(trial) {
+    const t = {}
+    const tt = trial["py/object"];
+    if(/Component/.test(tt)) {
+      if(/ComponentStart$/.test(tt)) {
+        return {
+          type: "ts-intro",
+          trial_duration: trial.duration * 1000
+        }
+      } else if(/ComponentTrialGap$/.test(tt)) {
+        return {
+          type: "ts-trial-gap",
+          trial_duration: trial.break_duration * 1000
+        }
+      } else if(/ComponentInfoCard$/.test(tt)) {
+        return {
+          type: "ts-info-card",
+          trial_duration: trial.break_duration * 1000,
+          next_task_type: trial.next_task
+        }
+      } else if(/ComponentRest$/.test(tt)) {
+        const d = typeof trial.duration === "Object"?
+                trial.duration["py/reduce"][1]["py/tuple"][0] : trial.duration;
+        return {
+          type: "ts-block-break",
+          trial_duration: d * 1000
+        }
+      }
+    } else if(/Trial/.test(tt)) {
+      t.type = "ts-trial";
+      t.max_response_time = trial.max_response_time * 1000;
+      t.stimulus = trial.stimulus;
+      t.stimulus_duration = trial.stimulus_duration * 1000;
+      t.delay_before_response = trial.delay_before_response * 1000;
+      t.answers = trial.answers;
+      t.answer_index = trial.answer_index;
+
+      if(/TrialDigitSpan$/.test(tt))
+        return {trial_type: "ts-trial-digit-span", ...t};
+      else if(/TrialSpatialSpan$/.test(tt))
+        return {trial_type: "ts-trial-spatial-span", ...t};
+      else if(/TrialSpatialRotation$/.test(tt))
+        return {trial_type: "ts-trial-spatial-rotation", ...t};
+    }
+    throw `No matching type conditions found for trial type ${tt}`;
+  }
+
+  function begin(timeline) {
+    if(DEBUG)
+      timeline.shift();
+    jsPsych.init({
+      timeline: timeline,
+      on_finish: end
+    });
+  }
+
+  function end() {
+    jsPsych.data.displayData();
+  }
+
+</script>
+</html>
