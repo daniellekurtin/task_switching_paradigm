@@ -27,7 +27,7 @@ headers = [
     'accuracy',
 ] 
 
-df_accuracy = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot4_withoccurence.csv', usecols = headers)
+df_accuracy = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot3_withoccurence.csv', usecols = headers)
 df_accuracy1 = pd.DataFrame()
 df_accuracy2 = pd.DataFrame()
 
@@ -96,7 +96,7 @@ for group_i, group_v in df_accuracy1.groupby(level=[0, 1, 2, 3]):
 
 df_accuracy2.drop_duplicates(subset ='drop_column', keep = "first", inplace = True)
 df_accuracy2.drop(columns=['accuracy', 'drop_column'], inplace=True)
-df_accuracy2.to_csv('pilot4_ACC_stats.csv')
+df_accuracy2.to_csv('pilot3_ACC_stats.csv')
 
 
 ############################################################################################

@@ -69,25 +69,6 @@ for group_i, group_v in df_rt.groupby(level=[0, 1, 2, 3]):
     group_v.reset_index(drop = False, inplace = True)
     df_behavstats1 = pd.concat([df_behavstats1, group_v], sort=False) 
 
-
-# df_behavstats1.columns = [
-#     'participant_id',
-#     'block',
-#     'type',
-#     'occurence',
-#     'response_time',
-#     'mean_rt',	
-#     'SD_rt',	
-#     'MAD_rt',	
-#     'median_rt',	
-#     'rt_trial_1',	
-#     'rt_trial_2',	
-#     'rt_trial_3',	
-#     'response_time',	
-#     'accuracy',	
-#     'switch_type',
-#     'switch_rt'
-#     ]
 df_behavstats1.set_index(['participant_id', 'block', 'type', 'occurence'], inplace = True)
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -149,23 +130,6 @@ print("")
 df_behavstats.reset_index(drop=False, inplace=True)
 df_behavstats.to_csv('pilot4_RT_stats.csv')
 
-df_behavstats.columns = [
-    'participant_id',
-    'block',
-    'type',
-    'occurence',
-    'switch_type',
-    'MAD_rt',
-    'SD_rt',
-    'mean_rt',
-    'median_rt',
-    'rt_trial_1',
-    'rt_trial_2',
-    'rt_trial_3',
-    'switch_rt'
-    ]
-
-
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -173,13 +137,11 @@ df_behavstats.columns = [
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 model = ols(
-    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(switch_type) + C(block):C(switch_type) + C(type):C(switch_type) + C(participant_id):C(switch_type) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
     data=df_behavstats
     ).fit()
-
 anova_table = sm.stats.anova_lm(model, typ=2)
 print(anova_table)
-
 
 
 model1 = ols(
