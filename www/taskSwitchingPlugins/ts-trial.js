@@ -111,7 +111,7 @@ jsPsych.plugins["ts-trial"] = (function() {
         jsPsych.pluginAPI.setTimeout(() => {
           data.stimulus_off.push(performance.now());
           grid.classList.add('hidden');
-        }, trial.stimulus_duration * i);
+        }, trial.stimulus_duration * (i + 1));
       }
 
       display_element.innerHTML = "";
@@ -123,7 +123,7 @@ jsPsych.plugins["ts-trial"] = (function() {
         const grid = drawGrid(trial.answers[i]);
         grid.id = `Answer${i}`;
         grid.classList.add("answer");
-        grid.dataset.answerId = i;
+        grid.dataset.answerId = i.toString();
         answers.appendChild(grid);
       }
 
