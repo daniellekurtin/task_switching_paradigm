@@ -17,22 +17,24 @@ headers = [
     'occurence',
     'response_time',
     'switch_type',
-    'accuracy'
 ]
 
 df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\pilot4_withoccurence.csv', usecols = headers)
 
 df_behavstats1 = pd.DataFrame()
+df_behavstats2 = pd.DataFrame()
 df_behavstats = pd.DataFrame()
-
+df_switch_type = pd.DataFrame()
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # LOOP WHICH CALCULATES AND CONCATS MAD, SD, MRT, MED
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 df.set_index(['participant_id', 'block', 'type', 'occurence'], inplace = True)
+df_switch_type = df
+
 df_rt = df.drop(columns = [
-    'accuracy'
+    'switch_type'
 ])
 
 for group_i, group_v in df_rt.groupby(level=[0, 1, 2, 3]):
@@ -68,11 +70,29 @@ for group_i, group_v in df_rt.groupby(level=[0, 1, 2, 3]):
     df_behavstats1 = pd.concat([df_behavstats1, group_v], sort=False) 
 
 
+# df_behavstats1.columns = [
+#     'participant_id',
+#     'block',
+#     'type',
+#     'occurence',
+#     'response_time',
+#     'mean_rt',	
+#     'SD_rt',	
+#     'MAD_rt',	
+#     'median_rt',	
+#     'rt_trial_1',	
+#     'rt_trial_2',	
+#     'rt_trial_3',	
+#     'response_time',	
+#     'accuracy',	
+#     'switch_type',
+#     'switch_rt'
+#     ]
+df_behavstats1.set_index(['participant_id', 'block', 'type', 'occurence'], inplace = True)
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # LOOP WHICH CALCULATES AND CONCATS SWITCH RT
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-df_behavstats1.set_index(['participant_id', 'block', 'type', 'occurence'], inplace = True)
 
 for group_i, group_v in df_behavstats1.groupby(level=[0, 1, 2, 3]):
 
@@ -89,11 +109,12 @@ for group_i, group_v in df_behavstats1.groupby(level=[0, 1, 2, 3]):
         m = 0
         for index, row in group_v.iterrows():
             group_v.at[index, 'switch_rt'] = np.nan
+
     elif n >= 3 and n < 5:
         m = 2
     elif n >= 5:
         m = 3
-
+    
     number_of_trials = 0
     overall_rt = 0
     # the 'islice' tells pandas to iterate with iterrows over the first 'm' rows, where 'm' is 
@@ -103,12 +124,14 @@ for group_i, group_v in df_behavstats1.groupby(level=[0, 1, 2, 3]):
         overall_rt = overall_rt + row['response_time']     
         j = (overall_rt/number_of_trials)
         group_v.at[index, 'switch_rt'] = j
-    
+            
     group_v.reset_index(drop = True, inplace = False)
     df_behavstats = pd.concat([df_behavstats, group_v], sort=True)
 
+df_behavstats = pd.concat([df_behavstats, df_switch_type.reindex(columns=df.columns)], axis=1)
 df_behavstats = df_behavstats.drop(columns=['response_time'])
 df_behavstats.drop_duplicates(subset="MAD_rt", keep='first', inplace=True)
+
 
 # when a group has less than 3 trials in it, the switch_rt is not calculated (m = 0). 
 # if there are NaN values in any of the rows of a column, that column returns NaN as a t-test 
@@ -123,8 +146,8 @@ df_behavstats = df_behavstats[pd.notnull(df_behavstats['switch_rt'])]
 print("")
 print("")
 
-df_behavstats.to_csv('pilot4_RT_stats.csv')
 df_behavstats.reset_index(drop=False, inplace=True)
+df_behavstats.to_csv('pilot4_RT_stats.csv')
 
 df_behavstats.columns = [
     'participant_id',
@@ -142,9 +165,22 @@ df_behavstats.columns = [
     'switch_rt'
     ]
 
+
+
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # ANOVAs
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+model = ols(
+    'switch_rt ~ C(block) + C(type) + C(participant_id) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
+    data=df_behavstats
+    ).fit()
+
+anova_table = sm.stats.anova_lm(model, typ=2)
+print(anova_table)
+
+
 
 model1 = ols(
     'switch_rt ~ C(block) + C(type) + C(participant_id) + C(switch_type) + C(block):C(switch_type) + C(type):C(switch_type) + C(participant_id):C(switch_type) + C(block):C(type) + C(block):C(participant_id) + C(type):C(participant_id)',
