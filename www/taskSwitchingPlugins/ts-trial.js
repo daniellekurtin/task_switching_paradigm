@@ -1,16 +1,10 @@
 /**
- * jspsych-html-button-response
- * Josh de Leeuw
- *
- * plugin for displaying a stimulus and getting a keyboard response
- *
- * documentation: docs.jspsych.org
- *
+ * Run one of the several kinds of trials
  **/
 
 jsPsych.plugins["ts-trial"] = (function() {
 
-  var plugin = {};
+  const plugin = {};
 
   plugin.info = {
     name: 'ts-trial',
@@ -73,6 +67,15 @@ jsPsych.plugins["ts-trial"] = (function() {
       response_correct: null
     };
 
+    function clearDisplay() {
+      // clear the display
+      display_element.innerHTML = '';
+      display_element.classList.remove(
+          'awaiting-response',
+          'received-response'
+      );
+    }
+
     function drawGrid(g, blank = false) {
       const grid = document.createElement('div');
       grid.classList.add('grid', blank? "blank" : "stimulus");
@@ -80,7 +83,7 @@ jsPsych.plugins["ts-trial"] = (function() {
         const row = g[r];
         for(let c = 0; c < row.length; c++) {
           const cell = document.createElement('div');
-          cell.innerHTML = row[c] && !blank? row[c] : "";
+          cell.innerHTML = row[c] !== null && !blank? row[c] : "";
           cell.classList.add(
               'grid-cell',
               `grid-row-${r}`,
@@ -163,17 +166,13 @@ jsPsych.plugins["ts-trial"] = (function() {
     function end_trial() {
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
-      // clear the display
-      display_element.innerHTML = '';
-      display_element.classList.remove(
-          'awaiting-response',
-          'received-response'
-      );
+      clearDisplay();
 
       // move on to the next trial
       jsPsych.finishTrial(data);
     }
 
+    clearDisplay();
     showStimulus();
   };
 

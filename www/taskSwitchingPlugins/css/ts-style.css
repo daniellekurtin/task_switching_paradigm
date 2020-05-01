@@ -5,10 +5,15 @@
     --dim: 6;
     --row-count: var(--dim);
     --col-count: var(--dim);
+    --background-color: #888;
+    --border-color: #FFF;
+    --stimulus-background-color: #bbb;
+    --stimulus-text-color: #00F;
 }
 
 body {
     user-select: none;
+    background-color: var(--background-color);
 }
 
 .jspsych-content {
@@ -28,15 +33,20 @@ body {
     height: calc(var(--my-cell-size) * var(--row-count));
     position: absolute;
     transform: translate(-50%, -50%);
-    background-color: black;
-    border: var(--gap) solid black;
+    background-color: var(--border-color);
+    border: var(--gap) solid var(--border-color);
 }
 .grid > div {
-    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: var(--background-color);
+}
+
+.grid > div.grid-cell-filled {
+    background-color: var(--stimulus-background-color);
+    color: var(--stimulus-text-color);
 }
 
 .grid.hidden {
