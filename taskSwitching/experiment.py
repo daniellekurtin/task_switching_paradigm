@@ -50,13 +50,9 @@ class Experiment:
             if config is None:
                 raise ValueError('A configuration must be specified for the experiment')
 
-            makedirs(path.join(self.save_path,"private"),exist_ok=True)
-            makedirs(path.join(self.save_path,"public"),exist_ok=True)
-
         self.participant = participant
         self.window = window
         self.synch = synch
-        self.save_path = path.join(getcwd(),"data")
         self.Config = config
         if config is not None:
             self.log_level = self.Config.MIN_LOG_LEVEL.value
@@ -70,6 +66,11 @@ class Experiment:
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
+
+        self.save_path = path.join(getcwd(), "data")
+        if not online:
+            makedirs(path.join(self.save_path,"private"), exist_ok=True)
+            makedirs(path.join(self.save_path,"public"), exist_ok=True)
 
         if self.window:
             if self.window.size[0] < self.panel_size[0] or self.window.size[1] < self.panel_size[1]:

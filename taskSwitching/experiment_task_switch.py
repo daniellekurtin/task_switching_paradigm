@@ -409,19 +409,18 @@ class ExperimentTaskSwitch(tS.Experiment):
         for s in self.trial_order_to_string():
             print(s + "\n")
 
-
     def save_trial_order(self, public=True):
         
-        # if public:
-        #     access = "public"
-        # else:
-        #     access = "private"
-        # file_name = path.join(self.save_path, access, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
+        if public:
+            access = "public"
+        else:
+            access = "private"
+        file_name = path.join(self.save_path, access, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
         
-        self.save_path2 = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\TaskStructure')
-        file_name = path.join(self.save_path2, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
+        # self.save_path2 = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\TaskStructure')
+        # file_name = path.join(self.save_path2, self.participant.id + "_" + "task_structure" + "_" + self.version + ".txt")
         
-        w = open(file_name, 'w+', newline='')
-        for s in self.trial_order_to_string():
-            w.write("\n" + s)
-    
+        with open(file_name, 'w+', newline='') as w:
+            for s in self.trial_order_to_string():
+                w.write("\n" + s)
+
