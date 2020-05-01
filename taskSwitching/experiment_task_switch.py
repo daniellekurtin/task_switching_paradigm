@@ -94,7 +94,7 @@ class ExperimentTaskSwitch(tS.Experiment):
                 s = deepcopy(switches)
                 sequence = [random.choice(list(self.TrialTypes))]
                 while len(sequence) <= self.Block.SWITCH_COUNT * self.Block.COUNT:
-                    if self.loading_text_stim is not None:
+                    if hasattr(self, "loading_text_stim") and self.loading_text_stim is not None:
                         self.loading_text_stim.text = "Generating run sequence... [attempt " + str(n + 1) + "] " + \
                                             str(len(sequence)) + "/" + str(self.Block.COUNT * self.Block.SWITCH_COUNT)
                         self.loading_text_stim.draw()
@@ -311,7 +311,7 @@ class ExperimentTaskSwitch(tS.Experiment):
             # Construct each run
             for s in range(self.Block.SWITCH_COUNT):
 
-                if self.loading_text_stim is not None:
+                if hasattr(self, "loading_text_stim") and self.loading_text_stim is not None:
                     self.loading_text_stim.text = "Generating trials for block " + str(b + 1) + "/" + \
                                         str(self.Block.COUNT.value) + ": " + \
                                         str(round(s / self.Block.SWITCH_COUNT.value * 100)) + "%"
