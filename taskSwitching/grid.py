@@ -1,5 +1,5 @@
 from math import ceil
-
+ 
 
 # Create a grid by specifying rectangles to be repeated
 class Grid:
