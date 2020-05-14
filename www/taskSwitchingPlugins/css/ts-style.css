@@ -11,6 +11,12 @@
     --stimulus-text-color: #00F;
 }
 
+.jspsych-content > img {
+    height: 20em;
+    display: block;
+    margin: 1em auto;
+}
+
 body {
     user-select: none;
     background-color: var(--background-color);

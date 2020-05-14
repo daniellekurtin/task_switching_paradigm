@@ -10,6 +10,10 @@
   <script src="taskSwitchingPlugins/ts-block-break.js"></script>
   <link rel="stylesheet" href="jspsych-6.1.0/css/jspsych.css">
   <link rel="stylesheet" href="taskSwitchingPlugins/css/ts-style.css">
+
+  <!-- Defines the instructions trial (not plugin!) -->
+  <script src="taskSwitchingPlugins/ts-instructions.js"></script>
+
   <title>Online Experiment</title>
 </head>
 <body tabindex="0" class=" jspsych-display-element" style="margin: 0px; height: 100vh; width: 100vw;">
@@ -126,6 +130,8 @@
   function begin(timeline) {
     if(DEBUG)
       timeline.shift();
+
+    timeline = [instructions, ...timeline];
     jsPsych.init({
       timeline: timeline,
       on_finish: end
