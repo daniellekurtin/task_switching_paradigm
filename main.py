@@ -8,7 +8,7 @@ from psychopy import visual
 from pyniexp import scannersynch
 import enum
 
-
+ 
 # Set some useful constants
 class Config(enum.Enum):
     SYNCH_CONFIG = 'config.json'
