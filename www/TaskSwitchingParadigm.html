@@ -14,7 +14,7 @@
 
   <!-- Defines the instructions trial (not plugin!) -->
   <script src="taskSwitchingPlugins/ts-instructions.js"></script>
-
+  <script src="taskSwitchingPlugins/ts-ethics.js"></script>
   <title>Online Experiment</title>
 </head>
 <body tabindex="0" class=" jspsych-display-element" style="margin: 0px; height: 100vh; width: 100vw;">
@@ -132,7 +132,7 @@
     if(DEBUG)
       timeline.shift();
 
-    timeline = [participant_info, instructions, ...timeline];
+    timeline = [ethics, participant_info, instructions, ...timeline];
     jsPsych.init({
       timeline: timeline,
       on_finish: end

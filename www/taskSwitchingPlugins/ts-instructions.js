@@ -14,9 +14,7 @@ var instructions = {
     type: 'instructions',
     pages: [
 
-        'Hello! Thank you for playing the task-switching game.',
-
-        'I will go over the rules for the task. Then, you will play a demo of the task to get familiar with it. Finally, we will begin the task!',
+        'Next you will see the rules for the task. Then, you will play a demo of the task to get familiar with it. Finally, you will begin the task!',
 
         'This game switches between three tasks: the digit span, the spatial span, and the spatial rotation.',
 
@@ -24,7 +22,7 @@ var instructions = {
 
         'All tasks have a similar format- a grid 6 boxes long and 6 boxes wide will appear.: <img src="img/blank_stimgrid.png"></img>',
         
-        'The first grid will disappear and be replaced with three answer grids. You will have three seconds to answer, and the next trial will begin. Answer grids 1, 2, and 3 map to "b", "n", and "m" on your keyboard.',
+        'The first grid will disappear and be replaced with three answer grids. You will have three seconds to answer by clicking on your grid of choice, and the next trial will begin.',
 
         'During one task, The "Digit Span", six numbers will flash on the grid, one after the other.: <img src="img/DS_cuecard.png"></img>',
         
