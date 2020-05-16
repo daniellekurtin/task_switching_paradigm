@@ -2,7 +2,6 @@ import taskSwitching
 from taskSwitching import ExperimentTaskSwitch
 import jsonpickle
 import enum
-
 from flask import Flask, jsonify
 from flask_cors import CORS
 

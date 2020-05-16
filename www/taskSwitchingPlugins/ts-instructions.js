@@ -1,3 +1,14 @@
+var participant_info = {
+    type: 'survey-text',
+    questions: [
+      {prompt: "How old are you?"}, 
+      {prompt: "What gender are you?", placeholder: "Male/Female/Other"},
+      {prompt: "What is your participant id?", placeholder: "001"}
+    ],
+  };
+
+
+
 
 var instructions = {
     type: 'instructions',

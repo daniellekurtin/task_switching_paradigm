@@ -3,6 +3,7 @@
 <head>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
   <script src="taskSwitchingPlugins/ts-trial.js"></script>
   <script src="taskSwitchingPlugins/ts-intro.js"></script>
   <script src="taskSwitchingPlugins/ts-trial-gap.js"></script>
@@ -131,7 +132,7 @@
     if(DEBUG)
       timeline.shift();
 
-    timeline = [instructions, ...timeline];
+    timeline = [participant_info, instructions, ...timeline];
     jsPsych.init({
       timeline: timeline,
       on_finish: end
