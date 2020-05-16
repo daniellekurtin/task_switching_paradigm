@@ -38,7 +38,7 @@ var instructions = {
 
         'After you play each task for a few minutes, you will be shown a card announcing what the next task will be. The next task will start immediately.',  
 
-        'Next is a demo of the task, so you can get used to the tasks.'
+        'Next is a demo of the task, so you can get used to the tasks. Most participants feel as though the tasks are difficult, and they are meant to be challenging. However, participants often perform much better than they feel they did. We advise you to answer as quickly and as accurately as you can, and hopefully have some fun!',
 
     ],
     show_clickable_nav: true
