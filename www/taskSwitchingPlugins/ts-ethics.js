@@ -17,6 +17,10 @@ var ethics = {
 
 var consent = {
     type:'consent',
-    checkbox_text: 'I agree to participate in this study.',
-    button_text: "Begin experiment!"
+    items: [
+        'I have read and understood the study description.',
+        'I am at least 18 years old.',
+        'I agree to participate in this study.'
+    ],
+    button_label: "Begin experiment!"
   };

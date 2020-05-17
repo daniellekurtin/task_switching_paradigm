@@ -11,6 +11,10 @@
     --stimulus-text-color: #00F;
 }
 
+.bad {
+    color: red;
+}
+
 .jspsych-content > img {
     height: 20em;
     display: block;
