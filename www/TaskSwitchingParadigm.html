@@ -3,6 +3,7 @@
 <head>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-consent.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
   <script src="taskSwitchingPlugins/ts-trial.js"></script>
   <script src="taskSwitchingPlugins/ts-intro.js"></script>
@@ -132,7 +133,7 @@
     if(DEBUG)
       timeline.shift();
 
-    timeline = [ethics, participant_info, instructions, ...timeline];
+    timeline = [ethics, consent, participant_info, instructions, ...timeline];
     jsPsych.init({
       timeline: timeline,
       on_finish: end
