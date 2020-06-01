@@ -43,3 +43,12 @@ var instructions = {
     ],
     show_clickable_nav: true
 }
+
+
+var end_thankyou = {
+  type: 'instructions',
+  pages: [
+      'Thank you for completing the Task Switching Paradigm! Be sure to notify the researchers you have completed the task to recieve SONA credits!'
+  ],
+  show_clickable_nav: false
+}

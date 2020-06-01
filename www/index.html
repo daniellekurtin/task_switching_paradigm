@@ -141,19 +141,15 @@
     if(DEBUG)
       timeline.shift();
 
-    timeline = [ethics, consent, participant_info, instructions, ...timeline];
+    timeline = [ethics, consent, participant_info, instructions, ...timeline, end_thankyou];
     // Add data saving onto each of the timeline trials
     timeline.forEach(x => x.on_finish = saveLastTrialData);
 
     jsPsych.init({
-      timeline: timeline,
-      on_finish: end
+      timeline: timeline
     });
   }
 
-  function end() {
-    jsPsych.data.displayData();
-  }
 
   function saveLastTrialData() {
     var xhr = new XMLHttpRequest();
