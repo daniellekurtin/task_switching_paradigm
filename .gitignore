@@ -121,3 +121,6 @@ dmypy.json
 .idea/modules.xml
 .idea/oxbridge_brainhack_2019.iml
 .idea/workspace.xml
+
+# Don't share database details on Git!
+database_config.php 
