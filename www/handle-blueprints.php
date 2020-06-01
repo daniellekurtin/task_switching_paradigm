@@ -28,6 +28,7 @@ if($data_array) {
     // Check authorisation
     if(!array_key_exists("password", $data_array) ||
         $data_array["password"] != BLUEPRINT_PASSWORD) {
+        // Incorrect password!
         http_response_code(401);
         die();
     }
@@ -40,6 +41,7 @@ if($data_array) {
         // Check whether file exists already
         if(file_exists($path . $filename) ||
             file_exists($path. 'used_' . $filename)) {
+            // File already exists!
             http_response_code(422);
             die();
         }
@@ -61,26 +63,30 @@ if($data_array) {
             array_push($unused_files, $f);
     }
     $filename = "";
+    $content = "";
 
     if(sizeof($unused_files) > 0) {
         shuffle($unused_files);
         $filename = array_pop($unused_files);
+
+        // Mark blueprint as used
+        $save_as = 'used_' . $filename;
+        $content = file_get_contents($path . $filename);
+        if(file_put_contents($path . $save_as, $content) === false) {
+            // Could not update filename to mark as used!
+            http_response_code(500);
+            die();
+        } else {
+            unlink($path . $filename);
+        }
     } elseif (sizeof($all_files) > 0) {
         shuffle($all_files);
         $filename = array_pop($all_files);
+        $content = file_get_contents($path . $filename);
     } else {
+        // Could not find any blueprints!
         http_response_code(503);
         die();
-    }
-
-    // Mark blueprint as used
-    $save_as = 'used_' . $filename;
-    $content = file_get_contents($path . $filename);
-    if(file_put_contents($path . $save_as, $content) === false) {
-        http_response_code(500);
-        die();
-    } else {
-        unlink($path . $filename);
     }
 
     // Send blueprint back
