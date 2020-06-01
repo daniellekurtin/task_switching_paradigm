@@ -71,7 +71,7 @@
   function createTimeline(json) {
     let out;
     try {
-      window.blueprintId = json.blueprint_id;
+      jsPsych.data.addProperties({blueprintId: json.blueprint_id});
       const trials = JSON.parse(json.blueprint.trials);
       out = trials.map(t => parseTrial(t));
     } catch(e) {
@@ -152,6 +152,8 @@
       }
     };
     xhr.send(jsPsych.data.getLastTrialData().json());
+    console.log('Saving data:');
+    console.log(jsPsych.data.getLastTrialData().json());
   }
 
 </script>
