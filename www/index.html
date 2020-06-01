@@ -51,8 +51,18 @@
     console.error(e);
   }
 
-  function loadTrialList() {
+  function loadTrialList(bp = null) {
     message('Fetching experiment details from server...');
+    if(bp) {
+      if(!/\.json$/i.test(bp))
+        return error("Could not load experiment.", `Bad blueprint path: ${bp}`);
+      return fetch(`./blueprints/${bp}`)
+              .then(async r => {return {
+                blueprint_id: bp,
+                blueprint: {trials: JSON.stringify(await r.json())} // Match php blueprint formatting
+              }})
+              .catch(e => error(`Could not load experiment.`, e));
+    }
     return fetch('./handle-blueprints.php', {
       method: 'GET',
       headers: {
