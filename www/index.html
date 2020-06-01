@@ -53,17 +53,13 @@
 
   function loadTrialList() {
     message('Fetching experiment details from server...');
-    return fetch('http://localhost:5000/', {
+    return fetch('./handle-blueprints.php', {
       method: 'GET',
-      // mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      // credentials: 'include',
       headers: {
         'Accept': 'application/json'
       }
     })
             .then(r => r.json())
-            .then(r => JSON.parse(r.trials))
             .catch(e => error("Could not load experiment.", e));
   }
 
@@ -72,9 +68,11 @@
    * @param trials {object[]} Trial specifications
    * @return {object[]} jsPsych plugin trials
    */
-  function createTimeline(trials) {
+  function createTimeline(json) {
     let out;
     try {
+      window.blueprintId = json.blueprint_id;
+      const trials = JSON.parse(json.blueprint.trials);
       out = trials.map(t => parseTrial(t));
     } catch(e) {
       error("Error preparing experiment.", e);
@@ -83,7 +81,7 @@
   }
 
   function parseTrial(trial) {
-    const t = {}
+    const t = {};
     const tt = trial["py/object"];
     if(/Component/.test(tt)) {
       if(/ComponentStart$/.test(tt)) {

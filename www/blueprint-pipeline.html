@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        Fetch blueprints from local server and upload them to remote</title>
+</head>
+<body>
+<div>
+    <h1>Server upload</h1>
+    <form>
+        <fieldset>
+            Source:
+            <input id="source" name="source" type="text" value="http://localhost:5000/"/>
+        </fieldset>
+        <fieldset>
+            File count:
+            <input id="count" name="count" type="number" min="0" value="10"/>
+        </fieldset>
+        <fieldset>
+            Destination:
+            <input id="destination" name="destination" type="text" value="http://localhost/oxbridge_brainhack_2019/www/handle-blueprints.php"/>
+        </fieldset>
+        <fieldset>
+            Password:
+            <input id="pass" name="pass" type="password" value=""/>
+        </fieldset>
+    </form>
+    <button onclick="pipeline()">Go!</button>
+</div>
+<div id="output"></div>
+
+<script type="text/javascript">
+    async function pipeline() {
+        const src = document.getElementById('source').value;
+        const count = parseInt(document.getElementById('count').value) || 1;
+        const dest = document.getElementById('destination').value;
+        const pass = document.getElementById('pass').value;
+        if(src && count && dest && pass) {
+            for(let i = 0; i < count; i++) {
+                await getBlueprint(src)
+                    .then(bp => saveBlueprint(dest, pass, bp))
+                    .then(r => document.getElementById('output').innerHTML += `<p><span class="nth">Blueprint ${i + 1}:</span> ${r.status} - ${r.statusText}</p>`);
+            }
+        }
+        return false;
+    }
+
+    async function getBlueprint(src) {
+        return await fetch(src)
+            .then(b => b.json());
+    }
+
+    async function saveBlueprint(dest, pass, bp) {
+        return await fetch(dest, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: pass,
+                blueprint: bp
+            })
+        });
+    }
+</script>
+</body>
+</html>

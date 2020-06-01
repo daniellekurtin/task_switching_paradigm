@@ -124,3 +124,4 @@ dmypy.json
 
 # Don't share database details on Git!
 database_config.php 
+www/blueprint-config.php
