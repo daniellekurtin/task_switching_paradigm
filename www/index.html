@@ -3,7 +3,7 @@
 <head>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>  
   <script src="taskSwitchingPlugins/ts-consent.js"></script>
   <script src="taskSwitchingPlugins/ts-trial.js"></script>
   <script src="taskSwitchingPlugins/ts-intro.js"></script>
@@ -32,7 +32,7 @@
 <script defer type="text/javascript">
   const DEBUG = true;
   // Load the trial list from the Python script
-  loadTrialList()
+  loadTrialList('demo-blueprint.json')
     .then(tl => createTimeline(tl))
     .then(timeline => begin(timeline));
 
