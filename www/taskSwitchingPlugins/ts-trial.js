@@ -64,7 +64,8 @@ jsPsych.plugins["ts-trial"] = (function() {
       response_time: null,
       response_answer: null,
       answer_index: trial.answer_index,
-      response_correct: null
+      response_correct: null,
+      trial_task_type: trial.trial_type
     };
 
     function clearDisplay() {
@@ -164,6 +165,8 @@ jsPsych.plugins["ts-trial"] = (function() {
 
     // function to end trial when it is time
     function end_trial() {
+      // convert data.stimulus_off to JSON string
+      data.stimulus_off = JSON.stringify(data.stimulus_off);
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
       clearDisplay();

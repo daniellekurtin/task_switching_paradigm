@@ -24,7 +24,7 @@
   <div id="jspsych-content" class="jspsych-content">
     <div>
       <h1>Loading</h1>
-      <p>Please wait while we load the experiment. This should only take a few moments.</p>
+      <p>Please wait while we load the experiment. This should only take a few moments. If an error occurs, please try refreshing the page to see if that resolves the issue.</p>
       <p id="LoadingStatus" class="status">Checking JavaScript is enabled...</p>
     </div>
   </div>
@@ -33,9 +33,10 @@
 <script defer type="text/javascript">
   const DEBUG = true;
   // Load the trial list from the Python script
-  loadTrialList('used_demo-blueprint.json')
+  loadTrialList()
     .then(tl => createTimeline(tl))
-    .then(timeline => begin(timeline, true));
+    .then(timeline => begin(timeline));
+
 
 </script>
 </html>

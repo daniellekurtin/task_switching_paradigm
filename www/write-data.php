@@ -43,7 +43,6 @@ try {
     }
     echo '{"success": true}';
 } catch(PDOException $e) {
-    echo '{"success": false, "message": ' . $e->getMessage();
+    echo '{"success": "false", "message": "' . $e->getMessage() . '"}';
 }
 $conn = null;
-?>
