@@ -142,7 +142,8 @@ function begin(timeline, isDemo = false) {
     }
 
     jsPsych.init({
-        timeline: timeline
+        timeline: timeline,
+        display_element: document.querySelector('.jspsych-display-element')
     });
 }
 
@@ -190,19 +191,10 @@ function saveLastTrialData() {
  */
 function saveErrorPopup(err) {
     console.log({dataSaveError: err});
-    document.body.innerHTML += `
-    <div id="errorModal" class="showError">
-        <div>
-            <h1>Error saving data!</h1>
-            <p>We ran into an error while trying to save the data.</p>
-            <p>If this has happened early in the experiment, we recommend you try <a href="main-task.html">refreshing the page</a>.</p>
-            <p>If you're further in, or do not want to start over, you can <span onclick="ignoreError()" class="link">ignore the error and continue</span>. If you do this, however, we won't be able to use your data.</p>
-        </div>
-    </div>
-    `;
+    document.getElementById('errorModal').classList.add('show-error');
 }
 
 function ignoreError() {
     window.ignoreSaveErrors = true;
-    document.getElementById('errorModal').classList.remove('showError');
+    document.getElementById('errorModal').classList.remove('show-error');
 }
