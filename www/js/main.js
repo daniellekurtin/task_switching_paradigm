@@ -139,6 +139,10 @@ function begin(timeline, isDemo = false) {
             if(!x.on_finish)
                 x.on_finish = saveLastTrialData;
         });
+    } else {
+        // Add feedback to demo trials
+        // TODO: this should eventually be handled within the blueprint!
+        timeline.forEach(x => x.feedback_duration = 1000);
     }
 
     jsPsych.init({
