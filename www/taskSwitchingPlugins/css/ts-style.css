@@ -93,6 +93,27 @@ body {
     column-gap: calc(var(--cell-size-answer) * 2);
 }
 
+/* Feedback */
+.received-response .answer.grid.feedback:not(.chosen) {
+    background-color: var(--background-color);
+    border-color: var(--background-color);
+    visibility: visible;
+}
+.received-response .answer.grid.feedback:not(.chosen) > div {
+    visibility: hidden;
+}
+.received-response .feedback::before {
+    content: " ";
+    background-color: green;
+    position: absolute;
+    height: 120%;
+    width: 120%;
+    top: -10%;
+    left: -10%;
+    z-index: -1;
+}
+
+
 .answers .grid {cursor: not-allowed;}
 .awaiting-response .answers .grid {cursor: pointer;}
 .awaiting-response .stimuli {visibility: hidden;}

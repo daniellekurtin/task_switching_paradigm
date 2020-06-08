@@ -51,6 +51,12 @@ jsPsych.plugins["ts-trial"] = (function() {
         pretty_name: "Trial task type",
         default: undefined,
         description: "The task type of the trial"
+      },
+      feedback_duration: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: "Feedback duration",
+        default: 0,
+        description: "Duration to show feedback (ms)."
       }
     }
   };
@@ -65,7 +71,9 @@ jsPsych.plugins["ts-trial"] = (function() {
       response_answer: null,
       answer_index: trial.answer_index,
       response_correct: null,
-      trial_task_type: trial.trial_type
+      trial_task_type: trial.trial_type,
+      feedback_on_time: null,
+      feedback_off_time: null
     };
 
     function clearDisplay() {
@@ -143,7 +151,7 @@ jsPsych.plugins["ts-trial"] = (function() {
       document.querySelectorAll('.answer')
           .forEach(elm => elm.addEventListener('click', answer));
 
-      jsPsych.pluginAPI.setTimeout(end_trial, trial.max_response_time);
+      jsPsych.pluginAPI.setTimeout(showFeedback, trial.max_response_time);
     }
 
     /**
@@ -163,8 +171,20 @@ jsPsych.plugins["ts-trial"] = (function() {
       }
     }
 
+    function showFeedback() {
+      if(!trial.feedback_duration)
+        end_trial();
+      else {
+        data.feedback_on_time = performance.now();
+        document.getElementById(`Answer${data.answer_index}`).classList.add('feedback');
+        setTimeout(end_trial, trial.feedback_duration);
+      }
+    }
+
     // function to end trial when it is time
     function end_trial() {
+      if(trial.feedback_duration)
+        data.feedback_off_time = performance.now();
       // convert data.stimulus_off to JSON string
       data.stimulus_off = JSON.stringify(data.stimulus_off);
       // kill any remaining setTimeout handlers
