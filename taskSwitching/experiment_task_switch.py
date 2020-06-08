@@ -33,8 +33,8 @@ class ExperimentTaskSwitch(tS.Experiment):
         MAX = 9
 
     class Block(enum.IntEnum):
-        COUNT = 4
-        SWITCH_COUNT = 9
+        COUNT = 2
+        SWITCH_COUNT = 6
         # COUNT * SWITCH_COUNT must be divisible by the number of unique switch types * unique InfoCardDurations
         BREAK_TIME = 120
 
