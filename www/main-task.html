@@ -19,14 +19,24 @@
   <script src="js/main.js"></script>
   <title>Online Experiment</title>
 </head>
-<body tabindex="0" class=" jspsych-display-element" style="margin: 0px; height: 100vh; width: 100vw;">
-<div class="jspsych-content-wrapper">
-  <div id="jspsych-content" class="jspsych-content">
-    <div>
-      <h1>Loading</h1>
-      <p>Please wait while we load the experiment. This should only take a few moments. If an error occurs, please try refreshing the page to see if that resolves the issue.</p>
-      <p id="LoadingStatus" class="status">Checking JavaScript is enabled...</p>
+<body tabindex="0" class="" style="margin: 0px; height: 100vh; width: 100vw;">
+<div class="jspsych-display-element">
+  <div class="jspsych-content-wrapper">
+    <div id="jspsych-content" class="jspsych-content">
+      <div>
+        <h1>Loading</h1>
+        <p>Please wait while we load the experiment. This should only take a few moments. If an error occurs, please try refreshing the page to see if that resolves the issue.</p>
+        <p id="LoadingStatus" class="status">Checking JavaScript is enabled...</p>
+      </div>
     </div>
+  </div>
+</div>
+<div id="errorModal" class="">
+  <div>
+    <h1>Error saving data!</h1>
+    <p>We ran into an error while trying to save the data.</p>
+    <p>If this has happened early in the experiment, we recommend you try <a href="main-task.html">refreshing the page</a>.</p>
+    <p>If you're further in, or do not want to start over, you can <span onclick="ignoreError()" class="link">ignore the error and continue</span>. If you do this, however, we won't be able to use your data.</p>
   </div>
 </div>
 </body>
