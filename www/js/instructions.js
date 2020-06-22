@@ -13,7 +13,7 @@ const demo_instructions = {
         'This game switches between three tasks: the <strong>Digit Span</strong>, the <strong>Spatial Span</strong>, and the <strong>Spatial Rotation</strong>.',
         'You will be given instructions on how to play each task in the game and you will be given time to practice. You can practice as many times as you want before starting the game. We will ask for your consent before we begin recording any data on your performance.',
         'In all tasks you will initially see a grid like the one below. This will be filled with information relevant for each task. <img src="img/blank_stimgrid.png"></img>',
-        'You will have three answer grids to choose from for your response. Only one is correct and you have <strong>3 seconds<\strong> to answer by clicking on your grid of choice',
+        'You will have three answer grids to choose from for your response. Only one is correct and you have <strong>3 seconds<\strong> to answer by clicking on your grid of choice. It may be easier to answer within the three-second window using a <strong>mouse</strong> as opposed to a <strong>trackpad</strong>.',
         '<p>During the <strong>Digit Span</strong> task, six numbers will flash on the grid, one after the other:</p><img src="img/DS_recording.gif"></img><p>Your job is to <strong>remember the six numbers in order</strong>, and click on the answer grid that has those 6 numbers from left to right.</p>',
         '<p>During the <strong>Spatial Span</strong> the grid will highlight 6 boxes, one after another. Your job is to <strong>remember which spaces have been occupied by boxes</strong>, and select the answer grid that shows all the boxes that were highlighted.</p><img src="img/SS_recording.gif"></img>',
         '<p>During the <strong>Spatial Rotation</strong> boxes will become highlighted. The boxes will add one after another instead of disappearing.</p><img src="img/SR_recording.gif"></img><p>You job is to <strong>pick the answer which shows the pattern of highlighted boxes <em>rotated through 90, 180, or 270 degrees</em></strong>.',
@@ -87,7 +87,7 @@ var instructions = {
 var end_thankyou = {
   type: 'instructions',
   pages: [
-      'Thank you for completing the Task Switching Paradigm! Be sure to notify the researchers you have completed the task to recieve SONA credits!'
+      'Thank you for completing the Task Switching Paradigm! Be sure to notify Danielle at d.kurtin@surrey.ac.uk you have completed the task to recieve SONA credits!'
   ],
   show_clickable_nav: false
 }
