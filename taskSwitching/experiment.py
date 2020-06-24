@@ -17,6 +17,7 @@ class Experiment:
     trials = []
     current_trial_number = 0
     stimulus_duration = 0.5   # if you want multiple values, use stimulus_durations instead
+    feedback_duration = 2  # if you want multiple values, use feedback_durations instead
 
     panel_size = [800, 800]
 
@@ -28,6 +29,7 @@ class Experiment:
     answer_rect_height = .06  # normed units for Panel
 
     background_color = [0, 0, 0]
+    feedback_color = [-1, 1, -1]
     line_color = [1, 1, 1]
     text_color = [1, 1, 1]
     stimulus_text_color = [-1, -1, 1]

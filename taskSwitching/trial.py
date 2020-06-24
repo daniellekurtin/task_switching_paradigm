@@ -1,6 +1,5 @@
 from taskSwitching.component import *
 from taskSwitching.grid import *
-from datetime import timedelta
 
 
 def make_display_numbers(rows, cols, values, row_num, col_num):
@@ -31,7 +30,7 @@ class Trial(Component):
     """
     Any values which might vary from trial to trial are recorded in a Trial
     """
-    version = "v0.0.1"  # used for keeping .csv file headers sensible
+    version = "v0.0.2"  # used for keeping .csv file headers sensible
 
     trial_number = -1
     stimulus = None
@@ -46,6 +45,8 @@ class Trial(Component):
         "response_enabled": -1,
         "response_submitted": -1,
         "response_disabled": -1,
+        "feedback_start": -1,
+        "feedback_end": -1,
         "trial_logged": -1
     }
 
@@ -81,7 +82,7 @@ class Trial(Component):
             )
 
         # Inherit trial-specific properties of the Experiment
-########################################################################################
+        ########################################################################################
 
         # Find out my stimulus_durations:
         # Plan A, I'll check my experiment to see if there is a dictionary of values for stimulus_durations,  
@@ -93,6 +94,11 @@ class Trial(Component):
             self.stimulus_duration = experiment.stimulus_durations[trial_type]  
         elif hasattr(experiment, 'stimulus_duration'):     # Plan B
             self.stimulus_duration = experiment.stimulus_duration
+
+        if hasattr(experiment, 'feedback_durations') and trial_type in experiment.feedback_durations:  # Plan A
+            self.feedback_duration = experiment.feedback_durations[trial_type]
+        elif hasattr(experiment, 'feedback_duration'):  # Plan B
+            self.feedback_duration = experiment.feedback_duration
         # Plan C is taken care of at the bottom with kwargs
 
         if hasattr(experiment, 'answer_rect_width'):
@@ -103,6 +109,8 @@ class Trial(Component):
             self.delay_before_response = experiment.delay_before_response
         if hasattr(experiment, 'max_response_time'):
             self.max_response_time = experiment.max_response_time
+        if hasattr(experiment, 'feedback_color'):
+            self.feedback_color = experiment.feedback_color
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -248,6 +256,45 @@ class Trial(Component):
                  level='EXP')
         self.log('Correct = ' + str(self.answer == self.answer_index), level='EXP')
 
+    def show_feedback(self):
+        """
+        Provide a visual indicator of the correct answer
+        :return:
+        """
+        self.times["feedback_start"] = self.experiment.synch.clock
+        if self.feedback_duration > 0:
+            # Draw a big green rectangle to show the position of the correct answer grid
+            target = self.get_answer_grids()[self.answer_index]
+            target.rect.lineColor = [-1, 1, -1]
+            target.draw()
+
+            size = (target.rect.width * target.width, target.rect.height * target.height)
+            size_adjust = 1.2
+            line_width = 6
+            feedback = Grid(
+                width_in_cells=1,
+                height_in_cells=1,
+                psychopy_rect=visual.Rect(
+                    win=self.experiment.window,
+                    width=size[0] * size_adjust,
+                    height=size[1] * size_adjust,
+                    units='pix',
+                    fillColor=self.experiment.background_color,
+                    lineColor=self.feedback_color,
+                    lineWidth=line_width
+                ),
+                start_coords=[
+                    target.start[0] + size[0] + target.rect.width / 2 - line_width,
+                    target.start[1] + size[0] + target.rect.height / 2 - line_width
+                ]
+            )
+            feedback.draw()
+            self.draw_response_feedback()
+            clock.wait(self.feedback_duration)
+
+        self.experiment.window.flip()
+        self.times["feedback_end"] = self.experiment.synch.clock
+
     def prepare_answers(self):
         """
         This should be overridden by each child class
@@ -263,6 +310,7 @@ class Trial(Component):
 
         self.show_stimulus()
         self.collect_response()
+        self.show_feedback()
 
         self.to_csv()
 
