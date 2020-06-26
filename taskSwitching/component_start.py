@@ -15,7 +15,7 @@ class ComponentStart(ComponentRest):
 
     def main(self):
         # Will show the start card and wait for a keypress
-        self.countdown.text = "Press any key to begin" 
+        self.countdown.text = "Press 1, 2, or 3 to begin" 
         self.draw()
         self.experiment.window.flip()
         
