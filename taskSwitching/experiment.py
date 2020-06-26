@@ -12,12 +12,12 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
-    version = "v0.0.7"
+    version = "v0.0.8"
     
     trials = []
     current_trial_number = 0
     stimulus_duration = 0.5   # if you want multiple values, use stimulus_durations instead
-    feedback_duration = 2  # if you want multiple values, use feedback_durations instead
+    feedback_duration = 0  # if you want multiple values, use feedback_durations instead
 
     panel_size = [800, 800]
 
@@ -34,6 +34,8 @@ class Experiment:
     text_color = [1, 1, 1]
     stimulus_text_color = [-1, -1, 1]
     stimulus_background_color = [.5, .5, .5]
+
+    save_enabled = True
 
     def __init__(self, participant=None, window=None, synch=None, config=None, online=False, **kwargs):
         """
@@ -70,7 +72,7 @@ class Experiment:
             self.__setattr__(k, kwargs[k])
 
         self.save_path = path.join(getcwd(), "data")
-        if not online:
+        if self.save_enabled and not online:
             makedirs(path.join(self.save_path,"private"), exist_ok=True)
             makedirs(path.join(self.save_path,"public"), exist_ok=True)
 
@@ -104,6 +106,9 @@ class Experiment:
         :type public: bool
         :return:
         """
+        if not self.save_enabled:
+            return
+
         if public:
             access = "public"
         else:
@@ -158,6 +163,8 @@ class Experiment:
         Save a JSON representation of the experimental parameters
         :return:
         """
+        if not self.save_enabled:
+            return
         pass
 
     def trial_order_to_string(self):

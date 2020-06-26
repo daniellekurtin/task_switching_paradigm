@@ -111,6 +111,8 @@ class Trial(Component):
             self.max_response_time = experiment.max_response_time
         if hasattr(experiment, 'feedback_color'):
             self.feedback_color = experiment.feedback_color
+        if hasattr(experiment, 'save_enabled'):
+            self.save_enabled = experiment.save_enabled
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -269,26 +271,42 @@ class Trial(Component):
             target.draw()
 
             size = (target.rect.width * target.width, target.rect.height * target.height)
-            size_adjust = 1.2
-            line_width = 6
-            feedback = Grid(
+            gap_size = 6
+            border_size = 12
+            feedback_big = Grid(
                 width_in_cells=1,
                 height_in_cells=1,
                 psychopy_rect=visual.Rect(
                     win=self.experiment.window,
-                    width=size[0] * size_adjust,
-                    height=size[1] * size_adjust,
+                    width=size[0] + gap_size + border_size * 2,
+                    height=size[1] + gap_size + border_size * 2,
                     units='pix',
-                    fillColor=self.experiment.background_color,
-                    lineColor=self.feedback_color,
-                    lineWidth=line_width
+                    fillColor=self.feedback_color,
+                    lineColor=self.experiment.background_color
                 ),
                 start_coords=[
-                    target.start[0] + size[0] + target.rect.width / 2 - line_width,
-                    target.start[1] + size[0] + target.rect.height / 2 - line_width
+                    target.start[0] + size[0] + target.rect.width / 2 - border_size / 2 - gap_size / 2,
+                    target.start[1] + size[1] + target.rect.height / 2 - border_size / 2 - gap_size / 2
                 ]
             )
-            feedback.draw()
+            feedback_small = Grid(
+                width_in_cells=1,
+                height_in_cells=1,
+                psychopy_rect=visual.Rect(
+                    win=self.experiment.window,
+                    width=size[0] + gap_size,
+                    height=size[1] + gap_size,
+                    units='pix',
+                    fillColor=self.experiment.background_color,
+                    lineColor=self.experiment.background_color
+                ),
+                start_coords=[
+                    target.start[0] + size[0] + target.rect.width / 2 - border_size - gap_size * 1.5,
+                    target.start[1] + size[1] + target.rect.height / 2 - border_size - gap_size * 1.5
+                ]
+            )
+            feedback_big.draw()
+            feedback_small.draw()
             self.draw_response_feedback()
             clock.wait(self.feedback_duration)
 
@@ -315,6 +333,9 @@ class Trial(Component):
         self.to_csv()
 
     def to_csv(self):
+        if not self.save_enabled:
+            return
+
         self.times["trial_logged"] = self.experiment.synch.clock
 
         self.experiment.save_csv(

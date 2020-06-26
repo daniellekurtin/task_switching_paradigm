@@ -104,7 +104,7 @@ body {
 }
 .received-response .feedback::before {
     content: " ";
-    background-color: green;
+    background-color: #00FF00;
     position: absolute;
     height: 120%;
     width: 120%;

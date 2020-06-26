@@ -95,6 +95,8 @@ function parseTrial(trial) {
         t.delay_before_response = trial.delay_before_response * 1000;
         t.answers = trial.answers;
         t.answer_index = trial.answer_index;
+        t.feedback_duration = trial.feedback_duration * 1000;
+        t.save_enabled = trial.save_enabled;
 
         if(/TrialDigitSpan$/.test(tt))
             return {trial_type: "ts-trial-digit-span", ...t};
@@ -126,24 +128,17 @@ function begin(timeline, isDemo = false) {
     timeline = addInstructionsToTimeline(timeline, isDemo);
 
     // Add data saving onto each of the timeline trials
-    if(!isDemo) {
-        // Add a unique participant Id to track this participant even before we have had them give us their id
-        jsPsych.data.addProperties({
-            auto_participant_id: performance.now().toString() + '_' + Math.round(Math.random() * 100000).toString(),
-            participant_age: NaN,
-            participant_gender: null,
-            participant_id: null
-        });
-        // Add automatic saving of data
-        timeline.forEach(x => {
-            if(!x.on_finish)
-                x.on_finish = saveLastTrialData;
-        });
-    } else {
-        // Add feedback to demo trials
-        // TODO: this should eventually be handled within the blueprint!
-        timeline.forEach(x => x.feedback_duration = 1000);
-    }
+    jsPsych.data.addProperties({
+        auto_participant_id: performance.now().toString() + '_' + Math.round(Math.random() * 100000).toString(),
+        participant_age: NaN,
+        participant_gender: null,
+        participant_id: null
+    });
+    // Add automatic saving of data
+    timeline.forEach(x => {
+        if(!x.on_finish && x.save_enabled !== false)
+            x.on_finish = saveLastTrialData;
+    });
 
     jsPsych.init({
         timeline: timeline,

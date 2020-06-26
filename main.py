@@ -65,6 +65,87 @@ if __name__ == '__main__':
 
     SSO.start_process()
 
+    # Run tutorial #
+    # Create the experiment object
+    tut = tS.ExperimentTaskSwitch(
+        window=win,
+        panel_size=[800, 800],
+        synch=SSO,
+        config=Config,
+        participant=participant,
+        feedback_duration=2,
+        run_sequence=[],
+        trials=[None],
+        save_enabled=False
+    )
+    tut.trials = [
+        tS.ComponentInfoCard(
+            experiment=tut,
+            next_task=tut.TrialTypes.DIGIT_SPAN.value,
+            break_duration=tut.InfoCardDurations.LONG.value
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.DIGIT_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.DIGIT_SPAN, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.DIGIT_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.DIGIT_SPAN, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.DIGIT_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.DIGIT_SPAN, experiment=tut)
+        ),
+        tS.ComponentInfoCard(
+            experiment=tut,
+            next_task=tut.TrialTypes.SPATIAL_SPAN.value,
+            break_duration=tut.InfoCardDurations.LONG.value
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_SPAN, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_SPAN, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_SPAN,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_SPAN, experiment=tut)
+        ),
+        tS.ComponentInfoCard(
+            experiment=tut,
+            next_task=tut.TrialTypes.SPATIAL_ROTATION.value,
+            break_duration=tut.InfoCardDurations.LONG.value
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_ROTATION,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_ROTATION, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_ROTATION,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_ROTATION, experiment=tut)
+        ),
+        tut.create_trial_by_type(
+            tut.TrialTypes.SPATIAL_ROTATION,
+            experiment=tut,
+            stimulus=tut.create_stimulus_by_type(tut.TrialTypes.SPATIAL_ROTATION, experiment=tut)
+        ),
+    ]
+
+    # Run the experiment
+    tut.synch.wait_for_synch()
+    tut.run()
+
+    # Run main experiment #
     # Create the experiment object
     exp = tS.ExperimentTaskSwitch(
         window=win,

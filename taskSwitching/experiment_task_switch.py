@@ -410,6 +410,8 @@ class ExperimentTaskSwitch(tS.Experiment):
             print(s + "\n")
 
     def save_trial_order(self, public=True):
+        if not self.save_enabled:
+            return
         
         if public:
             access = "public"
