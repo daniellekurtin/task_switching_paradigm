@@ -54,6 +54,7 @@ var consent = {
     type:'consent',
     bodyText: `
     <p>This game is used to investigate working memory. In this task, you will be required to remember a sample stimulus and, after a delay, identify whether which answer presented is correct.</p>
+    <p> This research is conducted under a project that recieved favourable approval from the University of Surrey Ethics Committee. </p>
     <p>Before starting the experiment, please make sure: You have understood the basic information about this experiment. You are aware of what your participation involves. You confirm you <strong>do not have a history of neurological or psychiatric conditions</strong> or any other neurological or psychiatric conditions. You understand that by taking part you are consenting to your data being used to assist in research into neuroscience and cognition. The <strong>data we collect will be analysed anonymously</strong> and we do not store any personally identifiable information (such as IP address location name or contact details). <strong>You may withdraw at any time</strong> without penalty or consequences of any kind. Anonymised data collected up to the point of withdrawal will be kept (data from tests and answers to the demographic questions). Your participation in this research is completely <strong>VOLUNTARY</strong>.</p>
     `,
     items: [
