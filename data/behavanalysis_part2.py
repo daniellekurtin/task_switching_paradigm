@@ -23,32 +23,39 @@ def create_df(raw_data_location):
     'occurence'
     ])
 
-    headers = [
-    'participant_id',
-    'type',
-    'target_ans',
-    'participant_ans',
-    'time_start',
-    'time_response_enabled',
-    'time_response_submitted'
-    ]
+    df = pd.read_csv(raw_data_location, usecols=headers)
 
-    df = pd.read_csv(raw_data_location, usecols = headers)
+    # Rename SQL columns to match analysis sheet
+    df.rename(columns= {
+    "trial_task_type":"type", 
+    "answer_index":"target_ans",
+    "response_answer":"participant_ans",
+    "response_enabled_time":"time_response_enabled",
+    "response_time":"time_response_submitted",    
+    "stimulus_on":"time_start",
+    "response_correct":"accuracy",
+    }, inplace=True
+    )
+
+    # determine how many nonanswered trials were there
+    xx = (len(df['participant_ans']))
+    #drops non-answered trials
+    df = df[~df['participant_ans'].isnull()]
+    yy = (len(df['participant_ans']))
+    # number of trials missed
+    zz = xx - yy
+    print(zz)
+    # number of trials missed as a % out of total
+    vv = zz / xx * 100
+    print(vv)
+
 
     df['time_block'] = df.time_start.diff()
-
-    conditions = [
-    df['target_ans'] == df['participant_ans']
-    ]
-    choices = [int(1)]
-
 
     df['response_time'] = np.where(
         df['time_response_submitted'] == int(-1), 3,
         df['time_response_submitted'].sub(df['time_response_enabled'], axis=0)
         )
-
-    df['accuracy'] = np.select(conditions, choices, default=0)
 
     for group_index, group_value in df.groupby('participant_id'):
         x = 1
@@ -71,7 +78,7 @@ def create_df(raw_data_location):
         df2.reset_index(drop = True, inplace = True)
 
 
-    df2.set_index(['participant_id', 'block', 'type'], inplace = True)
+    df2.set_index(['participant_id', 'type'], inplace = True)
 
     for group_index, group_value in df2.groupby(level=[0, 1]):
         group_value.reset_index(drop = False, inplace = True)
@@ -101,7 +108,7 @@ def create_df(raw_data_location):
                 group_v.at[index, 'occurence'] = j
 
             group_v.reset_index(drop = True, inplace = True)
-            df3 = pd.concat([df3, group_v])
+            df3 = pd.concat([df3, group_v], sort=False)
     
     df3.reset_index(drop = False, inplace = True)
 

@@ -6,7 +6,7 @@ import os
 from scipy import integrate 
 from numpy import absolute, mean  
 from pandas import DataFrame
-from behavanalysis_part2_switchtype import create_df1
+from behavanalysis_part2 import create_df
 
 # columns of interest from .csv file
 headers = [
@@ -18,8 +18,11 @@ headers = [
     'time_response_enabled',
     'time_response_submitted'
 ]
+
 # reading in .csv file
-df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\ExperimentTaskSwitch-v0.0.6_trials-v0.0.1.csv', usecols = headers)
+df = pd.read_csv(r'C:\Users\danie\Documents\SURREY\Project_1\TaskSwitchingParadigm\online_TSP\first_online_cohort\data_clean.csv', usecols=headers)
+path = (r'C:\Users\danie\Documents\SURREY\Project_1\TaskSwitchingParadigm\online_TSP\first_online_cohort')
+
 
 # creating an empty df with column names only for data analysis later on
 df_new = pd.DataFrame(columns=[
@@ -44,6 +47,7 @@ df_accuracy = pd.DataFrame(columns=[
     'index1',
     'cumu_acc'
 ])
+
 
 #-----DATA-----
 #-calculating blocks-
@@ -82,10 +86,7 @@ for group_name, df_group in pid_group:
     df_new.reset_index(drop = True, inplace = True)
 print('\n********************************************************************************************************************************************')
 
-# exporting data to .csv file 
-df_new.to_csv(r'pilot3_data.csv')
 
- 
 #-----ANALYSIS-----
 
 # heirachical grouping of data
@@ -224,7 +225,7 @@ for i in accuracy_plots:
                 top = False,
                 labelbottom = False
                 )
-            path = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\accuracy\cumulative')
+            path = path
             figname = 'fig_{}.png'.format(title)
             dest = os.path.join(path, figname)
             plt.savefig(dest)  
@@ -247,7 +248,7 @@ for i in accuracy_plots:
                 top = False,
                 labelbottom = False
                 )
-            path = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\accuracy\integral')
+            path = path
             figname = 'fig_{}.png'.format(title)
             dest = os.path.join(path, figname)
             plt.savefig(dest)  
@@ -270,7 +271,7 @@ for i in accuracy_plots:
                 top = False,
                 labelbottom = False
                 )
-            path = (r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\accuracy\differential')
+            path = path
             # plt.annotate(ACC_data, xy =(10,25))
             figname = 'fig_{}.png'.format(title)
             dest = os.path.join(path, figname)
@@ -278,6 +279,6 @@ for i in accuracy_plots:
             plt.cla()
 
 # Make the Occurence Column 
-raw_data_location = open(r'C:\Users\danie\Documents\SURREY\Project_1\task_switching_paradigm\data\public\ExperimentTaskSwitch-v0.0.6_trials-v0.0.1.csv')
-df = create_df1(raw_data_location)
-df.to_csv(r'pilot4_withoccurence.csv')
+raw_data_location = open(r'C:\Users\danie\Documents\SURREY\Project_1\TaskSwitchingParadigm\online_TSP\first_online_cohort\data.csv')
+df = create_df(raw_data_location)
+df.to_csv(r'pilot1_withoccurence.csv')
