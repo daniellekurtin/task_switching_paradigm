@@ -68,17 +68,18 @@ if($data_array) {
     if(sizeof($unused_files) > 0) {
         shuffle($unused_files);
         $filename = array_pop($unused_files);
-
-        // Mark blueprint as used
-        $save_as = 'used_' . $filename;
         $content = file_get_contents($path . $filename);
-        if(file_put_contents($path . $save_as, $content) === false) {
-            // Could not update filename to mark as used!
-            http_response_code(500);
-            die();
-        } else {
-            unlink($path . $filename);
-        }
+
+//        The Surrey server has permission issues renaming files so we don't do that here anymore
+        // Mark blueprint as used
+//        $save_as = 'used_' . $filename;
+//        if(file_put_contents($path . $save_as, $content) === false) {
+//            // Could not update filename to mark as used!
+//            http_response_code(500);
+//            die();
+//        } else {
+//            unlink($path . $filename);
+//        }
     } elseif (sizeof($all_files) > 0) {
         shuffle($all_files);
         $filename = array_pop($all_files);
