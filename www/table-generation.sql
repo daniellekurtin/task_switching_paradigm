@@ -27,7 +27,7 @@ CREATE TABLE `tspdata` (
   `participant_id` varchar(250) DEFAULT NULL,
   `participant_age` varchar(250) DEFAULT NULL,
   `participant_gender` varchar(250) DEFAULT NULL,
-  `view_history` varchar(250) DEFAULT NULL,
+  `view_history` varchar(50000) DEFAULT NULL,
   `rt` varchar(250) DEFAULT NULL,
   `trial_type` varchar(250) DEFAULT NULL,
   `trial_index` varchar(250) DEFAULT NULL,
