@@ -13,6 +13,18 @@ describe("Task switching paradigm (JS)", function () {
 
         cy.get('#jspsych-instructions-next')
             .should('be.visible')
-            .click()
+            .contains('Next')
+            .click();
+    });
+
+    it('Introduces the tasks', function() {
+        cy.contains('This game switches between three tasks').should('be.visible');
+        cy.contains('Digit Span').should('be.visible');
+        cy.contains('Spatial Span').should('be.visible');
+        cy.contains('Spatial Rotation').should('be.visible');
+
+        cy.contains('Next')
+            .should('be.visible')
+            .click();
     });
 });
