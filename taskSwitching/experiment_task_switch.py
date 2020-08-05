@@ -385,6 +385,7 @@ class ExperimentTaskSwitch(tS.Experiment):
         
         for i in range(len(self.trials)):
             t = self.trials[i]
+            tt = t.__class__.__name__
 
             if t.__class__.__name__ == "ComponentTrialGap" or t.__class__.__name__ == "ComponentStart":
                 continue
