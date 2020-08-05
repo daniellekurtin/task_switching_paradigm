@@ -1,0 +1,19 @@
+{
+  "name": "TaskSwitchingParadigm",
+  "version": "0.1.0",
+  "description": "Javascript implementation of the Task Switching Paradigm",
+  "homepage": "https://github.com/daniellekurtin/task_switching_paradigm/",
+  "repository": "github:daniellekurtin/task_switching_paradigm/",
+  "files": [
+    "dist/*"
+  ],
+  "browser": true,
+  "dependencies": {},
+  "private": true,
+  "devDependencies": {
+    "cypress": "^4.12.0"
+  },
+  "scripts": {
+    "test": "cypress run"
+  }
+}
