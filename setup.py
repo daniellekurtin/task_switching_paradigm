@@ -17,7 +17,7 @@ setup(
     author_email='danielle.kurtin18@imperial.ac.uk',
     license='MIT',
     packages=['taskSwitching'],
-    install_requires=[
+    setup_requires=[
         'numpy',
         'psychopy',
         'math',
