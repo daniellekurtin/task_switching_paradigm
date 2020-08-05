@@ -19,4 +19,4 @@ jobs:
           cd www
           pwd
           ls -la
-      - run: npm run ci
+          npm run ci
