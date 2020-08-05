@@ -1,5 +1,5 @@
 import taskSwitching as tS
-from psychopy import visual, core
+from psychopy import visual
 from pyniexp import scannersynch
 import enum
 import tkinter as tk

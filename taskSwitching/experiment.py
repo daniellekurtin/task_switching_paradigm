@@ -3,7 +3,6 @@ from psychopy import visual
 import csv
 from os import getcwd, path, makedirs
 from datetime import datetime
-import enum
 
 
 class Experiment:
