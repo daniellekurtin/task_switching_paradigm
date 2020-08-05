@@ -7,6 +7,7 @@ blueprint-config.php
 
 # ignore blueprints!
 blueprints/*.json
+!blueprints/used_demo-blueprint.json
 node_modules
 cypress/fixtures
 cypress/plugins

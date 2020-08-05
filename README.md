@@ -1,3 +1,5 @@
+![Cypress tests](https://github.com/daniellekurtin/task_switching_paradigm/workflows/Cypress%20tests/badge.svg)
+
 # Task Switching Paradigm
 
 Hello! This paradigm switching between three tasks: the spatial rotation, digit span, and spatial span. These tasks were chosen to maximize switch cost in a cued, task switching paradigm. 
