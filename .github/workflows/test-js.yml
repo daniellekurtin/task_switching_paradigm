@@ -15,4 +15,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
+      - run: cd www
+      - run: rm package-lock.json
       - run: npm run ci
