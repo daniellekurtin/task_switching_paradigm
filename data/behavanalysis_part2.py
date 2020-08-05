@@ -4,6 +4,16 @@ import matplotlib.pyplot as plt
 import os
 from pandas import DataFrame
 
+headers = [
+    'participant_id',
+    'type',
+    'target_ans',
+    'participant_ans',
+    'time_start',
+    'time_response_enabled',
+    'time_response_submitted'
+]
+
 def create_df(raw_data_location):
     df1 = pd.DataFrame()
     df2 = pd.DataFrame()
