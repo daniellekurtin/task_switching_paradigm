@@ -8,6 +8,9 @@ blueprint-config.php
 # ignore blueprints!
 blueprints/*.json
 node_modules
-cypress
-!cypress/integration
+cypress/fixtures
+cypress/plugins
+cypress/screenshots
+cypress/support
+cypress/videos
 cypress/integration/examples
