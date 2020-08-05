@@ -19,5 +19,5 @@ jobs:
           cd www
           pwd
           ls -la
-      - run: rm package-lock.json
+      - run: rm ./package-lock.json
       - run: npm run ci
