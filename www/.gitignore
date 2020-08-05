@@ -7,3 +7,7 @@ blueprint-config.php
 
 # ignore blueprints!
 blueprints/*.json
+node_modules
+cypress
+!cypress/integration
+cypress/integration/examples
