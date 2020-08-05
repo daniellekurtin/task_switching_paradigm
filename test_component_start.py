@@ -12,6 +12,7 @@ class Config(enum.Enum):
     TR = 2 # seconds
     MIN_LOG_LEVEL = 'INFO'
 
+
 if __name__ == '__main__':
     # Create the window we'll display the experiment in
     win = visual.Window(
@@ -49,11 +50,13 @@ if __name__ == '__main__':
 
 fields = 'Participant ID', 'Session ID', 'Date'
 
+
 def fetch(entries):
     for entry in entries:
         field = entry[0]
-        text  = entry[1].get()
+        text = entry[1].get()
         print('%s: "%s"' % (field, text)) 
+
 
 def makeform(root, fields):
     entries = []
@@ -66,6 +69,7 @@ def makeform(root, fields):
         ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
         entries.append((field, ent))
     return entries
+
 
 if __name__ == '__main__':
     root = tk.Tk()
@@ -90,12 +94,11 @@ if __name__ == '__main__':
 
 # master.mainloop()
 
-info = [tS.ComponentStart(experiment=exp)]
-exp.trials = info
+    info = [tS.ComponentStart(experiment=exp)]
+    exp.trials = info
 
-exp.synch.wait_for_synch()
-exp.run()
+    exp.synch.wait_for_synch()
+    exp.run()
 
-exp = None
-SSO = None
-    
+    exp = None
+    SSO = None
