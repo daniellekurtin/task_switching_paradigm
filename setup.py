@@ -17,7 +17,7 @@ setup(
     author_email='danielle.kurtin18@imperial.ac.uk',
     license='MIT',
     packages=['taskSwitching'],
-    setup_requires=[
+    install_requires=[
         'numpy',
         'psychopy',
         'math',
@@ -28,8 +28,7 @@ setup(
         'tkinter',
         'enum',
         'csv',
-        'os',
-        'copy'
+        'os'
     ],
     test_suite='nose.collector',
     tests_require=['nose'],
