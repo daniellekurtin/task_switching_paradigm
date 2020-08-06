@@ -19,16 +19,7 @@ setup(
     packages=['taskSwitching'],
     install_requires=[
         'numpy',
-        'psychopy',
-        'math',
-        'random',
-        'datetime',
-        'json',
-        'pyniexp',
-        'tkinter',
-        'enum',
-        'csv',
-        'os'
+        'psychopy'
     ],
     test_suite='nose.collector',
     tests_require=['nose'],
