@@ -1,3 +1,4 @@
+![Python package](https://github.com/daniellekurtin/task_switching_paradigm/workflows/Python%20package/badge.svg)
 ![Cypress tests](https://github.com/daniellekurtin/task_switching_paradigm/workflows/Cypress%20tests/badge.svg)
 
 # Task Switching Paradigm
