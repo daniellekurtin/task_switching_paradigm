@@ -16,13 +16,21 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
-
+    
+    env:
+      DISPLAY: ':99'
+    
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    
+    - name: Setup headless environment
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
