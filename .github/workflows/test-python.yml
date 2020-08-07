@@ -30,6 +30,7 @@ jobs:
     
     - name: Setup headless environment
       run: |
+        sudo apt-get install freeglut3-dev
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     
     - name: Install dependencies
