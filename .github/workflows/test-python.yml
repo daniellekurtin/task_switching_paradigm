@@ -38,7 +38,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 nose numpy psychopy
         # install pyniexp from Tibor's repo
-        pip install git+https://github.com/tiborauer/pyniexp.git
+        pip install git+https://github.com/mjaquiery/pyniexp.git
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
