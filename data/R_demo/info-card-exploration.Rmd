@@ -1,0 +1,47 @@
+---
+title: "Info card exploration"
+author: "Matt Jaquiery"
+date: "30/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Load data
+
+```{r}
+d <- read.csv('info_cards.csv') %>% as_tibble()
+d
+```
+
+## Summary statistics by participant
+
+```{r}
+d_participant <- nest(d, trials = -contains('participant'))
+d_participant %>%
+  transmute(
+    auto_participant_id,
+    participant_id,
+    info_card_count = map_int(trials, nrow)
+  )
+```
+
+## Which participants have 26 info cards?
+
+```{r}
+d_participant %>% 
+  mutate(
+    info_card_count = map_int(trials, nrow)
+  ) %>%
+  group_by(info_card_count) %>%
+  summarise(
+    n_participants = length(unique(participant_id)), 
+    participants = paste0(unique(participant_id), collapse = ', '),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(info_card_count))
+  
+```
