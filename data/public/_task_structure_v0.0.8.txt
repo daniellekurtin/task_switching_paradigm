@@ -1,0 +1,77 @@
+
+ComponentInfoCard
+4
+> 6 x ComponentInfoCard
+ComponentInfoCard
+4
+> 7 x ComponentInfoCard
+ComponentInfoCard
+4
+> 7 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+4
+> 9 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 6 x ComponentInfoCard
+ComponentInfoCard
+4
+> 7 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+> 3 x ComponentRest
+Block Break
+ComponentInfoCard
+4
+> 3 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 8 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 9 x ComponentInfoCard
+ComponentInfoCard
+4
+> 7 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 9 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 6 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 8 x ComponentInfoCard
+ComponentInfoCard
+0.5
+> 7 x ComponentInfoCard
+ComponentInfoCard
