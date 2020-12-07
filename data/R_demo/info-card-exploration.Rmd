@@ -30,7 +30,8 @@ d_participant %>%
     auto_participant_id,
     participant_id,
     info_card_count = map_int(trials, nrow)
-  )
+  ) %>% 
+  arrange(desc(info_card_count))
 ```
 
 ## Which participants have 26 info cards?
@@ -76,4 +77,27 @@ d_raw %>%
   select(participant_id, trial_index, trial_type, internal_node_id) %>%
   nest(participants = participant_id) %>%
   mutate(participants = map_int(participants, nrow))
+```
+
+```{r}
+
+tmp <- d_raw %>% 
+  left_join(
+    d_participant %>% 
+      transmute(
+        auto_participant_id,
+        info_card_count = map_int(trials, nrow)
+      ),
+    by = "auto_participant_id"
+  ) %>%
+  mutate(
+    info_card = trial_type == "ts-info-card",
+    all_cards = info_card_count == 26
+  )
+tmp %>%
+  ggplot(aes(x = trial_index, y = factor(auto_participant_id), alpha = as.numeric(info_card))) +
+  geom_hline(colour = 'blue', size = 2, aes(yintercept = auto_participant_id), data = filter(tmp, !all_cards)) +
+  geom_point(aes(alpha = 1)) +
+  geom_point(colour = 'red')
+
 ```
