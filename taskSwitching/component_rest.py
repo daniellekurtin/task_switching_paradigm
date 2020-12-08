@@ -30,7 +30,7 @@ class ComponentRest(Component):
                 color=self.experiment.text_color
             )
 
-        self.duration = break_duration
+        self.break_duration = break_duration
 
         for k in kwargs.keys():
             self.__setattr__(k, kwargs[k])
@@ -44,11 +44,11 @@ class ComponentRest(Component):
         # self.duration - 6
         end_time = 0
         final_countdown = 114
-        while end_time < self.duration:
+        while end_time < self.break_duration:
             if end_time < final_countdown:
                 self.countdown.text = str("+")
             if final_countdown < end_time:
-                self.countdown.text = str(self.duration - end_time)
+                self.countdown.text = str(self.break_duration - end_time)
 
             self.draw()
             clock.wait(1)

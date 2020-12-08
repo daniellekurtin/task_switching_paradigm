@@ -132,12 +132,17 @@ function begin(timeline, isDemo = false) {
         auto_participant_id: performance.now().toString() + '_' + Math.round(Math.random() * 100000).toString(),
         participant_age: NaN,
         participant_gender: null,
-        participant_id: null
+        participant_id: null,
+        experiment_complete: false
     });
     // Add automatic saving of data
+    const lastTrial = timeline[timeline.length - 2];
     timeline.forEach(x => {
         if(!x.on_finish && x.save_enabled !== false)
-            x.on_finish = saveLastTrialData;
+            if(x === lastTrial)
+                x.on_finish = (d) => saveLastTrialData(d, true);
+            else
+                x.on_finish = saveLastTrialData;
     });
 
     jsPsych.init({
@@ -160,18 +165,25 @@ function recordDemographics(data) {
             participant_id: answers.Q2
         });
 
-        saveLastTrialData(data);
+        saveLastTrialData();
     } catch(e) {
         error("Could not save demographic responses!", e);
     }
 }
 
-function saveLastTrialData() {
+/**
+ * Save the data from the last trial
+ * @param data {null|object} ignored, we instead use the jsPsych data API to find the data
+ * @param mark_complete {boolean} whether to mark the whole experiment as complete
+ */
+function saveLastTrialData(data = null, mark_complete = false) {
+    if(mark_complete)
+        jsPsych.data.addProperties({experiment_complete: true});
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'write-data.php');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
-        if(xhr.status == 200){
+        if(xhr.status === 200){
             var response = JSON.parse(xhr.responseText);
             if(response.success !== true) {
                 if(!window.ignoreSaveErrors) {

@@ -13,7 +13,11 @@ library(tidyverse)
 ## Load data
 
 ```{r}
-d <- read.csv('info_cards.csv') %>% as_tibble()
+d_raw <- read.csv('../data_clean.csv') %>% 
+  as_tibble()
+  
+d <- d_raw %>%
+  filter(trial_type == 'ts-info-card')
 d
 ```
 
@@ -26,7 +30,8 @@ d_participant %>%
     auto_participant_id,
     participant_id,
     info_card_count = map_int(trials, nrow)
-  )
+  ) %>% 
+  arrange(desc(info_card_count))
 ```
 
 ## Which participants have 26 info cards?
@@ -44,4 +49,55 @@ d_participant %>%
   ) %>%
   arrange(desc(info_card_count))
   
+```
+
+## Selecting 26th info card for all participants
+
+```{r}
+last_info_card <- d_participant %>% 
+  filter(map_lgl(trials, ~nrow(.) == 26)) %>%
+  mutate(trials = map(trials, ~.[26,])) %>%
+  unnest(cols = trials) 
+
+last_trial <- d_raw %>%
+  nest(trials = -matches('participant')) %>%
+  filter(auto_participant_id %in% last_info_card$auto_participant_id) %>%
+  mutate(trials = map(trials, ~.[.$trial_index == max(.$trial_index), ])) %>%
+  unnest(cols = trials)
+
+last_trial
+```
+
+## Trials by trial_index
+
+```{r}
+d_raw %>% 
+  filter(auto_participant_id %in% last_info_card$auto_participant_id) %>%
+  arrange(trial_index) %>%
+  select(participant_id, trial_index, trial_type, internal_node_id) %>%
+  nest(participants = participant_id) %>%
+  mutate(participants = map_int(participants, nrow))
+```
+
+```{r}
+
+tmp <- d_raw %>% 
+  left_join(
+    d_participant %>% 
+      transmute(
+        auto_participant_id,
+        info_card_count = map_int(trials, nrow)
+      ),
+    by = "auto_participant_id"
+  ) %>%
+  mutate(
+    info_card = trial_type == "ts-info-card",
+    all_cards = info_card_count == 26
+  )
+tmp %>%
+  ggplot(aes(x = trial_index, y = factor(auto_participant_id), alpha = as.numeric(info_card))) +
+  geom_hline(colour = 'blue', size = 2, aes(yintercept = auto_participant_id), data = filter(tmp, !all_cards)) +
+  geom_point(aes(alpha = 1)) +
+  geom_point(colour = 'red')
+
 ```
