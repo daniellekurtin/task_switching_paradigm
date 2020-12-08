@@ -17,7 +17,7 @@ const demo_instructions = {
         '<p>During the <strong>Digit Span</strong> task, six numbers will flash on the grid, one after the other:</p><img src="img/DS_recording.gif"></img><p>Your job is to <strong>remember the six numbers in order</strong>, and click on the answer grid that has those 6 numbers from left to right.</p>',
         '<p>During the <strong>Spatial Span</strong> the grid will highlight 6 boxes, one after another. Your job is to <strong>remember which spaces have been occupied by boxes</strong>, and select the answer grid that shows all the boxes that were highlighted.</p><img src="img/SS_recording.gif"></img>',
         '<p>During the <strong>Spatial Rotation</strong> boxes will become highlighted. The boxes will add one after another instead of disappearing.</p><img src="img/SR_recording.gif"></img><p>You job is to <strong>pick the answer which shows the pattern of highlighted boxes <em>rotated through 90, 180, or 270 degrees</em></strong>.',
-        'After you play each task for a few rounds, you will be shown a card announcing what the next task will be. The next task will start <strong>immediately</strong>.',
+        'After you play each task for a few rounds, the next task will start <strong>without warning</strong>.',
         'Now you can begin a demo of each task. Most people feel as though the tasks are difficult, and <em>they are meant to be challenging</em>. We encourage you to answer as quickly and as accurately as you can, and hope you have some fun!',
     ],
     show_clickable_nav: true
@@ -69,7 +69,7 @@ var participant_info = {
     type: 'survey-text',
     questions: [
       {prompt: "How old are you?"}, 
-      {prompt: "What gender are you?", placeholder: "Male/Female/Other"},
+      {prompt: "What gender are you?", placeholder: "Please write Male, Female, or Other- this response is case sensitive"},
       {prompt: "What is your participant id?", placeholder: "001"}
     ],
     on_finish: (data) => recordDemographics(data)
@@ -88,7 +88,7 @@ var instructions = {
 var end_thankyou = {
   type: 'instructions',
   pages: [
-      'Thank you for completing the Task Switching Paradigm! Be sure to notify Danielle at d.kurtin@surrey.ac.uk you have completed the task to recieve SONA credits!'
+      'Thank you for completing the Task Switching Paradigm!'
   ],
   show_clickable_nav: false
 }
