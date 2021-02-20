@@ -22,8 +22,8 @@ class ExperimentTaskSwitch(tS.Experiment):
     }
 
     class InfoCardDurations(enum.Enum):
-        SHORT = 0.5
-        LONG = 0.5
+        SHORT = 0.0
+        LONG = 0.0
 
     class RunLength(enum.IntEnum):
         MIN = 4
