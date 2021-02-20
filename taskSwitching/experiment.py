@@ -11,7 +11,7 @@ class Experiment:
     The values it holds are ones we define at creation time.
     Maybe later we'll add some default values to give an idea of how it should be used.
     """
-    version = "v0.0.9"
+    version = "v0.1.0"
     
     trials = []
     current_trial_number = 0

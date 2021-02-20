@@ -70,7 +70,10 @@ var participant_info = {
     questions: [
       {prompt: "How old are you?"}, 
       {prompt: "What gender are you?", placeholder: "Please write Male, Female, or Other- this response is case sensitive"},
-      {prompt: "What is your participant id?", placeholder: "001"}
+      {prompt: "What is your participant id?", placeholder: "001"},
+      {prompt: "Do you play any sports?", placeholder: "soccer, football, swimming"},
+      {prompt: "Is this a contact sport with the potential for head injury?", placeholder: "yes or no"},
+      {prompt: "How many hours do you play a week?"},
     ],
     on_finish: (data) => recordDemographics(data)
   };
