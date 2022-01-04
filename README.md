@@ -3,9 +3,9 @@
 
 # Task Switching Paradigm
 
-Hello! This paradigm switching between three tasks: the spatial rotation, digit span, and spatial span. These tasks were chosen to maximize switch cost in a cued, task switching paradigm. 
+Hello! This cued, task switching paradigm switches between three tasks: the spatial rotation, digit span, and spatial span. This task was coded with the intent for other researchers to modify it to suit their experimental needs, so please, pull it and play!
 
-This task was coded to be MRI and EEG compatible, but requires installation of this package:
+This task was coded to be MRI and EEG compatible, and thus requires installation of this package:
 
        pip install git+https://github.com/tiborauer/pyniexp.git
 
